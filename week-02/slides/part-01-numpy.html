@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>NumPy | هفته دوم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ── */
+    .stack-figs {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+    }
+    .stack-figs figure { margin: 0; }
+    .stack-figs img {
+      max-width: 100%;
+      max-height: 140px;
+      object-fit: contain;
+      border-radius: 8px;
+      border: 1px solid #E2E8F0;
+    }
+    .stack-figs figcaption {
+      font-size: 13px;
+      color: var(--mid);
+      text-align: center;
+      margin-top: 4px;
+    }
+    .cover-logo {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 18px 30px;
+      display: inline-flex;
+      margin-bottom: 28px;
+    }
+    .cover-logo img {
+      height: 46px;
+      width: auto;
+      display: block;
+    }
+    .cover-link {
+      margin-top: 24px;
+      font-size: 14px;
+      color: #94A3B8;
+    }
+    .cover-link a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+    .cover-link a:hover { text-decoration: underline; }
+
+    .used-by-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .used-by-chip {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark);
+      direction: ltr;
+    }
+
+    .doc-link {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 24px;
+      font-weight: 700;
+      padding: 14px 36px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      direction: ltr;
+    }
+    .doc-link:hover { opacity: .9; }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px 36px;
+      direction: ltr;
+    }
+    .toc-item {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      font-size: 16px;
+      color: var(--dark);
+      line-height: 1.5;
+    }
+    .toc-item .toc-num {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+      min-width: 22px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته دوم · بخش ۱</div>
+    <div class="cover-logo"><img src="images/numpy.png" alt="NumPy logo"></div>
+    <h1 class="slide__title">پایه محاسبات عددی در پایتون</h1>
+    <h2 class="slide__subtitle" dir="ltr">Numerical Python</h2>
+    <div class="cover-link">مستندات رسمی: <a href="https://numpy.org/" target="_blank" rel="noopener" dir="ltr">numpy.org</a></div>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 معرفی: NumPy چیست؟ ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">معرفی</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;"><span class="ltr">NumPy</span> چیست؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <div>
+        <p class="slide__body mb-20" style="font-size:19px;">
+          <span class="ltr">NumPy</span> کتابخانه اصلی محاسبات عددی در پایتون است.
+          هسته آن یک ساختار داده به نام <span class="ltr">ndarray</span> (آرایه چند بعدی) است
+          که تمام عملیات ریاضی و آماری روی آن انجام می‌شود.
+        </p>
+        <p class="slide__body" style="font-size:18px;">
+          این کتابخانه در سال ۲۰۰۶ توسط <span class="ltr">Travis Oliphant</span> با ادغام دو پروژه قدیمی‌تر
+          به نام‌های <span class="ltr">Numeric</span> و <span class="ltr">Numarray</span> شکل گرفت،
+          و از همان زمان به استاندارد آرایه در پایتون تبدیل شد.
+        </p>
+      </div>
+      <div>
+        <div class="callout--blue callout mb-20" style="font-size:18px;">
+          تقریبا هر کتابخانه علمی دیگر در پایتون، روی <span class="ltr">NumPy</span> ساخته شده است.
+        </div>
+        <div class="used-by-grid">
+          <span class="used-by-chip">pandas</span>
+          <span class="used-by-chip">scikit-learn</span>
+          <span class="used-by-chip">matplotlib</span>
+          <span class="used-by-chip">PyTorch</span>
+          <span class="used-by-chip">SciPy</span>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · NumPy</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 چرا نه لیست پایتون؟ ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;">چرا لیست پایتون کافی نیست؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="../assets/numpy/numpy-array-vs-list.png" alt="لیست پایتون در برابر آرایه NumPy در حافظه"
+             style="max-height:300px; border-radius:8px; border:1px solid #E2E8F0;">
+      </figure>
+      <div>
+        <ul class="slide__list" style="font-size:19px; margin-bottom:24px;">
+          <li><span class="ltr">list</span> در پایتون آرایه‌ای از <strong>اشاره‌گر</strong> است؛ هر عنصر جای دیگری در حافظه پخش شده.</li>
+          <li><span class="ltr">NumPy array</span> اعداد را پشت‌سرهم و هم‌نوع در یک بلوک پیوسته نگه می‌دارد.</li>
+        </ul>
+        <div class="callout--blue callout" style="font-size:18px; line-height:1.9;">
+          همین یک تفاوت طراحی باعث می‌شود عملیات برداری مثل <span class="ltr">prices * 2</span>
+          ده‌ها برابر سریع‌تر از حلقه پایتونی باشد.
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · NumPy</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 آناتومی: SHAPE و AXIS ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;"><span class="ltr">shape</span> و <span class="ltr">axis</span></h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="../assets/numpy/diagram_axis.png" alt="محور صفر پایین سطرها، محور یک در طول ستون‌ها"
+             style="max-height:300px; border-radius:8px; border:1px solid #E2E8F0;">
+      </figure>
+      <div>
+        <ul class="slide__list" style="font-size:19px; margin-bottom:24px;">
+          <li><span class="ltr">.shape</span> ابعاد آرایه را می‌دهد؛ <span class="ltr">.ndim</span> تعداد بعدها را.</li>
+          <li>هر آرایه یک <span class="ltr">.dtype</span> دارد، یعنی همه عناصر هم‌نوع هستند.</li>
+        </ul>
+        <div class="callout" style="font-size:18px; direction:ltr; text-align:left; line-height:2;">
+          axis=0 → down the rows<br>
+          axis=1 → across the columns
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · NumPy</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 قانون BROADCASTING ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;">قانون <span class="ltr">Broadcasting</span></h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <div class="stack-figs">
+        <figure>
+          <img src="../assets/numpy/diagram_broadcast_row.png" alt="پخش یک بردار سطری روی هر سطر">
+          <figcaption>پخش سطری</figcaption>
+        </figure>
+        <figure>
+          <img src="../assets/numpy/diagram_broadcast_col.png" alt="پخش یک بردار ستونی روی هر ستون">
+          <figcaption>پخش ستونی</figcaption>
+        </figure>
+      </div>
+      <div>
+        <div class="callout--blue callout mb-24" style="font-size:18px; line-height:1.9;">
+          شکل‌ها را از <strong>راست</strong> مقایسه کن. دو بعد سازگارند اگر برابر باشند،
+          یا یکی از آن‌ها ۱ باشد.
+        </div>
+        <p class="slide__body" style="font-size:17px;">
+          اگر هیچ جفت بعدی سازگار نبود، <span class="ltr">NumPy</span> به‌جای حدس زدن، خطا می‌دهد.
+        </p>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · NumPy</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 دام رایج: SHAPE GOTCHA ────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دام رایج</div>
+    <h1 class="slide__title mb-24" style="font-size:34px;">
+      <span class="ltr">(n,)</span> در برابر <span class="ltr">(n, 1)</span> در برابر <span class="ltr">(1, n)</span>
+    </h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="../assets/numpy/diagram_shape_gotcha.png" alt="سه شکل متفاوت با همان اعداد"
+             style="max-height:300px; border-radius:8px; border:1px solid #E2E8F0;">
+      </figure>
+      <div class="callout--red callout" style="font-size:19px; line-height:1.9;">
+        این سه شکل «همان اعداد» را نگه می‌دارند، اما <span class="ltr">NumPy</span> و <span class="ltr">scikit-learn</span>
+        با آن‌ها متفاوت رفتار می‌کنند.<br><br>
+        همین یک تفاوت، منبع بخش بزرگی از باگ‌های واقعی <span class="ltr">shape</span> است.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · NumPy</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 مستندات و فهرست مطالب ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مرجع</div>
+    <h1 class="slide__title mb-24" style="font-size:34px; text-align:center;">مستندات و فهرست مطالب</h1>
+    <div style="text-align:center; margin-bottom:28px;">
+      <a class="doc-link" href="https://numpy.org/" target="_blank" rel="noopener">numpy.org</a>
+    </div>
+    <div class="toc-grid" style="max-width:920px; margin:0 auto; width:100%;">
+      <div class="toc-item"><span class="toc-num">00</span><span>Introduction</span></div>
+      <div class="toc-item"><span class="toc-num">01</span><span>Creating arrays</span></div>
+      <div class="toc-item"><span class="toc-num">02</span><span>Anatomy of an array</span></div>
+      <div class="toc-item"><span class="toc-num">03</span><span>Indexing, slicing, and views</span></div>
+      <div class="toc-item"><span class="toc-num">04</span><span>Reshaping, joining, and splitting arrays</span></div>
+      <div class="toc-item"><span class="toc-num">05</span><span>Iterating arrays</span></div>
+      <div class="toc-item"><span class="toc-num">06</span><span>Vectorization and broadcasting</span></div>
+      <div class="toc-item"><span class="toc-num">07</span><span>Aggregations, sorting, and searching</span></div>
+      <div class="toc-item"><span class="toc-num">08</span><span>Linear algebra essentials</span></div>
+      <div class="toc-item"><span class="toc-num">09</span><span>Random number generation</span></div>
+      <div class="toc-item"><span class="toc-num">10</span><span>Inserting, appending, and deleting elements</span></div>
+      <div class="toc-item"><span class="toc-num">11</span><span>Performance: why vectorize?</span></div>
+      <div class="toc-item"><span class="toc-num">12</span><span>Summary</span></div>
+      <div class="toc-item"><span class="toc-num">13</span><span>Exercises</span></div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · NumPy</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

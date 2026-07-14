@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>معرفی هفته دوم | یادگیری ماشین</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ──────────────────────────────────────── */
+
+    .week-topics {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      direction: rtl;
+      align-items: flex-start;
+    }
+    .week-topic-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 20px;
+      color: rgba(255,255,255,.8);
+      direction: rtl;
+    }
+    .week-topic-item .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .roadmap-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 12px 20px;
+      border: 2px solid #E2E8F0;
+      direction: rtl;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .roadmap-card__right {
+      text-align: right;
+      flex-shrink: 0;
+      min-width: 200px;
+    }
+    .roadmap-card__num {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .08em;
+      margin-bottom: 4px;
+    }
+    .roadmap-card__title {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .roadmap-card__left {
+      flex: 1;
+      direction: ltr;
+      text-align: left;
+    }
+    .roadmap-card__desc {
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+    .roadmap-card__note {
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .roadmap-card__link {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      direction: ltr;
+    }
+    .roadmap-card__link:hover { text-decoration: underline; }
+
+    .key-quote {
+      font-size: 26px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(255,255,255,.9);
+      text-align: center;
+      max-width: 860px;
+    }
+    .key-quote strong {
+      font-weight: 700;
+      color: var(--accent2);
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ──────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته دوم · مقدمه</div>
+    <h1 class="slide__title mb-16">ابزارهای پایه یادگیری ماشین با پایتون</h1>
+    <h2 class="slide__subtitle mb-40" dir="ltr">NumPy · pandas · matplotlib</h2>
+    <div class="week-topics">
+      <div class="week-topic-item"><span class="num">۱</span><span>آرایه‌ها و محاسبات برداری با <span class="ltr">NumPy</span></span></div>
+      <div class="week-topic-item"><span class="num">۲</span><span>جدول‌های داده و پاک‌سازی با <span class="ltr">pandas</span></span></div>
+      <div class="week-topic-item"><span class="num">۳</span><span>رسم و بررسی بصری داده با <span class="ltr">matplotlib</span></span></div>
+    </div>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 هدف این هفته ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">هدف</div>
+    <h1 class="slide__title mb-28" style="font-size:40px;">هدف این هفته</h1>
+    <div style="display:flex; flex-direction:column; flex:1; justify-content:flex-start; gap:16px; max-width:760px; margin-right:200px;">
+      <div class="callout" style="font-size:19px; line-height:1.9;">
+        قبل از هر مدلی، باید بتوانیم داده را <strong>بگیریم، تمیز کنیم و ببینیم</strong>.
+      </div>
+      <p class="slide__body" style="font-size:18px; font-weight:600;">سوال‌هایی که جواب می‌دهیم:</p>
+      <ul class="slide__list" style="font-size:19px; margin-bottom:4px;">
+        <li>چرا حلقه‌نویسی روی داده در پایتون خالص کند و پرخطاست؟</li>
+        <li>چطور یک جدول داده را انتخاب، فیلتر و خلاصه کنیم؟</li>
+        <li>چطور داده را ببینیم تا الگوها را کشف کنیم؟</li>
+      </ul>
+      <div class="callout--blue callout" style="font-size:19px; line-height:2;">
+        <strong style="color:var(--dark); display:block; margin-bottom:8px;">نکته مهم:</strong>
+        این هفته هم مثل هفته اول، هنوز مدل نمی‌سازیم؛<br>
+        داریم <span class="ltr">زبان مشترک</span> کل دوره را یاد می‌گیریم.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 نقشه هفته ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ساختار هفته</div>
+    <h1 class="slide__title mb-28" style="font-size:38px;">نقشه هفته</h1>
+    <div style="display:flex; flex-direction:column; gap:14px; flex:1; justify-content:center; max-width:860px; margin:0 auto; width:100%;">
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۱</div>
+          <div class="roadmap-card__title" dir="ltr">NumPy</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">Arrays · Vectorization · Broadcasting</div>
+          <div class="roadmap-card__note" style="direction:rtl; text-align:right;">پایه عددی همه چیز</div>
+          <a class="roadmap-card__link" href="https://numpy.org/" target="_blank" rel="noopener">numpy.org</a>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۲</div>
+          <div class="roadmap-card__title" dir="ltr">pandas</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">Series · DataFrame · groupby</div>
+          <div class="roadmap-card__note" style="direction:rtl; text-align:right;">جدول داده، آماده برای مدل</div>
+          <a class="roadmap-card__link" href="https://pandas.pydata.org/" target="_blank" rel="noopener">pandas.pydata.org</a>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۳</div>
+          <div class="roadmap-card__title" dir="ltr">matplotlib</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">Figure · Axes · Plots</div>
+          <div class="roadmap-card__note" style="direction:rtl; text-align:right;">دیدن یعنی فهمیدن</div>
+          <a class="roadmap-card__link" href="http://matplotlib.org/" target="_blank" rel="noopener">matplotlib.org</a>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 چرا این ترتیب ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ترتیب هفته</div>
+    <h1 class="slide__title mb-28" style="font-size:38px; text-align:center;">هر لایه روی لایه قبلی ساخته می‌شود</h1>
+    <div class="flow" style="flex:1; justify-content:center;">
+      <div class="flow-item">
+        <div class="flow-box" dir="ltr">NumPy · Array</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item">
+        <div class="flow-box" dir="ltr">pandas · DataFrame of NumPy columns</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item">
+        <div class="flow-box flow-box--dim" dir="ltr">matplotlib · a look at either one</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 KEY TAKEAWAY ───────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">پیام کلیدی هفته</div>
+    <p class="key-quote">
+      همه‌چیز در نهایت یک <strong>آرایه عددی</strong> است.
+      <br><br>
+      <span class="ltr">NumPy</span> پایه آن است.<br>
+      <span class="ltr">pandas</span> پوششی برچسب‌دار روی آن است.<br>
+      <span class="ltr">matplotlib</span> پنجره‌ای برای دیدن آن است.
+    </p>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>matplotlib | هفته دوم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ── */
+    .cover-logo {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 18px 30px;
+      display: inline-flex;
+      margin-bottom: 28px;
+    }
+    .cover-logo img {
+      height: 46px;
+      width: auto;
+      display: block;
+    }
+    .cover-link {
+      margin-top: 24px;
+      font-size: 14px;
+      color: #94A3B8;
+    }
+    .cover-link a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+    .cover-link a:hover { text-decoration: underline; }
+
+    .doc-link {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 24px;
+      font-weight: 700;
+      padding: 14px 36px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      direction: ltr;
+    }
+    .doc-link:hover { opacity: .9; }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px 36px;
+      direction: ltr;
+    }
+    .toc-item {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      font-size: 16px;
+      color: var(--dark);
+      line-height: 1.5;
+    }
+    .toc-item .toc-num {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+      min-width: 22px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته دوم · بخش ۳</div>
+    <div class="cover-logo"><img src="images/mtplotlib.png" alt="matplotlib logo"></div>
+    <h1 class="slide__title">رسم و بصری‌سازی داده در پایتون</h1>
+    <h2 class="slide__subtitle" dir="ltr">Visualization with Python</h2>
+    <div class="cover-link">مستندات رسمی: <a href="http://matplotlib.org/" target="_blank" rel="noopener" dir="ltr">matplotlib.org</a></div>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 معرفی: matplotlib چیست؟ ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">معرفی</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;"><span class="ltr">matplotlib</span> چیست؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <div>
+        <p class="slide__body mb-20" style="font-size:19px;">
+          <span class="ltr">matplotlib</span> کتابخانه اصلی رسم نمودار در پایتون است؛
+          آرایه یا جدولی از اعداد را به یک تصویر قابل فهم تبدیل می‌کند.
+        </p>
+        <p class="slide__body" style="font-size:18px;">
+          این کتابخانه در اوایل دهه ۲۰۰۰ توسط <span class="ltr">John Hunter</span>، در جریان کار روی داده‌های
+          عصب‌شناسی، به‌عنوان جایگزینی متن‌باز برای ابزار رسم نمودار در <span class="ltr">MATLAB</span> نوشته شد؛
+          و همان الهام در نامش هم مانده است.
+        </p>
+      </div>
+      <div class="callout--blue callout" style="font-size:18px; line-height:1.9;">
+        امروز بیشتر کتابخانه‌های رسم نمودار دیگر در پایتون، از جمله <span class="ltr">pandas.plot()</span> و
+        <span class="ltr">seaborn</span>، در واقع پوششی روی <span class="ltr">matplotlib</span> هستند.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · matplotlib</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 چرا دیدن داده مهم است ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-28" style="text-align:center; font-size:36px;">عدد و جدول همیشه کافی نیستند</h1>
+    <div class="big-statement mb-32" style="font-size:24px;">
+      <span class="ltr">NumPy</span> عدد را نگه‌می‌دارد و <span class="ltr">pandas</span> جدول را؛<br>
+      <span class="ltr">matplotlib</span> یعنی واقعا <strong>ببینیمشان</strong>.
+    </div>
+    <div class="callout--blue callout" style="text-align:center; font-size:19px; max-width:760px; margin:0 auto;">
+      خیلی از الگوها، پرت‌ها و خطاهای داده فقط با نگاه‌کردن به نمودار دیده می‌شوند،
+      نه با خواندن یک جدول از اعداد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · matplotlib</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 مدل شیء‌گرا FIGURE/AXES ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-24" style="font-size:34px;">مدل شیء‌گرا: <span class="ltr">Figure</span> و <span class="ltr">Axes</span></h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="../assets/matplotlib/diagram_anatomy.png" alt="آناتومی Figure و Axes: عنوان، برچسب‌ها، legend، ticks، grid"
+             style="max-height:300px; border-radius:8px; border:1px solid #E2E8F0;">
+      </figure>
+      <div>
+        <ul class="slide__list" style="font-size:18px; margin-bottom:24px;">
+          <li><span class="ltr">Figure</span>: کل بوم؛ می‌تواند چند <span class="ltr">Axes</span> داشته باشد.</li>
+          <li><span class="ltr">Axes</span>: یک نمودار مستقل، با <span class="ltr">title</span>، برچسب محورها، <span class="ltr">ticks</span>، <span class="ltr">grid</span> و <span class="ltr">legend</span> مخصوص خودش.</li>
+        </ul>
+        <div class="callout--blue callout" style="font-size:18px; direction:ltr; text-align:left;">
+          fig, ax = plt.subplots()
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · matplotlib</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 مستندات و فهرست مطالب ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مرجع</div>
+    <h1 class="slide__title mb-24" style="font-size:34px; text-align:center;">مستندات و فهرست مطالب</h1>
+    <div style="text-align:center; margin-bottom:28px;">
+      <a class="doc-link" href="http://matplotlib.org/" target="_blank" rel="noopener">matplotlib.org</a>
+    </div>
+    <div class="toc-grid" style="max-width:920px; margin:0 auto; width:100%;">
+      <div class="toc-item"><span class="toc-num">00</span><span>Introduction</span></div>
+      <div class="toc-item"><span class="toc-num">01</span><span>Your first plot: the quick way</span></div>
+      <div class="toc-item"><span class="toc-num">02</span><span>The Figure/Axes object model</span></div>
+      <div class="toc-item"><span class="toc-num">03</span><span>Anatomy of a figure</span></div>
+      <div class="toc-item"><span class="toc-num">04</span><span>Line and scatter plots</span></div>
+      <div class="toc-item"><span class="toc-num">05</span><span>Bar charts and histograms</span></div>
+      <div class="toc-item"><span class="toc-num">06</span><span>Styling: color, markers, linestyles, and colormaps</span></div>
+      <div class="toc-item"><span class="toc-num">07</span><span>Multiple Axes: subplot grids</span></div>
+      <div class="toc-item"><span class="toc-num">08</span><span>Saving and displaying figures</span></div>
+      <div class="toc-item"><span class="toc-num">09</span><span>matplotlib in the ML stack</span></div>
+      <div class="toc-item"><span class="toc-num">10</span><span>Summary</span></div>
+      <div class="toc-item"><span class="toc-num">11</span><span>Exercises</span></div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · matplotlib</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

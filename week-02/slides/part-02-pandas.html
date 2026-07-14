@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>pandas | هفته دوم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ── */
+    .cover-logo {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 18px 30px;
+      display: inline-flex;
+      margin-bottom: 28px;
+    }
+    .cover-logo img {
+      height: 46px;
+      width: auto;
+      display: block;
+    }
+    .cover-link {
+      margin-top: 24px;
+      font-size: 14px;
+      color: #94A3B8;
+    }
+    .cover-link a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+    .cover-link a:hover { text-decoration: underline; }
+
+    .used-by-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .used-by-chip {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark);
+      direction: ltr;
+    }
+
+    .doc-link {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 24px;
+      font-weight: 700;
+      padding: 14px 36px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      direction: ltr;
+    }
+    .doc-link:hover { opacity: .9; }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px 36px;
+      direction: ltr;
+    }
+    .toc-item {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      font-size: 16px;
+      color: var(--dark);
+      line-height: 1.5;
+    }
+    .toc-item .toc-num {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+      min-width: 22px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته دوم · بخش ۲</div>
+    <div class="cover-logo"><img src="images/pandas.png" alt="pandas logo"></div>
+    <h1 class="slide__title">جدول‌های داده در پایتون</h1>
+    <h2 class="slide__subtitle" dir="ltr">Python Data Analysis Library</h2>
+    <div class="cover-link">مستندات رسمی: <a href="https://pandas.pydata.org/" target="_blank" rel="noopener" dir="ltr">pandas.pydata.org</a></div>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 معرفی: pandas چیست؟ ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">معرفی</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;"><span class="ltr">pandas</span> چیست؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <div>
+        <p class="slide__body mb-20" style="font-size:19px;">
+          <span class="ltr">pandas</span> کتابخانه اصلی کار با داده‌های جدولی در پایتون است.
+          هر ستون یک آرایه <span class="ltr">NumPy</span> با برچسب است، و کنار هم یک جدول کامل
+          با نام سطر و ستون می‌سازند.
+        </p>
+        <p class="slide__body" style="font-size:18px;">
+          این کتابخانه در سال ۲۰۰۸ توسط <span class="ltr">Wes McKinney</span> برای تحلیل داده‌های مالی نوشته شد.
+          نام آن از اصطلاح «<span class="ltr">panel data</span>» در اقتصادسنجی گرفته شده، اصطلاحی برای داده‌هایی
+          که هم در طول زمان و هم بین واحدهای مختلف جمع‌آوری شده‌اند.
+        </p>
+      </div>
+      <div>
+        <div class="callout--blue callout mb-20" style="font-size:18px;">
+          <span class="ltr">pandas</span> روی <span class="ltr">NumPy</span> ساخته شده است: لایه‌ای که داده خام و شلوغ را
+          به جدولی تمیز، آماده برای مدل، تبدیل می‌کند.
+        </div>
+        <div class="used-by-grid">
+          <span class="used-by-chip">CSV / Excel</span>
+          <span class="used-by-chip">SQL</span>
+          <span class="used-by-chip">scikit-learn</span>
+          <span class="used-by-chip">matplotlib</span>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · pandas</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 آناتومی DATAFRAME ─────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;">آناتومی <span class="ltr">DataFrame</span></h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="../assets/pandas/diagram_anatomy.png" alt="آناتومی DataFrame: index، columns، values"
+             style="max-height:300px; border-radius:8px; border:1px solid #E2E8F0;">
+      </figure>
+      <div>
+        <ul class="slide__list" style="font-size:20px;">
+          <li><span class="ltr">columns</span>: برچسب‌ها در بالای جدول</li>
+          <li><span class="ltr">index</span>: برچسب‌ها در کنار جدول</li>
+          <li><span class="ltr">values</span>: خودِ شبکه اعداد</li>
+        </ul>
+        <div class="callout mt-auto" style="font-size:17px; margin-top:24px;">
+          هر انتخابی در ادامه، فقط «چند ستون و چند برچسب از ایندکس را انتخاب کن» است.
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · pandas</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 LOC در برابر ILOC ─────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;"><span class="ltr">.loc</span> در برابر <span class="ltr">.iloc</span></h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="../assets/pandas/diagram_loc_iloc.png" alt="loc با برچسب، iloc با موقعیت انتخاب می‌کند"
+             style="max-height:300px; border-radius:8px; border:1px solid #E2E8F0;">
+      </figure>
+      <div>
+        <div class="callout--blue callout mb-24" style="font-size:19px; direction:ltr; text-align:left; line-height:2.2;">
+          .loc  → select by <strong>label</strong><br>
+          .iloc → select by <strong>position</strong>
+        </div>
+        <p class="slide__body" style="font-size:18px;">
+          وقتی ایندکس یک بازه ساده <span class="ltr">0, 1, 2, ...</span> نباشد، این دو با هم فرق می‌کنند.
+          همین تفاوتی است که باید در ذهن بماند.
+        </p>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · pandas</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 GROUPBY ────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;"><span class="ltr">groupby</span>: تقسیم، اعمال، ترکیب</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="../assets/pandas/diagram_groupby.png" alt="split apply combine"
+             style="max-height:300px; border-radius:8px; border:1px solid #E2E8F0;">
+      </figure>
+      <div>
+        <p class="slide__body mb-24" style="font-size:18px;">
+          بدون <span class="ltr">groupby</span>، محاسبه جمع هر گروه یعنی حلقه‌زدن روی سطرها و
+          انباشتن دستی در یک دیکشنری کلیددار.
+        </p>
+        <div class="callout--blue callout" style="font-size:18px; direction:ltr; text-align:left;">
+          Split → Apply → Combine
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · pandas</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 مستندات و فهرست مطالب ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مرجع</div>
+    <h1 class="slide__title mb-24" style="font-size:34px; text-align:center;">مستندات و فهرست مطالب</h1>
+    <div style="text-align:center; margin-bottom:28px;">
+      <a class="doc-link" href="https://pandas.pydata.org/" target="_blank" rel="noopener">pandas.pydata.org</a>
+    </div>
+    <div class="toc-grid" style="max-width:920px; margin:0 auto; width:100%;">
+      <div class="toc-item"><span class="toc-num">00</span><span>Introduction</span></div>
+      <div class="toc-item"><span class="toc-num">01</span><span>Series and DataFrames: creating and loading</span></div>
+      <div class="toc-item"><span class="toc-num">02</span><span>Inspecting a DataFrame</span></div>
+      <div class="toc-item"><span class="toc-num">03</span><span>Selecting data: loc, iloc, and boolean masks</span></div>
+      <div class="toc-item"><span class="toc-num">04</span><span>Adding, transforming, and dropping columns</span></div>
+      <div class="toc-item"><span class="toc-num">05</span><span>Sorting, counting, and summarizing</span></div>
+      <div class="toc-item"><span class="toc-num">06</span><span>Handling missing data</span></div>
+      <div class="toc-item"><span class="toc-num">07</span><span>groupby: split-apply-combine</span></div>
+      <div class="toc-item"><span class="toc-num">08</span><span>Combining DataFrames: concat and merge</span></div>
+      <div class="toc-item"><span class="toc-num">09</span><span>Reshaping: pivot and melt</span></div>
+      <div class="toc-item"><span class="toc-num">10</span><span>From pandas to the ML stack</span></div>
+      <div class="toc-item"><span class="toc-num">11</span><span>Summary</span></div>
+      <div class="toc-item"><span class="toc-num">12</span><span>Exercises</span></div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · pandas</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>
