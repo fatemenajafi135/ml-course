@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>فهرست اسلایدها | یادگیری ماشین</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent:  #ff6600;
+      --accent2: #ffcc66;
+      --dark:    #20295c;
+      --mid:     #475569;
+      --light:   #efe0ca;
+      --white:   #FFFFFF;
+      --radius:  10px;
+    }
+
+    body {
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      background: #0f1630;
+      color: var(--white);
+      min-height: 100vh;
+    }
+
+    /* ── Top bar ─────────────────────────────────────────────── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(15, 22, 48, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      padding: 16px 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar__brand {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent2);
+      letter-spacing: .06em;
+    }
+    .topbar__title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .topbar__meta {
+      font-size: 12px;
+      color: #64748B;
+    }
+
+    /* ── Page shell ──────────────────────────────────────────── */
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 56px 64px 96px;
+    }
+
+    /* ── Hero ────────────────────────────────────────────────── */
+    .hero {
+      margin-bottom: 64px;
+    }
+    .hero__eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .hero__h1 {
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+    .hero__sub {
+      font-size: 18px;
+      color: #94A3B8;
+      line-height: 1.7;
+      max-width: 600px;
+    }
+
+    /* ── Week section ────────────────────────────────────────── */
+    .week-section {
+      margin-bottom: 56px;
+    }
+    .week-section + .week-section {
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding-top: 56px;
+    }
+
+    .week-header {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .week-badge {
+      flex-shrink: 0;
+      background: var(--dark);
+      color: var(--accent2);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,204,102,.25);
+    }
+    .week-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .week-desc {
+      font-size: 14px;
+      color: #64748B;
+      margin-right: auto;
+    }
+
+    /* ── Part cards ──────────────────────────────────────────── */
+    .parts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .part-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: background .15s, border-color .15s, transform .12s;
+      min-height: 130px;
+    }
+    .part-card:hover {
+      background: rgba(255,102,0,.1);
+      border-color: rgba(255,102,0,.4);
+      transform: translateY(-2px);
+    }
+    .part-card.soon {
+      opacity: .35;
+      pointer-events: none;
+    }
+
+    .part-card__num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      color: var(--accent);
+    }
+    .part-card__title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.45;
+      flex: 1;
+    }
+    .part-card__badge {
+      margin-top: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      width: fit-content;
+    }
+    .badge--ready { background: rgba(255,102,0,.15); color: var(--accent); }
+    .badge--soon  { background: rgba(255,255,255,.06); color: #64748B; }
+
+    /* ── Footer ──────────────────────────────────────────────── */
+    .footer {
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding-top: 24px;
+      font-size: 12px;
+      color: #334155;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+<!-- sticky top bar -->
+<div class="topbar">
+  <span class="topbar__brand">گیلان‌مهارت</span>
+  <span class="topbar__title">یادگیری ماشین</span>
+</div>
+
+<div class="page">
+
+  <!-- hero -->
+  <div class="hero">
+    <div class="hero__eyebrow">فهرست اسلایدها</div>
+    <h1 class="hero__h1">دوره یادگیری ماشین</h1>
+    <p class="hero__sub">
+      دوره ده هفته‌ای یادگیری ماشین عملی، با Scikit-Learn
+    </p>
+  </div>
+
+  <!-- ── WEEK 00 ─────────────────────────────────────────────── -->
+  <div class="week-section">
+    <div class="week-header">
+      <span class="week-badge">هفته ۰</span>
+      <span class="week-title">معرفی دوره</span>
+      <span class="week-desc">آشنایی با دوره، مدرس و ابزارها</span>
+    </div>
+    <div class="parts-grid">
+
+      <a class="part-card" href="week-00/slides/part-01-introduction.html">
+        <div class="part-card__num">بخش ۱</div>
+        <div class="part-card__title">معرفی کامل دوره</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ── WEEK 01 ─────────────────────────────────────────────── -->
+  <div class="week-section">
+    <div class="week-header">
+      <span class="week-badge">هفته ۱</span>
+      <span class="week-title">مقدمه‌ای بر یادگیری ماشین</span>
+      <span class="week-desc">چرخه حیات، انواع سیستم‌ها، داده و ابزارها</span>
+    </div>
+    <div class="parts-grid">
+
+      <a class="part-card" href="week-01/slides/part-00-introduction.html">
+        <div class="part-card__num">مقدمه</div>
+        <div class="part-card__title">معرفی هفته اول</div>
+      </a>
+
+      <a class="part-card" href="week-01/slides/part-01-ml-lifecycle.html">
+        <div class="part-card__num">بخش ۱</div>
+        <div class="part-card__title">چرخه حیات پروژه ML</div>
+      </a>
+
+      
+
+      <a class="part-card" href="week-01/slides/part-02-data-types.html">
+        <div class="part-card__num">بخش ۲</div>
+        <div class="part-card__title">انواع داده‌ها</div>
+      </a>
+
+      <a class="part-card" href="week-01/slides/part-03-ml-systems.html">
+        <div class="part-card__num">بخش ۳</div>
+        <div class="part-card__title">انواع سیستم‌های ML</div>
+      </a>
+
+      <a class="part-card" href="week-01/slides/part-04-tools.html">
+        <div class="part-card__num">بخش ۴</div>
+        <div class="part-card__title">ابزارها و محیط کار</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ── WEEK 02 ─────────────────────────────────────────────── -->
+  <div class="week-section">
+    <div class="week-header">
+      <span class="week-badge">هفته ۲</span>
+      <span class="week-title">NumPy، pandas و matplotlib</span>
+      <span class="week-desc">آرایه، جدول داده و رسم نمودار</span>
+    </div>
+    <div class="parts-grid">
+
+      <a class="part-card" href="week-02/slides/part-00-introduction.html">
+        <div class="part-card__num">مقدمه</div>
+        <div class="part-card__title">معرفی هفته دوم</div>
+      </a>
+
+      <a class="part-card" href="week-02/slides/part-01-numpy.html">
+        <div class="part-card__num">بخش ۱</div>
+        <div class="part-card__title">NumPy</div>
+      </a>
+
+      <a class="part-card" href="week-02/slides/part-02-pandas.html">
+        <div class="part-card__num">بخش ۲</div>
+        <div class="part-card__title">pandas</div>
+      </a>
+
+      <a class="part-card" href="week-02/slides/part-03-matplotlib.html">
+        <div class="part-card__num">بخش ۳</div>
+        <div class="part-card__title">matplotlib</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div class="footer">
+    <span>گیلان‌مهارت · بخش هوش مصنوعی</span>
+    <!-- <span dir="ltr">slides/index.html</span> -->
+  </div>
+
+</div>
+</body>
+</html>
