@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>معرفی دوره | یادگیری ماشین</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ──────────────────────────────────────── */
+
+    .about-label {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .rule-box {
+      background: #f8f4ff;
+      border: 2px solid #e0d6f5;
+      border-radius: var(--radius);
+      padding: 18px 24px;
+      direction: ltr;
+      text-align: left;
+      font-family: 'Courier New', monospace;
+      font-size: 18px;
+      color: var(--dark);
+      line-height: 2;
+    }
+
+    .roadmap-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 16px 22px;
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 2px solid #E2E8F0;
+      direction: ltr;
+    }
+    .roadmap-row__badge {
+      font-size: 20px;
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+    .roadmap-row__body {
+      flex: 1;
+    }
+    .roadmap-row__title {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 4px;
+    }
+    .roadmap-row__topics {
+      font-size: 14px;
+      color: var(--mid);
+    }
+
+    .goal-statement {
+      font-size: 26px;
+      line-height: 2;
+      color: var(--dark);
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .goal-statement strong {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ──────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">جلسه صفر · معرفی دوره</div>
+    <h1 class="slide__title">یادگیری ماشین</h1>
+    <h2 class="slide__subtitle" dir="ltr">Hands-On Machine Learning with Scikit-Learn</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 ABOUT ME ───────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">معرفی مدرس</div>
+    <h1 class="slide__title mb-32" style="font-size:42px;">درباره من</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:56px; max-width:900px; margin:0 auto; width:100%;">
+      <div style="text-align:right;" dir="rtl">
+        <ul class="slide__list" style="font-size:19px;">
+          <li>مدرس: فاطمه نجفی</li>
+          <li><span class="ltr">AI Engineer و Data Scientist</span></li>
+          <li>کارشناسی ارشد کامپیوتر، دانشگاه صنعتی امیرکبیر</li>
+        </ul>
+      </div>
+      <div style="text-align:left;" dir="ltr">
+        <div class="about-label" style="direction:ltr; text-align:left;">Skills:</div>
+        <ul class="slide__list" style="font-size:19px;">
+          <li>NLP</li>
+          <li>ML &amp; AI</li>
+          <li>Generative AI</li>
+          <li>RAG Systems &amp; Agentic AI</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>جلسه صفر · معرفی دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 WHAT IS ML ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تعریف</div>
+    <h1 class="slide__title mb-40" style="font-size:40px;">یادگیری ماشین چیست؟</h1>
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; max-width:680px; margin:0 auto; width:100%;">
+      <div class="callout" style="font-size:22px; line-height:2; text-align:center; width:100%;">
+        یاد دادن به کامپیوترها برای<br>
+        <strong>یادگیری از داده</strong><br>
+        بدون نوشتن قوانین دستی
+      </div>
+      <div class="callout--blue callout" style="font-size:20px; text-align:center; width:100%;">
+        به مدل می‌گوییم: از داده یاد بگیر و خودت تصمیم بگیر.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>جلسه صفر · معرفی دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 WHY ML ──────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">اهمیت</div>
+    <h1 class="slide__title mb-32" style="font-size:40px;">چرا باید یادگیری ماشین را یاد بگیریم؟</h1>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:20px; max-width:720px; margin:0 auto; width:100%;">
+      <p class="slide__body" style="font-size:19px; font-weight:600;">دنیای واقعی پر از داده است:</p>
+      <ul class="slide__list" style="font-size:19px; margin-bottom:8px;">
+        <li>کاربران روزانه میلیون‌ها کلیک تولید می‌کنند</li>
+        <li>شبکه اجتماعی، متن، تصویر، ویدئو</li>
+        <li>سیستم‌های مالی و پزشکی</li>
+      </ul>
+      <div class="callout" style="font-size:19px; line-height:1.8;">
+        <strong style="color:var(--dark);">مشکل روش‌های سنتی:</strong><br>
+        نمی‌توان برای همه چیز قانون و شرط نوشت.<br>
+        داده‌ها پیچیده و در حال تغییرند.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>جلسه صفر · معرفی دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 ML AS SOLUTION ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">اهمیت</div>
+    <h1 class="slide__title mb-40" style="font-size:40px;">راه‌حل: یادگیری ماشین</h1>
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px; max-width:720px; margin:0 auto; width:100%;">
+      <div class="callout--blue callout" style="font-size:19px; line-height:2; width:100%;">
+        یادگیری از داده به جای قانون‌نویسی دستی<br>
+        سازگار با تغییرات<br>
+        قابل استفاده در سیستم‌های واقعی
+      </div>
+      <p style="font-size:22px; color:var(--accent); line-height:1.7; text-align:center; font-weight:600;">
+        تقریبا پشت هر سیستمی که امروز هوشمند به نظر می‌رسد،<br>
+         <span class="ltr">Machine Learning</span> وجود دارد.
+      </p>
+    </div>
+    <div class="slide__footer">
+      <span>جلسه صفر · معرفی دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 SECTION: ROADMAP ───────────────────────────────── -->
+  <div class="slide slide--section">
+    <h1 class="slide__title">در این دوره چه یاد می‌گیریم؟</h1>
+    <h2 class="slide__subtitle">نقشه دوره</h2>
+    <div class="slide__footer">
+      <span>جلسه صفر · معرفی دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 ROADMAP ────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">نقشه دوره</div>
+    <h1 class="slide__title mb-28" style="font-size:36px;">مسیر ده هفته‌ای</h1>
+    <div style="display:flex; flex-direction:column; gap:12px; flex:1; justify-content:center; max-width:860px; margin:0 auto; width:100%;">
+      <div class="roadmap-row">
+        <div class="roadmap-row__body">
+          <div class="roadmap-row__title">1. Foundations &nbsp;<span style="font-weight:400; color:var(--mid); font-size:16px;">مبانی و درک مسئله</span></div>
+          <div class="roadmap-row__topics">ML Lifecycle · Supervised / Unsupervised / RL · Data Types</div>
+        </div>
+      </div>
+      <div class="roadmap-row">
+        <div class="roadmap-row__body">
+          <div class="roadmap-row__title">2. Tools &amp; Environment &nbsp;<span style="font-weight:400; color:var(--mid); font-size:16px;">ابزارها</span></div>
+          <div class="roadmap-row__topics">Python · Google Colab · Miniconda · Jupyter · VS Code · NumPy · Pandas · Scikit-learn</div>
+        </div>
+      </div>
+      <div class="roadmap-row">
+        <div class="roadmap-row__body">
+          <div class="roadmap-row__title">3. ML Algorithms &nbsp;<span style="font-weight:400; color:var(--mid); font-size:16px;">الگوریتم‌ها</span></div>
+          <div class="roadmap-row__topics">Linear Regression · Logistic Regression · Decision Trees · Random Forest · KNN · SVM · Clustering</div>
+        </div>
+      </div>
+      <div class="roadmap-row">
+        <div class="roadmap-row__body">
+          <div class="roadmap-row__title">4. Data Pipeline &nbsp;<span style="font-weight:400; color:var(--mid); font-size:16px;">پردازش داده</span></div>
+          <div class="roadmap-row__topics">Data Cleaning · Feature Engineering · Encoding &amp; Scaling · Overfitting · Evaluation Metrics</div>
+        </div>
+      </div>
+      <div class="roadmap-row">
+        <div class="roadmap-row__body">
+          <div class="roadmap-row__title">5. Real Projects &nbsp;<span style="font-weight:400; color:var(--mid); font-size:16px;">پروژه‌های واقعی</span></div>
+          <div class="roadmap-row__topics">Spam Detection · House Price Prediction · Customer Segmentation · Anomaly Detection</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>جلسه صفر · معرفی دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 GOAL ────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">هدف نهایی</div>
+    <h1 class="slide__title mb-48" style="font-size:36px;">در پایان این دوره می‌توانی...</h1>
+    <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+      <p class="goal-statement">
+        یک <strong>مسئله واقعی</strong> را بگیری،<br>
+        آن را به یک <strong>مسئله یادگیری ماشین</strong> تبدیل کنی،<br>
+        <strong>مدل بسازی</strong> و آن را <strong>ارزیابی</strong> کنی.
+      </p>
+    </div>
+    <div class="slide__footer">
+      <span>جلسه صفر · معرفی دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 CLOSING ────────────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <h1 class="slide__title mb-40" style="font-size:44px;">شروع می‌کنیم.</h1>
+    <p style="font-size:20px; color:rgba(255,255,255,.55); direction:ltr; letter-spacing:.04em;">
+      Foundations &nbsp;·&nbsp; Tools &nbsp;·&nbsp; Algorithms &nbsp;·&nbsp; Pipeline &nbsp;·&nbsp; Projects
+    </p>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>
