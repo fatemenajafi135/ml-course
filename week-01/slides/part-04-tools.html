@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>ابزارهای دوره | هفته اول</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ── */
+    .tool-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: var(--white);
+      padding: 18px 28px;
+      border-radius: var(--radius);
+      border: 2px solid #E2E8F0;
+      direction: ltr;
+    }
+    .tool-row__name  { font-size: 20px; font-weight: 700; direction: ltr; color: var(--dark); }
+    .tool-row__desc  { font-size: 15px; color: var(--mid); direction: ltr; }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته اول · ویدئو ۴</div>
+    <h1 class="slide__title">ابزارهای این دوره</h1>
+    <h2 class="slide__subtitle" dir="ltr">
+      Colab · Python · Miniconda · Jupyter · VS Code
+    </h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span id="slide-counter-cover"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 OVERVIEW ───────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">نمای کلی</div>
+    <h1 class="slide__title mb-32" style="font-size:40px;">ابزارهایی که در این دوره استفاده می‌کنیم</h1>
+    <div style="display:flex; flex-direction:column; gap:18px; flex:1; justify-content:center;">
+      <div style="display:flex; gap:18px; justify-content:center; flex-wrap:wrap;">
+        <div class="tool-row" style="width:300px; padding:14px 20px; gap:16px;">
+          <img src="images/fig-tools-01.webp" alt="Google Colab" style="max-height:38px; max-width:80px; flex-shrink:0;">
+          <div>
+            <div class="tool-row__name">Google Colab</div>
+            <div class="tool-row__desc">Run code online</div>
+          </div>
+        </div>
+        <div class="tool-row" style="width:300px; padding:14px 20px; gap:16px;">
+          <img src="images/fig-tools-02.png" alt="Python" style="max-height:38px; max-width:80px; flex-shrink:0;">
+          <div>
+            <div class="tool-row__name">Python</div>
+            <div class="tool-row__desc">Programming language</div>
+          </div>
+        </div>
+        <div class="tool-row" style="width:300px; padding:14px 20px; gap:16px;">
+          <img src="images/fig-tools-03.jpeg" alt="Miniconda" style="max-height:38px; max-width:80px; flex-shrink:0;">
+          <div>
+            <div class="tool-row__name">Miniconda</div>
+            <div class="tool-row__desc">Environment manager</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex; gap:18px; justify-content:center; flex-wrap:wrap;">
+        <div class="tool-row" style="width:300px; padding:14px 20px; gap:16px;">
+          <img src="images/fig-tools-04.png" alt="Jupyter Notebook" style="max-height:38px; max-width:80px; flex-shrink:0;">
+          <div>
+            <div class="tool-row__name">Jupyter Notebook</div>
+            <div class="tool-row__desc">Interactive notebooks</div>
+          </div>
+        </div>
+        <div class="tool-row" style="width:300px; padding:14px 20px; gap:16px;">
+          <img src="images/fig-tools-05.png" alt="VS Code" style="max-height:38px; max-width:80px; flex-shrink:0;">
+          <div>
+            <div class="tool-row__name">VS Code</div>
+            <div class="tool-row__desc">Code editor</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · ابزارهای دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 GOOGLE COLAB ───────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ابزارها</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;" dir="ltr">Google Colab</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:48px;">
+      <div>
+        <p class="slide__body mb-28" style="font-size:21px;">
+          اجرای کد Python در مرورگر، بدون نیاز به نصب.
+        </p>
+        <ul class="slide__list" style="font-size:22px;">
+          <li>مناسب برای شروع سریع</li>
+          <li>اجرا روی Cloud، نه لپ‌تاپ</li>
+          <li>مناسب تمرین‌های این دوره</li>
+        </ul>
+      </div>
+      <figure class="slide__figure" style="align-self:center; margin:0;">
+        <!-- <img src="images/fig-tools-01.webp" alt="Google Colab" style="max-height:240px; max-width:100%;"> -->
+        <img src="images/fig-tools-01-1.png" alt="Google Colab" style="max-height:240px; max-width:100%;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · ابزارهای دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 PYTHON ─────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ابزارها</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;" dir="ltr">Python</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:48px;">
+      <div>
+        <p class="slide__body mb-28" style="font-size:21px;">
+          زبان برنامه‌نویسی اصلی برای یادگیری ماشین.
+        </p>
+        <ul class="slide__list" style="font-size:22px;">
+          <li>پایه تمام پروژه‌های دوره</li>
+          <li>استفاده برای نوشتن الگوریتم‌ها</li>
+          <li>نسخه پیشنهادی: <span class="ltr em">Python 3.11+</span></li>
+        </ul>
+      </div>
+      <figure class="slide__figure" style="align-self:center; margin:0;">
+        <img src="images/fig-tools-02.png" alt="Python" style="max-height:240px; max-width:100%;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · ابزارهای دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 MINICONDA ──────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ابزارها</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;" dir="ltr">Miniconda</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:48px;">
+      <div>
+        <p class="slide__body mb-28" style="font-size:21px;">
+          ابزار مدیریت محیط‌های Python.
+        </p>
+        <ul class="slide__list" style="font-size:22px;">
+          <li>جلوگیری از <span class="ltr">conflict</span> بین پکیج‌ها</li>
+          <li>ساخت <span class="ltr">environment</span> جدا برای هر پروژه</li>
+          <li>مدیریت ساده کتابخانه‌ها</li>
+        </ul>
+      </div>
+      <figure class="slide__figure" style="align-self:center; margin:0;">
+        <img src="images/fig-tools-03.jpeg" alt="Miniconda" style="max-height:240px; max-width:100%;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · ابزارهای دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 JUPYTER ────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ابزارها</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;" dir="ltr">Jupyter Notebook</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:48px;">
+      <div>
+        <p class="slide__body mb-28" style="font-size:21px;">
+          محیط کدنویسی تعاملی برای علم داده.
+        </p>
+        <ul class="slide__list" style="font-size:22px;">
+          <li>اجرای سلول به سلول</li>
+          <li>مناسب تحلیل داده</li>
+          <li>پایه <span class="ltr">Google Colab</span> هم همین است</li>
+        </ul>
+      </div>
+      <figure class="slide__figure" style="align-self:center; margin:0;">
+        <img src="images/fig-tools-04-1.png" alt="Jupyter Notebook" style="max-height:240px; max-width:100%;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · ابزارهای دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 VS CODE ────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ابزارها</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;" dir="ltr">VS Code</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:48px;">
+      <div>
+        <p class="slide__body mb-28" style="font-size:21px;">
+          ویرایشگر کد حرفه‌ای برای پروژه‌های Python.
+        </p>
+        <ul class="slide__list" style="font-size:22px;">
+          <li>مناسب پروژه‌های واقعی</li>
+          <li>اتصال به <span class="ltr">environment</span></li>
+          <li>مناسب کارهای <span class="ltr">production-level</span></li>
+        </ul>
+      </div>
+      <figure class="slide__figure" style="align-self:center; margin:0;">
+        <img src="images/fig-tools-05-1.png" alt="VS Code" style="max-height:240px; max-width:100%;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · ابزارهای دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 TOOLS WE WILL LEARN LATER ────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">آینده دوره</div>
+    <h1 class="slide__title mb-32" style="font-size:40px;">ابزارهایی که بعدا یاد می‌گیریم</h1>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; flex:1; align-content:center; max-width:620px; margin:0 auto;">
+      <div class="tool-row" style="opacity:.75; padding:12px 20px;">
+        <span style="font-size:22px; flex-shrink:0;">🗂</span>
+        <div>
+          <div style="font-size:24px; font-weight:700; direction:ltr; color:var(--dark);">Git</div>
+          <div style="font-size:16px; color:var(--mid); direction:ltr;">version control</div>
+        </div>
+      </div>
+      <div class="tool-row" style="opacity:.75; padding:12px 20px;">
+        <span style="font-size:22px; flex-shrink:0;">🐳</span>
+        <div>
+          <div style="font-size:24px; font-weight:700; direction:ltr; color:var(--dark);">Docker</div>
+          <div style="font-size:16px; color:var(--mid); direction:ltr;">environment packaging</div>
+        </div>
+      </div>
+      <div class="tool-row" style="opacity:.75; padding:12px 20px;">
+        <span style="font-size:22px; flex-shrink:0;">☁️</span>
+        <div>
+          <div style="font-size:24px; font-weight:700; direction:ltr; color:var(--dark);">Cloud</div>
+          <div style="font-size:16px; color:var(--mid); direction:ltr;">run models at scale</div>
+        </div>
+      </div>
+      <div class="tool-row" style="opacity:.75; padding:12px 20px;">
+        <span style="font-size:22px; flex-shrink:0;">🔌</span>
+        <div>
+          <div style="font-size:24px; font-weight:700; direction:ltr; color:var(--dark);">APIs</div>
+          <div style="font-size:16px; color:var(--mid); direction:ltr;">deploy models</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · ابزارهای دوره</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

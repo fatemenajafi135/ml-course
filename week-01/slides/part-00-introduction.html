@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>معرفی هفته اول | یادگیری ماشین</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ──────────────────────────────────────── */
+
+    .week-topics {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      direction: rtl;
+      align-items: flex-start;
+    }
+    .week-topic-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 20px;
+      color: rgba(255,255,255,.8);
+      direction: rtl;
+    }
+    .week-topic-item .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .roadmap-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 12px 20px;
+      border: 2px solid #E2E8F0;
+      direction: rtl;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .roadmap-card__right {
+      text-align: right;
+      flex-shrink: 0;
+      min-width: 200px;
+    }
+    .roadmap-card__num {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .08em;
+      margin-bottom: 4px;
+    }
+    .roadmap-card__title {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .roadmap-card__left {
+      flex: 1;
+      direction: ltr;
+      text-align: left;
+    }
+    .roadmap-card__desc {
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+    .roadmap-card__note {
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .study-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      font-size: 20px;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    .study-item .icon {
+      font-size: 22px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .key-quote {
+      font-size: 28px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(255,255,255,.9);
+      text-align: center;
+      direction: ltr;
+      max-width: 860px;
+    }
+    .key-quote strong {
+      font-weight: 700;
+      color: var(--accent2);
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ──────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته اول · مقدمه</div>
+    <h1 class="slide__title mb-16">مقدمه‌ای بر یادگیری ماشین</h1>
+    <h2 class="slide__subtitle mb-40">این هفته چه یاد می‌گیریم؟</h2>
+    <div class="week-topics">
+      <div class="week-topic-item"><span class="num">۱</span><span>چرخه حیات پروژه یادگیری ماشین</span></div>
+      <div class="week-topic-item"><span class="num">۲</span><span>انواع داده‌ها</span></div>
+      <div class="week-topic-item"><span class="num">۳</span><span>انواع سیستم‌های یادگیری ماشین </span></div>
+      <div class="week-topic-item"><span class="num">۴</span><span>ابزارها و محیط کار</span></div>
+    </div>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 هدف این هفته ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">هدف</div>
+    <h1 class="slide__title mb-28" style="font-size:40px;">هدف این هفته</h1>
+    <div style="display:flex; flex-direction:column; flex:1; justify-content:flex-start; gap:16px; max-width:760px; margin-right:200px;">
+      <div class="callout" style="font-size:19px; line-height:1.9;">
+        قبل از کدنویسی، باید یک <strong>طرز فکر درست</strong> بسازیم.
+      </div>
+      <!-- <p class="slide__body" style="font-size:18px; font-weight:600;">سوال‌هایی که جواب می‌دهیم:</p>
+      <ul class="slide__list" style="font-size:19px; margin-bottom:4px;">
+        <li>یک پروژه <span class="ltr">ML</span> از ابتدا تا انتها چگونه است؟</li>
+        <li>انواع مختلف یادگیری ماشین چه تفاوتی دارند؟</li>
+        <li>با چه نوع داده‌هایی کار می‌کنیم؟</li>
+        <li>از چه ابزارهایی استفاده می‌کنیم؟</li>
+      </ul> -->
+      <div class="callout--blue callout" style="font-size:19px; line-height:2;">
+        <strong style="color:var(--dark); display:block; margin-bottom:8px;">نکته مهم:</strong>
+        این هفته هنوز قرار نیست مدل بسازیم.<br>
+        قرار است مثل یک <span class="ltr">ML Engineer</span> فکر کنیم.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 نقشه هفته ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ساختار هفته</div>
+    <h1 class="slide__title mb-28" style="font-size:38px;">نقشه هفته</h1>
+    <div style="display:flex; flex-direction:column; gap:10px; flex:1; justify-content:center; max-width:860px; margin:0 auto; width:100%;">
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۱</div>
+          <div class="roadmap-card__title">چرخه حیات پروژه یادگیری ماشین</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">From problem definition to deployment and monitoring</div>
+          <div class="roadmap-card__note">یادگیری ماشین فقط آموزش مدل نیست</div>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۲</div>
+          <div class="roadmap-card__title">انواع داده‌ها</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">Structured / Unstructured / Semi-Structured</div>
+          <div class="roadmap-card__note">در نهایت همه چیز باید به عدد تبدیل شود</div>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۳</div>
+          <div class="roadmap-card__title">انواع سیستم‌های یادگیری ماشین</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">Supervised / Unsupervised / Reinforcement</div>
+          <div class="roadmap-card__note">همه چیز از نوع مسئله شروع می‌شود</div>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۴</div>
+          <div class="roadmap-card__title">ابزارها و محیط کار</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">Python · Colab · Miniconda · VS Code</div>
+          <div class="roadmap-card__note">ابزارهای شروع کار عملی</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 KEY TAKEAWAY ───────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">پیام کلیدی هفته</div>
+    <p class="key-quote">
+      یادگیری ماشین قبل از اینکه <br> درباره
+      <strong>کد و الگوریتم</strong> باشد
+      <br>
+      یک <strong>طرز فکر درباره مسئله و داده</strong> است
+    </p>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>انواع سیستم‌های ML | هفته اول</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ── */
+    .data-table {
+      border-collapse: collapse;
+      font-size: 21px;
+      direction: ltr;
+      text-align: left;
+    }
+    .data-table th {
+      background: var(--accent);
+      color: var(--white);
+      padding: 12px 28px;
+      font-weight: 600;
+    }
+    .data-table td {
+      padding: 12px 28px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+    }
+    .data-table tr:nth-child(even) td { background: #faf5ef; }
+    .label-yes { color: #16a34a; font-weight: 700; }
+    .label-no  { color: #dc2626; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته اول · ویدئو ۳</div>
+    <h1 class="slide__title">
+      انواع سیستم‌های<br>
+      <span class="ltr">Machine Learning</span>
+    </h1>
+    <h2 class="slide__subtitle" dir="ltr">
+      Supervised · Unsupervised · Reinforcement
+    </h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span id="slide-counter-cover"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 HOOK: WITH LABELS ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">نقطه شروع</div>
+    <h1 class="slide__title mb-32">فرض کنید این داده را داریم</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:48px;">
+      <table class="data-table">
+        <thead>
+          <tr><th>Email</th><th>Spam?</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>offer free prize now...</td><td class="label-yes">Yes</td></tr>
+          <tr><td>meeting at 3pm tomorrow</td><td class="label-no">No</td></tr>
+          <tr><td>click here to claim reward</td><td class="label-yes">Yes</td></tr>
+        </tbody>
+      </table>
+      <div>
+        <p class="slide__body mb-28">سوال:</p>
+        <div class="big-statement mb-28">آیا جواب درست را داریم؟</div>
+        <div class="callout--blue callout" style="font-size:28px; text-align:center;" dir="ltr">
+          ✓ &nbsp;بله
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 HOOK: WITHOUT LABELS ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">نقطه شروع</div>
+    <h1 class="slide__title mb-32">این بار؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:48px;">
+      <table class="data-table">
+        <thead>
+          <tr><th>Email</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>offer free prize now...</td></tr>
+          <tr><td>meeting at 3pm tomorrow</td></tr>
+          <tr><td>click here to claim reward</td></tr>
+        </tbody>
+      </table>
+      <div>
+        <p class="slide__body mb-28">سوال:</p>
+        <div class="big-statement mb-28">آیا جواب درست را داریم؟</div>
+        <div class="callout--red callout" style="font-size:28px; text-align:center;">
+          ✗ &nbsp;خیر
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 KEY QUESTION ───────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <h1 class="slide__title mb-40" style="text-align:center;">
+      مهم‌ترین سوال در دسته‌بندی الگوریتم‌های ML
+    </h1>
+    <div class="big-statement mb-32" style="font-size:72px; color:var(--accent);" dir="ltr">
+      آیا برچسب (لیبل) درست را داریم؟
+      <br>
+      Do we have labels?
+    </div>
+    <p class="slide__body" style="text-align:center; font-size:24px;">
+      تقریبا همه چیز از همین سوال شروع می‌شود.
+    </p>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 SECTION: SUPERVISED ────────────────────────────────── -->
+  <div class="slide slide--section">
+    <h1 class="slide__title">Supervised Learning</h1>
+    <h2 class="slide__subtitle">یادگیری نظارت‌شده</h2>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 SUPERVISED LEARNING (Fig. 1-5) ────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Supervised Learning · یادگیری نظارت‌شده</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;">یادگیری از مثال‌هایی که جواب درست آن‌ها را می‌دانیم</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="images/fig-01-05.png" alt="Supervised learning diagram"
+             style="max-height:330px; border-radius:8px; border:1px solid #E2E8F0;">
+        <figcaption class="slide__caption">
+          <span class="slide__source" dir="ltr">Géron, Hands-On ML (2025), Fig. 1-5</span>
+        </figcaption>
+      </figure>
+      <div>
+        <p class="slide__body mb-24">برای هر ایمیل، جواب درست داریم:</p>
+        <div class="callout mb-24" style="font-size:20px; direction:ltr; text-align:left;">
+          Spam یا Not Spam
+        </div>
+        <div class="callout--blue callout" style="font-size:20px; direction:ltr; text-align:left;">
+          Input + Correct Answer → Model
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 CLASSIFICATION ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Classification · دسته‌بندی</div>
+    <h1 class="slide__title mb-32" style="font-size:40px;">خروجی یک کلاس است، نه یک عدد</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <div>
+        <p class="slide__body mb-20">مثال اسپم:</p>
+        <div class="callout mb-24" style="direction:ltr; text-align:left; font-size:20px;">
+          Email → [Model] → <strong>Spam</strong> یا <strong>Not Spam</strong>
+        </div>
+        <ul class="slide__list" style="font-size:20px;">
+          <li>تعداد محدودی کلاس برای خروجی</li>
+          <li>تشخیص بیماری: سالم / بیمار</li>
+          <li>تشخیص تصویر: گربه / سگ / پرنده</li>
+        </ul>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:16px; align-items:center; justify-content:center;">
+        <div style="background:var(--accent); color:white; font-size:28px; font-weight:700; padding:24px 56px; border-radius:var(--radius);" dir="ltr">Spam</div>
+        <div style="font-size:30px; color:var(--mid); font-weight:300;">یا</div>
+        <div style="background:var(--dark); color:white; font-size:28px; font-weight:700; padding:24px 56px; border-radius:var(--radius);" dir="ltr">Not Spam</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 REGRESSION (Fig. 1-6) ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Regression · رگرسیون</div>
+    <h1 class="slide__title mb-24" style="font-size:40px;">اینجا خروجی دیگر کلاس نیست، یک عدد است</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="images/fig-01-06.png" alt="Regression example diagram"
+             style="max-height:330px; border-radius:8px; border:1px solid #E2E8F0;">
+        <figcaption class="slide__caption">
+          <span class="slide__source" dir="ltr">Géron, Hands-On ML (2025), Fig. 1-6</span>
+        </figcaption>
+      </figure>
+      <div>
+        <p class="slide__body mb-24">مثال‌ها:</p>
+        <ul class="slide__list" style="font-size:21px; margin-bottom:28px;">
+          <li>قیمت خانه</li>
+          <li>دمای هوا</li>
+          <li>فروش ماه آینده</li>
+        </ul>
+        <div class="callout--blue callout" style="font-size:19px; direction:ltr; text-align:left;">
+          Output = Continuous Number
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 KEY: CLASSIFICATION vs REGRESSION ──────────────────── -->
+  <div class="slide slide--highlight">
+    <!-- <h1 class="slide__title mb-40" style="text-align:center; font-size:40px;">این اسلاید را حفظ کنید</h1> -->
+    <div class="cols-2" style="gap:40px; flex:1; align-items:center;">
+      <div style="text-align:center; padding:44px 36px; background:var(--white); border-radius:16px; border:3px solid var(--accent);">
+        <div style="font-size:36px; font-weight:700; color:var(--accent); margin-bottom:12px;" dir="ltr">Classification</div>
+        <div style="font-size:26px; color:var(--dark); font-weight:600; margin-bottom:28px;">→ Category</div>
+        <div style="font-size:18px; color:var(--mid); line-height:2.4;" dir="ltr">
+          Spam / Not Spam<br>
+          سالم / بیمار<br>
+          گربه / سگ / پرنده
+        </div>
+      </div>
+      <div style="text-align:center; padding:44px 36px; background:var(--white); border-radius:16px; border:3px solid var(--dark);">
+        <div style="font-size:36px; font-weight:700; color:var(--dark); margin-bottom:12px;" dir="ltr">Regression</div>
+        <div style="font-size:26px; color:var(--dark); font-weight:600; margin-bottom:28px;">→ Number</div>
+        <div style="font-size:18px; color:var(--mid); line-height:2.4;">
+          قیمت خانه<br>
+          دمای هوا<br>
+          فروش ماه آینده
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 SECTION: UNSUPERVISED ──────────────────────────────── -->
+  <div class="slide slide--section">
+    <h1 class="slide__title">Unsupervised Learning</h1>
+    <h2 class="slide__subtitle">یادگیری بدون نظارت</h2>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 11 UNSUPERVISED (Fig. 1-7) ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Unsupervised Learning · یادگیری بدون نظارت</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;">بدون <span class="ltr">label</span> هم می‌توان یاد گرفت</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="images/fig-01-07.png" alt="Unsupervised clustering diagram"
+             style="max-height:330px; border-radius:8px; border:1px solid #E2E8F0;">
+        <figcaption class="slide__caption">
+          <span class="slide__source" dir="ltr">Géron, Hands-On ML (2025), Fig. 1-7</span>
+        </figcaption>
+      </figure>
+      <div>
+        <div class="callout mb-28" style="font-size:20px;">
+          مشتریان فروشگاه را داریم.<br>
+          هیچ برچسبی نداریم.<br><br>
+          اما می‌توانیم <strong>گروه‌های مشابه</strong> را پیدا کنیم.
+        </div>
+        <p class="slide__body" style="font-size:20px;">
+          الگوریتم خودش ساختار پنهان داده را کشف می‌کند.
+        </p>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 12 VISUALIZATION (Fig. 1-8) ─────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Visualization · تجسم داده</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;">وقتی داده‌ها ابعاد بسیار زیادی دارند</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="images/fig-01-08.png" alt="t-SNE visualization diagram"
+             style="max-height:330px; border-radius:8px; border:1px solid #E2E8F0;">
+        <figcaption class="slide__caption">
+          <span class="slide__source" dir="ltr">Géron, Hands-On ML (2025), Fig. 1-8</span>
+        </figcaption>
+      </figure>
+      <div>
+        <p class="slide__body mb-24">ما نمی‌توانیم داده‌های چندبُعدی را ببینیم.</p>
+        <div class="callout mb-24" style="font-size:19px;">
+          ابزارهایی مثل <span class="ltr em">t-SNE</span> کمک می‌کنند داده‌ها را به شکلی نمایش دهیم که الگوها و خوشه‌ها قابل مشاهده باشند.
+        </div>
+        <p class="slide__body" style="font-size:18px; color:var(--mid);">
+          این یک الگوریتم پیش‌بینی نیست؛ یک ابزار بصری است.
+        </p>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 13 ANOMALY DETECTION (Fig. 1-9) ──────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Anomaly Detection · تشخیص ناهنجاری</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;">وقتی یک رفتار خیلی متفاوت است</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="images/fig-01-09.png" alt="Anomaly detection diagram"
+             style="max-height:330px; border-radius:8px; border:1px solid #E2E8F0;">
+        <figcaption class="slide__caption">
+          <span class="slide__source" dir="ltr">Géron, Hands-On ML (2025), Fig. 1-9</span>
+        </figcaption>
+      </figure>
+      <div>
+        <p class="slide__body mb-20">رفتار معمول را یاد می‌گیریم، سپس:</p>
+        <ul class="slide__list" style="font-size:20px; margin-bottom:24px;">
+          <li>تقلب بانکی</li>
+          <li>نفوذ امنیتی</li>
+          <li>خرابی سنسور</li>
+        </ul>
+        <div class="callout--red callout" style="font-size:19px;">
+          هر چیزی که از الگوی معمول فاصله داشته باشد → ناهنجاری
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 14 SEMI-SUPERVISED (Fig. 1-10) ───────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Semi-Supervised Learning · یادگیری نیمه‌نظارت‌شده</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;">داده زیاد داریم، <span class="ltr">Label</span> کم داریم</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="images/fig-01-10.png" alt="Semi-supervised learning diagram"
+             style="max-height:330px; border-radius:8px; border:1px solid #E2E8F0;">
+        <figcaption class="slide__caption">
+          <span class="slide__source" dir="ltr">Géron, Hands-On ML (2025), Fig. 1-10</span>
+        </figcaption>
+      </figure>
+      <div>
+        <div class="callout mb-24" style="font-size:20px;">
+          <strong>مثال واقعی:</strong><br><br>
+          ۱۰۰ هزار عکس<br>
+          فقط ۵۰۰ عکس برچسب خورده
+        </div>
+        <div class="callout--blue callout" style="font-size:19px; direction:ltr; text-align:left; line-height:2;">
+          Small Labeled Data<br>
+          + Large Unlabeled Data<br>
+          ───────────────────<br>
+          Semi-Supervised Learning
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 15 SELF-SUPERVISED (Fig. 1-11) ───────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Self-Supervised Learning · یادگیری خودنظارت‌شده</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;">مدل خودش <span class="ltr">Label</span> تولید می‌کند</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="images/fig-01-11.png" alt="Self-supervised learning diagram"
+             style="max-height:330px; border-radius:8px; border:1px solid #E2E8F0;">
+        <figcaption class="slide__caption">
+          <span class="slide__source" dir="ltr">Géron, Hands-On ML (2025), Fig. 1-11</span>
+        </figcaption>
+      </figure>
+      <div>
+        <p class="slide__body mb-20" style="font-size:20px;">
+          چطور <span class="ltr">ChatGPT</span> روی میلیاردها متن آموزش دید؟
+          کسی <span class="ltr">Label</span> ننوشته.
+        </p>
+        <div class="callout mb-24" style="font-size:20px; direction:ltr; text-align:left; line-height:2;">
+          I love machine _____<br>
+          <span style="color:var(--accent); font-weight:700;">← Predict next word</span>
+        </div>
+        <p class="slide__body" style="font-size:19px; color:var(--mid);">
+          خود داده، <span class="ltr">Label</span> است.
+        </p>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 16 SECTION: REINFORCEMENT ─────────────────────────────── -->
+  <div class="slide slide--section">
+    <h1 class="slide__title">Reinforcement Learning</h1>
+    <h2 class="slide__subtitle">یادگیری تقویتی</h2>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 17 REINFORCEMENT LEARNING (Fig. 1-12) ─────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Reinforcement Learning · یادگیری تقویتی</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;">مدل از پاداش یاد می‌گیرد، نه از <span class="ltr">label</span></h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="images/fig-01-12.png" alt="Reinforcement learning diagram"
+             style="max-height:330px; border-radius:8px; border:1px solid #E2E8F0;">
+        <figcaption class="slide__caption">
+          <span class="slide__source" dir="ltr">Géron, Hands-On ML (2025), Fig. 1-12</span>
+        </figcaption>
+      </figure>
+      <div>
+        <div class="callout mb-24" style="font-size:19px; direction:ltr; text-align:left; line-height:2.2;">
+          Action → Environment → Reward → Learn
+        </div>
+        <ul class="slide__list" style="font-size:20px; margin-bottom:24px;">
+          <li>بازی شطرنج</li>
+          <li>بازی <span class="ltr">Atari</span></li>
+          <li>کنترل ربات</li>
+        </ul>
+        <div class="callout--blue callout" style="font-size:19px;">
+          جواب درست از قبل نداریم.<br>
+          مدل از <strong>پاداش</strong> یاد می‌گیرد.
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 18 BIG PICTURE (Fig. 1-20) ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تصویر بزرگ · Big Picture</div>
+    <h1 class="slide__title mb-24" style="font-size:38px;">نگاهی به همه دسته‌ها</h1>
+    <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+      <figure class="slide__figure" style="align-self:center; margin:0;">
+        <img src="images/fig-01-20.png" alt="ML types overview"
+             style="max-height:500px; max-width:100%; border-radius:8px; border:1px solid #E2E8F0;">
+        <figcaption class="slide__caption">
+          <span class="slide__source" dir="ltr">Géron, Hands-On ML (2025), Fig. 1-20</span>
+        </figcaption>
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · انواع سیستم‌های ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 19 CLOSING ────────────────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <h1 class="slide__title" style="font-size:44px;">سوال مهم را به خاطر بسپارید:</h1>
+    <div style="margin:36px 0;">
+      <div class="big-statement" style="font-size:64px; color:var(--accent2);" dir="ltr">
+        آیا برچسب صحیح را داریم؟
+      </div>
+    </div>
+    <!-- <p style="font-size:22px; color:rgba(255,255,255,.8);">
+      جلسه بعد، نگاه دقیق‌تری به <span class="ltr">Supervised Learning</span> خواهیم داشت.
+    </p> -->
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

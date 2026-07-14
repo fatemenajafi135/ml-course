@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>چرخه‌ی حیات یک پروژه ML | هفته اول</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific overrides ── */
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .flow-grid-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .flow-grid-box {
+      background: var(--accent);
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      text-align: center;
+      width: 100%;
+    }
+    .flow-grid-num {
+      font-size: 12px;
+      color: var(--mid);
+      font-weight: 500;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 20px;
+      direction: ltr;
+      text-align: left;
+    }
+    .data-table th {
+      background: var(--accent);
+      color: var(--white);
+      padding: 10px 18px;
+      font-weight: 600;
+    }
+    .data-table td {
+      padding: 10px 18px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+    }
+    .data-table tr:nth-child(even) td { background: var(--light); }
+    .data-table .cell-null { color: #EF4444; font-weight: 600; }
+    .data-table .cell-bad  { color: #F59E0B; font-weight: 600; }
+    .verdict {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+    }
+    .verdict-card {
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 28px 36px;
+      text-align: center;
+      flex: 1;
+    }
+    .verdict-card__num {
+      font-size: 56px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 8px;
+      direction: ltr;
+    }
+    .verdict-card__label {
+      font-size: 18px;
+      color: var(--mid);
+    }
+    .monitoring-examples {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .mon-card {
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .mon-icon {
+      font-size: 32px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .mon-label { font-size: 19px; color: var(--dark); font-weight: 500; }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ───────────────────────── 01 COVER ───────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته اول · ویدئو ۱</div>
+    <h1 class="slide__title">
+      چگونه یک پروژه<br>
+      <span class="ltr">Machine Learning</span><br>
+      را از ایده تا محصول واقعی می‌سازیم؟
+    </h1>
+    <h2 class="slide__subtitle">
+      چرخه‌ی حیات یک پروژه یادگیری ماشین
+      <span class="ltr">(ML Project Life Cycle)</span>
+    </h2>
+    <div class="slide__footer">
+      <span> گیلان‌مهارت · یادگیری ماشین</span>
+      <span id="slide-counter-cover"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 02 HOOK ────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">داستان ما</div>
+    <h1 class="slide__title mb-24">فرض کنید امروز وارد یک شرکت می‌شوید</h1>
+    <div class="callout mb-32">
+      مدیر محصول به شما می‌گوید:<br>
+      <strong>«می‌خواهم قبل از اینکه مشتری خرید کند، احتمال خرید او را پیش‌بینی کنیم.»</strong>
+    </div>
+    <div class="big-statement" style="font-size:28px; color: var(--mid);">
+      قدم بعدی شما چیست؟
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 03 COMMON MISTAKE ────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">اشتباه رایج</div>
+    <h1 class="slide__title mb-32">اکثر افراد تازه‌کار از همین‌جا اشتباه می‌کنند</h1>
+    <div class="cols-2" style="align-items:center; flex:1;">
+      <ul class="slide__list">
+        <li>مستقیم سراغ مدل می‌روند</li>
+        <li>الگوریتم انتخاب می‌کنند</li>
+        <li>داده جمع می‌کنند، بدون هدف مشخص</li>
+      </ul>
+      <div class="callout--red callout" style="text-align:center; font-size:24px;">
+        <div style="font-size:48px; margin-bottom:12px;">⚠️</div>
+        بدون تعریف درست مسئله،<br>
+        بهترین مدل هم شکست می‌خورد.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 04 WHY ML? ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">پرسش اساسی</div>
+    <h1 class="slide__title mb-24">چرا اصلا از <span class="ltr">Machine Learning</span> استفاده می‌کنیم؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:36px;">
+      <div>
+        <p class="slide__body mb-24">
+          فرض کنید می‌خواهیم <span class="ltr">spam</span> را تشخیص دهیم.<br>
+          می‌توانیم قانون بنویسیم:
+        </p>
+        <div class="callout mb-24" style="font-size:20px; direction:ltr; text-align:left;">
+          if "Free" in email → spam<br>
+          if links &gt; 10 → spam<br>
+          if sender unknown → spam<br>
+          if ...
+        </div>
+        <p class="slide__body" style="color:var(--mid); font-size:19px;">
+          مشکل این رویکرد چیست؟
+        </p>
+      </div>
+      <div class="callout--red callout" style="display:flex; align-items:center; gap:20px; font-size:21px; padding:20px 28px;">
+        <div style="font-size:48px; flex-shrink:0; line-height:1;">📋</div>
+        <div style="text-align:right;">
+          قوانین خیلی زیاد می‌شوند.<br>
+          با هر تغییر، باید <strong>دستی اصلاح شوند.</strong>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 04 FIGURE 1-1: TRADITIONAL APPROACH ── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">روش سنتی · Traditional Approach</div>
+    <h1 class="slide__title mb-24" style="font-size:34px;">قبل از ML: برنامه‌نویس قانون می‌نوشت</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="images/fig-01-01.png" alt="The traditional approach diagram"
+             style="max-height:330px; border-radius:8px; border:1px solid #E2E8F0;">
+        <figcaption class="slide__caption">
+          <span class="slide__source" dir="ltr">Géron, Hands-On ML (2025), Fig. 1-1</span>
+        </figcaption>
+      </figure>
+      <div>
+        <ul class="slide__list" style="font-size:20px; margin-bottom:28px;">
+          <li>برنامه‌نویس قوانین را دستی تعریف می‌کند</li>
+          <li>برنامه بر اساس همین قوانین پیش‌بینی می‌کند</li>
+          <li>با هر تغییر: برگرد و قوانین را اصلاح کن</li>
+        </ul>
+        <div class="callout--red callout" style="font-size:19px;">
+          قوانین زیاد، شکننده، و سخت نگهداری می‌شوند.
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 05 FIGURE 1-2: ML APPROACH ────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">رویکرد یادگیری ماشین · Machine Learning Approach</div>
+    <h1 class="slide__title mb-24" style="font-size:34px;">با ML: مدل خودش الگو یاد می‌گیرد</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="images/fig-01-02.png" alt="The machine learning approach diagram"
+             style="max-height:330px; border-radius:8px; border:1px solid #E2E8F0;">
+        <figcaption class="slide__caption">
+          <span class="slide__source" dir="ltr">Géron, Hands-On ML (2025), Fig. 1-2</span>
+        </figcaption>
+      </figure>
+      <div>
+        <p class="slide__body mb-24" style="font-size:19px;">به جای قانون‌نویسی دستی:</p>
+        <ul class="slide__list" style="font-size:20px; margin-bottom:28px;">
+          <li>داده + برچسب‌های صحیح به الگوریتم می‌دهیم</li>
+          <li>مدل خودش الگوها را کشف می‌کند</li>
+          <li>با داده جدید، مدل به‌روز می‌شود</li>
+        </ul>
+        <div class="callout--blue callout" style="font-size:19px; direction:ltr; text-align:left;">
+          Data + Answers → Learning Algorithm → Model
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 04 ML ≠ TRAINING ───────────────────── -->
+  <div class="slide slide--highlight">
+    <div class="slide__eyebrow">حقیقت یادگیری ماشین</div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:36px; text-align:center;">
+      <div class="big-statement" style="font-size:44px;">
+        <span class="ltr">Machine Learning</span><br>
+        <span style="font-size:32px; color:var(--mid);">≠</span><br>
+        <span class="ltr">Training a Model</span>
+      </div>
+      <div class="callout--blue callout" style="max-width:680px; text-align:right;">
+        در پروژه‌های واقعی، <span class="em">کمتر از ۲۰٪</span> زمان صرف آموزش مدل می‌شود.<br>
+        بخش زیادی از زمان روی <span class="em">درک مسئله</span>، <span class="em">جمع‌آوری داده</span> و <span class="em">آماده‌سازی</span> صرف می‌شود.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 05 SECTION: OVERVIEW ───────────────── -->
+  <div class="slide slide--section">
+    <h1 class="slide__title">نمای کلی چرخه</h1>
+    <h2 class="slide__subtitle">
+      <span class="ltr">ML Project Life Cycle</span>
+    </h2>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 06 CYCLE OVERVIEW ──────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">نقشه راه</div>
+    <h1 class="slide__title mb-32" style="font-size:36px;">چرخه حیات یک پروژه ML</h1>
+    <div style="display:flex; gap:48px; align-items:center; flex:1;">
+      <!--
+        7 nodes, R_nodes=155, R_ring=175, center(265,225).
+        Node angles: θ_i = -90° + i*(360/7)°  (clockwise from top).
+        Arrowhead midpoint angles: φ = θ_i + 180/7° ; rotation = 180° + φ.
+        All arrowheads verified to fall outside adjacent node bounding boxes.
+      -->
+      <svg viewBox="0 0 540 440" width="520" height="430" xmlns="http://www.w3.org/2000/svg" style="flex:0 0 auto; overflow:visible;">
+
+        <!-- Outer dashed ring (drawn first so boxes cover it where they overlap) -->
+        <circle cx="265" cy="225" r="175" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-dasharray="6 4"/>
+
+        <!-- Center disc -->
+        <circle cx="265" cy="225" r="54" fill="#efe0ca"/>
+        <text x="265" y="219" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="15" font-weight="700" fill="#20295c">چرخه</text>
+        <text x="265" y="237" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="12" fill="#475569">ML</text>
+
+        <!-- Node 0: تعریف مسئله  (top,         θ=-90°,  cx=265, cy=70)  -->
+        <rect x="200" y="51"  width="130" height="38" rx="7" fill="#ff6600"/>
+        <text x="265" y="70"  dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="13" fill="white">تعریف مسئله</text>
+
+        <!-- Node 1: جمع‌آوری داده (top-right,  θ=-38.57°, cx=386, cy=128) -->
+        <rect x="321" y="109" width="130" height="38" rx="7" fill="#ff6600"/>
+        <text x="386" y="128" dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="13" fill="white">جمع‌آوری داده</text>
+
+        <!-- Node 2: آماده‌سازی داده (right,    θ= 12.86°, cx=416, cy=260) -->
+        <rect x="351" y="241" width="130" height="38" rx="7" fill="#ff6600"/>
+        <text x="416" y="260" dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="13" fill="white">آماده‌سازی داده</text>
+
+        <!-- Node 3: آموزش مدل    (bottom-right, θ= 64.29°, cx=332, cy=365) -->
+        <rect x="267" y="346" width="130" height="38" rx="7" fill="#ff6600"/>
+        <text x="332" y="365" dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="13" fill="white">آموزش مدل</text>
+
+        <!-- Node 4: ارزیابی      (bottom-left,  θ=115.71°, cx=198, cy=365) -->
+        <rect x="133" y="346" width="130" height="38" rx="7" fill="#ff6600"/>
+        <text x="198" y="365" dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="13" fill="white">ارزیابی</text>
+
+        <!-- Node 5: استقرار      (left,         θ=167.14°, cx=114, cy=260) -->
+        <rect x="49"  y="241" width="130" height="38" rx="7" fill="#ff6600"/>
+        <text x="114" y="260" dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="13" fill="white">استقرار</text>
+
+        <!-- Node 6: پایش         (top-left,     θ=218.57°, cx=144, cy=128) -->
+        <rect x="79"  y="109" width="130" height="38" rx="7" fill="#ff6600"/>
+        <text x="144" y="128" dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="13" fill="white">پایش</text>
+
+        <!-- Arrowheads drawn last (on top); rotation = 180° + φ -->
+        <!-- 0→1 φ=-64.29° pos=(340.9, 67.3) rot=115.71° -->
+        <polygon points="0,-7 -4,5 4,5" transform="translate(340.9,67.3)  rotate(115.71)" fill="#ff6600"/>
+        <!-- 1→2 φ=-12.86° pos=(435.6,186.1) rot=167.14° -->
+        <polygon points="0,-7 -4,5 4,5" transform="translate(435.6,186.1) rotate(167.14)" fill="#ff6600"/>
+        <!-- 2→3 φ= 38.57° pos=(401.8,334.1) rot=218.57° -->
+        <polygon points="0,-7 -4,5 4,5" transform="translate(401.8,334.1) rotate(218.57)" fill="#ff6600"/>
+        <!-- 3→4 φ= 90°    pos=(265,  400)   rot=270°    -->
+        <polygon points="0,-7 -4,5 4,5" transform="translate(265,400)     rotate(270)"    fill="#ff6600"/>
+        <!-- 4→5 φ=141.43° pos=(128.2,334.1) rot=321.43° -->
+        <polygon points="0,-7 -4,5 4,5" transform="translate(128.2,334.1) rotate(321.43)" fill="#ff6600"/>
+        <!-- 5→6 φ=192.86° pos=( 94.4,186.1) rot= 12.86° -->
+        <polygon points="0,-7 -4,5 4,5" transform="translate(94.4,186.1)  rotate(12.86)"  fill="#ff6600"/>
+        <!-- 6→0 φ=244.29° pos=(189.1, 67.3) rot= 64.29° -->
+        <polygon points="0,-7 -4,5 4,5" transform="translate(189.1,67.3)  rotate(64.29)"  fill="#ff6600"/>
+
+      </svg>
+      <div class="callout--blue callout" style="flex:1;">
+        فعلا لازم نیست جزئیات را بدانیم.<br><br>
+        هدف فقط دیدن <span class="em">نقشه راه</span> است:<br>
+        قدم‌هایی که هر پروژه ML از آن‌ها عبور می‌کند.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 07 SECTION: PROBLEM DEF ────────────── -->
+  <div class="slide slide--section">
+    <h1 class="slide__title">تعریف مسئله</h1>
+    <h2 class="slide__subtitle">
+      <span class="ltr">Problem Definition</span>
+    </h2>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 08 PROBLEM DEFINITION ─────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تعریف مسئله · Problem Definition</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;">ML از مسئله شروع می‌شود؛ نه از داده</h1>
+    <div class="callout mb-24">
+      مدیر می‌گوید: «مشتری خرید خواهد کرد یا نه؟»<br>
+      <span style="color:var(--mid); font-size:18px;">آیا این مسئله به اندازه کافی دقیق است؟</span>
+    </div>
+    <ul class="slide__list">
+      <li>خرید در <span class="em ltr">۱</span> روز آینده؟</li>
+      <li>خرید در <span class="em ltr">۷</span> روز آینده؟</li>
+      <li>خرید در <span class="em ltr">۳۰</span> روز آینده؟</li>
+    </ul>
+    <p class="slide__body mt-auto" style="color:var(--mid); font-size:18px;">
+      این‌ها <span class="em">سه مسئله متفاوت</span> هستند؛ با داده‌ها، مدل‌ها و معیارهای ارزیابی متفاوت.
+    </p>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 09 PROBLEM DEFINITION — KEY ────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+      <div style="text-align:center; max-width:760px;">
+        <!-- <div style="font-size:20px; color:var(--mid); margin-bottom:24px; direction:ltr;">
+          Key Insight
+        </div> -->
+        <div class="big-statement" style="margin-bottom:32px; font-size:32px; direction:ltr;">
+          A badly defined problem<br>
+          =<br>
+          A failed ML project
+        </div>
+        <div class="callout--blue callout" style="text-align:right;">
+          قبل از هر کاری، باید بدانیم دقیقا چه چیزی را می‌خواهیم پیش‌بینی کنیم،<br>
+          چرا و برای چه کسی.
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 10 SECTION: DATA COLLECTION ───────── -->
+  <div class="slide slide--section">
+    <h1 class="slide__title">جمع‌آوری داده</h1>
+    <h2 class="slide__subtitle">
+      <span class="ltr">Data Collection</span>
+    </h2>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 11 DATA COLLECTION ────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">جمع‌آوری داده · Data Collection</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;">داده را از کجا می‌آوریم؟</h1>
+    <div class="cols-2">
+      <div>
+        <p class="slide__body mb-16" style="font-size:18px; color:var(--mid);">برای فروشگاه اینترنتی:</p>
+        <ul class="slide__list">
+          <li>سن کاربر</li>
+          <li>تعداد خریدهای قبلی</li>
+          <li>زمان آخرین خرید</li>
+          <li>مجموع مبلغ خریدها</li>
+          <li>صفحاتی که بازدید کرده</li>
+        </ul>
+      </div>
+      <div class="callout--red callout" style="align-self:center;">
+        <strong>واقعیت:</strong><br><br>
+        گاهی بهترین الگوریتم دنیا را داریم،<br>
+        اما داده مناسب نداریم.<br><br>
+        در این حالت، پروژه شکست می‌خورد.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 12 BETTER DATA ────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+      <div style="text-align:center;">
+        <!-- <div style="font-size:20px; color:var(--mid); margin-bottom:20px; direction:ltr;">
+          Industry Wisdom
+        </div> -->
+        <div class="big-statement" style="font-size:48px; direction:ltr; margin-bottom:32px;">
+          Better data<br>beats better algorithms.
+        </div>
+        <div class="callout--blue callout" style="max-width:680px; margin:0 auto; text-align:right;">
+          داده‌های باکیفیت، از پیچیده‌ترین مدل‌ها با داده‌های ضعیف پیشی می‌گیرند.
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 13 SECTION: DATA PREP ─────────────── -->
+  <div class="slide slide--section">
+    <h1 class="slide__title">آماده‌سازی داده</h1>
+    <h2 class="slide__subtitle">
+      <span class="ltr">Data Cleaning &amp; Preparation</span>
+    </h2>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 14 DIRTY DATA ─────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">آماده‌سازی داده · Data Cleaning</div>
+    <h1 class="slide__title mb-24" style="font-size:34px;">آیا می‌توانیم مستقیم آموزش بدهیم؟</h1>
+    <div class="cols-2" style="gap:32px; flex:1;">
+      <div>
+        <p class="slide__body mb-12" style="font-size:18px; color:var(--mid);">ستون <span class="ltr">age</span> در داده:</p>
+        <table class="data-table">
+          <thead>
+            <tr><th>age</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>25</td></tr>
+            <tr><td class="cell-null">null</td></tr>
+            <tr><td class="cell-bad">400</td></tr>
+            <tr><td>31</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:12px; font-size:16px; color:var(--mid);">
+          مشکل: مقدار گمشده + مقدار غیرواقعی
+        </div>
+      </div>
+      <div>
+        <p class="slide__body mb-12" style="font-size:18px; color:var(--mid);">ستون <span class="ltr">city</span> در داده:</p>
+        <table class="data-table">
+          <thead>
+            <tr><th>city</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Tehran</td></tr>
+            <tr><td class="cell-bad">tehran</td></tr>
+            <tr><td class="cell-bad">TEHRAN</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:12px; font-size:16px; color:var(--mid);">
+          سه مقدار متفاوت، اما یک شهر
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 15 DATA 70% ───────────────────────── -->
+  <div class="slide slide--highlight">
+    <div class="slide__eyebrow">واقعیت پروژه‌های ML</div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:32px; text-align:center;">
+      <div class="verdict">
+        <div class="verdict-card">
+          <div class="verdict-card__num">~70%</div>
+          <div class="verdict-card__label">آماده‌سازی داده<br><span class="ltr" style="font-size:14px;">Data Cleaning &amp; Preparation</span></div>
+        </div>
+        <div class="verdict-card">
+          <div class="verdict-card__num">&lt;20%</div>
+          <div class="verdict-card__label">آموزش مدل<br><span class="ltr" style="font-size:14px;">Model Training</span></div>
+        </div>
+        <div class="verdict-card">
+          <div class="verdict-card__num">~10%</div>
+          <div class="verdict-card__label">مراحل دیگر</div>
+        </div>
+      </div>
+      <div class="callout--blue callout" style="max-width:700px; text-align:right;">
+        در دنیای واقعی، داده‌ها کثیف هستند.<br>
+        گاهی <span class="em">۷۰ درصد</span> از زمان پروژه صرف همین مرحله می‌شود.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 16 SECTION: TRAINING ──────────────── -->
+  <div class="slide slide--section">
+    <h1 class="slide__title">آموزش مدل</h1>
+    <h2 class="slide__subtitle">
+      <span class="ltr">Model Training</span>
+    </h2>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 17 TRAINING ───────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">آموزش مدل · Model Training</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;">الان تازه می‌توانیم مدل بسازیم</h1>
+    <div class="cols-2" style="align-items:center; flex:1;">
+      <div>
+        <p class="slide__body mb-24">
+          بسیاری فکر می‌کنند یادگیری ماشین یعنی همین بخش.<br>
+          در حالی که فقط <span class="em">یکی از مراحل</span> است.
+        </p>
+        <div class="callout">
+          مدل از روی داده‌ها <strong>الگو</strong> یاد می‌گیرد:<br><br>
+          <span class="ltr" style="font-size:18px; font-family:var(--font-mono);">X (Features) → Patterns → ŷ (Prediction)</span>
+        </div>
+      </div>
+      <div class="flow" style="align-items:center; gap:4px; direction:ltr;">
+        <div class="flow-box" style="background:var(--mid);">Features (X)</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">Model</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box" style="background:var(--mid);">Prediction (ŷ)</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 18 SECTION: EVALUATION ────────────── -->
+  <div class="slide slide--section">
+    <h1 class="slide__title">ارزیابی</h1>
+    <h2 class="slide__subtitle">
+      <span class="ltr">Evaluation</span>
+    </h2>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 19 EVALUATION ─────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ارزیابی · Evaluation</div>
+    <h1 class="slide__title mb-32" style="font-size:36px;">از کجا بدانیم مدل خوب است؟</h1>
+    <div class="cols-2" style="gap:32px; flex:1; align-items:center;">
+      <div>
+        <div class="callout mb-24">
+          <strong>تشبیه:</strong><br>
+          امتحان بدون تصحیح برگه‌ها بی‌معنی است.<br>
+          <span class="ltr">Training</span> بدون ارزیابی هم همین‌طور.
+        </div>
+        <p class="slide__body" style="font-size:19px; color:var(--mid);">
+          فقط ساختن مدل کافی نیست؛<br>
+          باید <span class="em">اندازه‌گیری</span> کنیم.
+        </p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div class="callout--blue callout" style="font-size:20px; direction:ltr; text-align:center;">
+          Model A: <strong>Accuracy = 60%</strong>
+        </div>
+        <div class="callout callout--blue" style="font-size:20px; direction:ltr; text-align:center; border-color:var(--accent); background:#fff3e8; border-width:3px;">
+          Model B: <strong style="font-size:24px; color:var(--accent);">Accuracy = 90%</strong>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 20 SECTION: DEPLOYMENT ────────────── -->
+  <div class="slide slide--section">
+    <h1 class="slide__title">استقرار</h1>
+    <h2 class="slide__subtitle">
+      <span class="ltr">Deployment</span>
+    </h2>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 21 DEPLOYMENT ─────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">استقرار · Deployment</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;">مدل روی لپ‌تاپ ما کار می‌کند؛ کاربران چطور؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center;">
+      <ul class="slide__list">
+        <li>سایت فروشگاهی</li>
+        <li>اپلیکیشن موبایل</li>
+        <li>سیستم بانکی</li>
+        <li>سرویس <span class="ltr">API</span> برای سایر تیم‌ها</li>
+      </ul>
+      <div class="callout--red callout" style="font-size:21px; text-align:center;">
+        <div style="font-size:40px; margin-bottom:16px;">🚀</div>
+        <strong>مدل خوبی که</strong><br>
+        <span class="ltr">Deploy</span> <strong>نشده،</strong><br>
+        <strong>ارزش تجاری ندارد.</strong>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 22 SECTION: MONITORING ────────────── -->
+  <div class="slide slide--section">
+    <h1 class="slide__title">پایش</h1>
+    <h2 class="slide__subtitle">
+      <span class="ltr">Monitoring</span>
+    </h2>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 23 MONITORING ─────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">پایش · Monitoring</div>
+    <h1 class="slide__title mb-24" style="font-size:34px;">مدل‌ها پیر می‌شوند</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <div>
+        <div class="callout mb-24">
+          سال ۲۰۲۴ مدل ساختیم.<br>
+          سال ۲۰۲۶ رفتار کاربران عوض شده.<br><br>
+          <span class="em">چه اتفاقی می‌افتد؟</span><br>
+          دقت مدل افت می‌کند. <br>مدل پیر می‌شود و نیاز به بازآموزی دارد. 
+        </div>
+        <!-- <div style="text-align:center; direction:ltr; font-size:22px; font-weight:700; color:var(--accent);">
+          Model gets old. It needs retraining.
+        </div> -->
+      </div>
+      <div>
+        <p class="slide__body mb-16" style="font-size:18px; color:var(--mid);">مثال‌های واقعی:</p>
+        <div class="monitoring-examples">
+          <div class="mon-card">
+            <div class="mon-icon">📧</div>
+            <div class="mon-label">تشخیص اسپم</div>
+          </div>
+          <div class="mon-card">
+            <div class="mon-icon">🏦</div>
+            <div class="mon-label">تقلب بانکی</div>
+          </div>
+          <div class="mon-card">
+            <div class="mon-icon">🏠</div>
+            <div class="mon-label">قیمت مسکن</div>
+          </div>
+          <div class="mon-card">
+            <div class="mon-icon">🎬</div>
+            <div class="mon-label">پیشنهاد فیلم</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 24 FIGURE 1-3: ADAPTING TO CHANGE ─── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">انطباق با تغییر · Automatically Adapting to Change</div>
+    <h1 class="slide__title mb-24" style="font-size:34px;">سیستم ML با تغییر دنیا سازگار می‌شود</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure" style="align-self:center;">
+        <img src="images/fig-01-03.png" alt="Automatically adapting to change diagram"
+             style="max-height:330px; border-radius:8px; border:1px solid #E2E8F0;">
+        <figcaption class="slide__caption">
+          <span class="slide__source" dir="ltr">Géron, Hands-On ML (2025), Fig. 1-3</span>
+        </figcaption>
+      </figure>
+      <div>
+        <p class="slide__body mb-16" style="font-size:19px;">وقتی دنیا تغییر می‌کند:</p>
+        <ul class="slide__list" style="font-size:19px; margin-bottom:24px;">
+          <li>الگوهای اسپم عوض شده</li>
+          <li>رفتار مشتریان تغییر کرده</li>
+          <li>بازار دیگرگون شده</li>
+        </ul>
+        <div class="cols-2" style="gap:16px;">
+          <div class="callout--red callout" style="font-size:17px;">
+            <strong>روش سنتی:</strong><br>
+            قوانین را دستی اصلاح کن.
+          </div>
+          <div class="callout--blue callout" style="font-size:17px;">
+            <strong style="color:var(--accent);">ML:</strong><br>
+            داده جدید جمع کن و مدل را دوباره آموزش بده.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 25 SECTION: FULL CYCLE ────────────── -->
+  <div class="slide slide--section">
+    <div class="slide__eyebrow">جمع‌بندی</div>
+    <h1 class="slide__title">چرخه کامل</h1>
+    <h2 class="slide__subtitle">از ابتدا تا انتها، و دوباره از ابتدا</h2>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 25 FULL CYCLE DIAGRAM ─────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">چرخه کامل ML</div>
+    <div style="flex:1; display:flex; align-items:center; justify-content:center; padding-bottom:40px;">
+      <!--
+        Circle: center (525, 245), R_nodes=210, R_track=185
+        Node angles: -90°, -45°, 0°, 45°, 90°, 135°, 180°, 225° (clockwise from top)
+        Arrowhead midpoints at R=185, rotation = 180° + φ (φ = midpoint angle between adjacent nodes)
+        Arrowhead polygon "0,-8 -5,6 5,6" points up by default; rotation aligns it with clockwise tangent.
+      -->
+      <svg viewBox="0 0 1050 490" width="1050" height="490" xmlns="http://www.w3.org/2000/svg" style="overflow:visible;">
+
+        <!-- Track ring -->
+        <circle cx="525" cy="245" r="185" fill="none" stroke="#CBD5E1" stroke-width="2.5" stroke-dasharray="7 5"/>
+
+        <!-- Center disc -->
+        <circle cx="525" cy="245" r="70" fill="#efe0ca"/>
+        <text x="525" y="238" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif"
+              font-size="18" font-weight="700" fill="#20295c">چرخه</text>
+        <text x="525" y="260" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif"
+              font-size="13" fill="#475569">یادگیری ماشین</text>
+
+        <!-- Directional arrowheads (clockwise); rotation = 180° + φ -->
+        <!-- 0→1 φ=-67.5° r=112.5 pos=(595.8, 74.1) -->
+        <polygon points="0,-8 -5,6 5,6" transform="translate(595.8,74.1) rotate(112.5)"  fill="#ff6600"/>
+        <!-- 1→2 φ=-22.5° r=157.5 pos=(695.9,174.2) -->
+        <polygon points="0,-8 -5,6 5,6" transform="translate(695.9,174.2) rotate(157.5)" fill="#ff6600"/>
+        <!-- 2→3 φ= 22.5° r=202.5 pos=(695.9,315.8) -->
+        <polygon points="0,-8 -5,6 5,6" transform="translate(695.9,315.8) rotate(202.5)" fill="#ff6600"/>
+        <!-- 3→4 φ= 67.5° r=247.5 pos=(595.8,415.9) -->
+        <polygon points="0,-8 -5,6 5,6" transform="translate(595.8,415.9) rotate(247.5)" fill="#ff6600"/>
+        <!-- 4→5 φ=112.5° r=292.5 pos=(454.2,415.9) -->
+        <polygon points="0,-8 -5,6 5,6" transform="translate(454.2,415.9) rotate(292.5)" fill="#ff6600"/>
+        <!-- 5→6 φ=157.5° r=337.5 pos=(354.1,315.8) -->
+        <polygon points="0,-8 -5,6 5,6" transform="translate(354.1,315.8) rotate(337.5)" fill="#ff6600"/>
+        <!-- 6→7 φ=202.5° r= 22.5 pos=(354.1,174.2) -->
+        <polygon points="0,-8 -5,6 5,6" transform="translate(354.1,174.2) rotate(22.5)"  fill="#ff6600"/>
+        <!-- 7→0 φ=247.5° r= 67.5 pos=(454.2, 74.1) -->
+        <polygon points="0,-8 -5,6 5,6" transform="translate(454.2,74.1)  rotate(67.5)"  fill="#ff6600"/>
+
+        <!-- Node 0: تعریف مسئله  (top,         -90°, cx=525, cy=35) -->
+        <rect x="460" y="15"  width="130" height="40" rx="8" fill="#ff6600"/>
+        <text x="525" y="35"  dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="14" fill="white">تعریف مسئله</text>
+
+        <!-- Node 1: جمع‌آوری داده (top-right,   -45°, cx=674, cy=97) -->
+        <rect x="609" y="77"  width="130" height="40" rx="8" fill="#ff6600"/>
+        <text x="674" y="97"  dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="14" fill="white">جمع‌آوری داده</text>
+
+        <!-- Node 2: آماده‌سازی داده (right,      0°, cx=735, cy=245) -->
+        <rect x="670" y="225" width="130" height="40" rx="8" fill="#ff6600"/>
+        <text x="735" y="245" dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="14" fill="white">آماده‌سازی داده</text>
+
+        <!-- Node 3: آموزش مدل    (bottom-right,  45°, cx=674, cy=394) -->
+        <rect x="609" y="374" width="130" height="40" rx="8" fill="#ff6600"/>
+        <text x="674" y="394" dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="14" fill="white">آموزش مدل</text>
+
+        <!-- Node 4: ارزیابی       (bottom,        90°, cx=525, cy=455) -->
+        <rect x="460" y="435" width="130" height="40" rx="8" fill="#ff6600"/>
+        <text x="525" y="455" dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="14" fill="white">ارزیابی</text>
+
+        <!-- Node 5: استقرار       (bottom-left,  135°, cx=377, cy=394) -->
+        <rect x="312" y="374" width="130" height="40" rx="8" fill="#ff6600"/>
+        <text x="377" y="394" dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="14" fill="white">استقرار</text>
+
+        <!-- Node 6: پایش          (left,         180°, cx=315, cy=245) -->
+        <rect x="250" y="225" width="130" height="40" rx="8" fill="#ff6600"/>
+        <text x="315" y="245" dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="14" fill="white">پایش</text>
+
+        <!-- Node 7: بازآموزی      (top-left,     225°, cx=377, cy=97) -->
+        <rect x="312" y="77"  width="130" height="40" rx="8" fill="#ff6600"/>
+        <text x="377" y="97"  dy="0.35em" text-anchor="middle" font-family="Vazirmatn,Tahoma,sans-serif" font-size="14" fill="white">بازآموزی</text>
+
+      </svg>
+    </div>
+    <div class="slide__footer">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ───────────────────────── 26 CLOSING ────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">پیام اصلی این ویدئو</div>
+    <h1 class="slide__title mb-32" style="font-size:40px;">
+      اگر فقط یک چیز از این جلسه یادتان بماند:
+    </h1>
+    <div style="background:rgba(255,255,255,.1); border-radius:var(--radius); padding:32px 48px; max-width:840px; text-align:right;">
+      <p style="font-size:24px; line-height:1.8; color:rgba(255,255,255,.85);">
+        یادگیری ماشین فقط ساختن مدل نیست.<br>
+        <span class="rtl" style="color:var(--accent2); font-weight:700;">آموزش مدل</span>
+        فقط یکی از مراحل یک پروژه
+        <span class="ltr" style="color:var(--accent2); font-weight:700;">ML</span>
+        است.
+      </p>
+    </div>
+    <div class="slide__footer" style="color:#94A3B8;">
+      <span>هفته اول · چرخه حیات ML</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div><!-- /deck -->
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>
