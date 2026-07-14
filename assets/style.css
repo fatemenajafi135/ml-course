@@ -1,0 +1,384 @@
+/* ── Fonts (must be first) ───────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+
+/* ── Reset & base ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent:     #ff6600;   /* orange */
+  --accent2:    #ffcc66;   /* amber gold */
+  --dark:       #20295c;   /* navy */
+  --mid:        #475569;
+  --light:      #efe0ca;   /* warm beige */
+  --white:      #FFFFFF;
+  --code-bg:    #141b3d;   /* dark navy */
+  --code-fg:    #E2E8F0;
+  --radius:     10px;
+  --slide-w:    1280px;
+  --slide-h:    720px;
+  --font-main: 'Vazirmatn', 'Tahoma', sans-serif;
+  --font-mono: 'Fira Code', 'Consolas', monospace;
+}
+
+/* ── Slide shell ────────────────────────────────────────────── */
+html, body {
+  height: 100%;
+  background: var(--dark);
+  font-family: var(--font-main);
+  overflow: hidden;
+}
+
+.deck {
+  width: var(--slide-w);
+  height: var(--slide-h);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
+}
+
+/* ── Individual slide ───────────────────────────────────────── */
+.slide {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: var(--white);
+  padding: 56px 72px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  overflow: hidden;
+}
+.slide.active {
+  display: flex;
+  animation: slideEnter 1s ease both;
+}
+@keyframes slideEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Slide types ────────────────────────────────────────────── */
+.slide--cover {
+  background: var(--dark);
+  color: var(--white);
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+
+.slide--section {
+  background: var(--accent);
+  color: var(--white);
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+
+.slide--content {}
+
+.slide--highlight {
+  background: var(--light);
+}
+
+/* ── Typography ─────────────────────────────────────────────── */
+.slide__eyebrow {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.slide--cover   .slide__eyebrow { color: var(--accent2); }
+.slide--section .slide__eyebrow { color: rgba(255,255,255,.85); }
+
+h1.slide__title {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--dark);
+  margin-bottom: 24px;
+}
+.slide--cover h1.slide__title { color: var(--white); font-size: 52px; }
+.slide--section h1.slide__title { color: var(--white); font-size: 46px; }
+
+h2.slide__subtitle {
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--mid);
+  margin-bottom: 32px;
+  line-height: 1.4;
+}
+.slide--cover h2.slide__subtitle { color: #94A3B8; }
+.slide--section h2.slide__subtitle { color: rgba(255,255,255,.7); }
+
+.slide__body {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.75;
+  color: var(--mid);
+}
+
+/* ── Lists ──────────────────────────────────────────────────── */
+ul.slide__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+ul.slide__list li {
+  font-size: 22px;
+  line-height: 1.6;
+  color: var(--dark);
+  padding-inline-start: 28px;
+  position: relative;
+}
+ul.slide__list li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: .65em;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ── Callout / quote box ────────────────────────────────────── */
+.callout {
+  border-inline-start: 4px solid var(--accent2);
+  padding: 20px 28px;
+  background: #fff5ec;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 22px;
+  line-height: 1.65;
+  color: var(--dark);
+}
+.callout--blue {
+  border-color: var(--accent);
+  background: #fff3e8;
+}
+.callout--red {
+  border-color: #EF4444;
+  background: #FEF2F2;
+}
+
+/* ── Big statement ──────────────────────────────────────────── */
+.big-statement {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* ── Key–value pairs / two-column layout ───────────────────── */
+.cols-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* ── Code block ─────────────────────────────────────────────── */
+pre.code-block {
+  direction: ltr;
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  line-height: 1.6;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  padding: 24px 28px;
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+/* ── Flow diagram ───────────────────────────────────────────── */
+.flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.flow-item {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-direction: column;
+}
+.flow-box {
+  background: var(--accent);
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 600;
+  padding: 12px 36px;
+  border-radius: var(--radius);
+  min-width: 220px;
+  text-align: center;
+}
+.flow-box--dim { background: var(--mid); }
+.flow-arrow {
+  font-size: 24px;
+  color: var(--mid);
+  line-height: 1;
+  padding: 2px 0;
+}
+
+/* ── Badge / tag ────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 14px;
+  border-radius: 999px;
+}
+.badge--amber { background: var(--accent2); color: var(--dark); }
+
+/* ── Progress bar ───────────────────────────────────────────── */
+.progress {
+  position: absolute;
+  bottom: 0;
+  inset-inline-start: 0;
+  height: 4px;
+  background: var(--accent);
+  transition: width .2s ease;
+}
+
+/* ── Footer ─────────────────────────────────────────────────── */
+.slide__footer {
+  position: absolute;
+  bottom: 24px;
+  inset-inline-start: 72px;
+  inset-inline-end: 72px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #94A3B8;
+}
+
+/* ── Image slides ───────────────────────────────────────────── */
+
+/*
+  Usage patterns:
+  A) Full-bleed background image:
+       <div class="slide slide--image" style="background-image:url(images/foo.jpg)">
+         <div class="slide__overlay"> ...title / caption... </div>
+       </div>
+
+  B) Contained image inside a content slide:
+       <figure class="slide__figure">
+         <img src="images/foo.png" alt="...">
+         <figcaption class="slide__caption">
+           توضیح فارسی
+           <span class="slide__source" dir="ltr">Source: Géron, 2025, Fig. 1-1</span>
+         </figcaption>
+       </figure>
+
+  C) Side-by-side image + text (use .cols-2):
+       <div class="cols-2">
+         <figure class="slide__figure">...</figure>
+         <div>...text...</div>
+       </div>
+
+  Images from this course go in:  slides/week-NN/images/
+  Own diagrams: Persian labels.
+  Textbook/paper screenshots: keep English, add Persian <figcaption>.
+*/
+
+.slide--image {
+  padding: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.slide--image .slide__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(32,41,92,.55);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 56px 72px;
+  gap: 0;
+}
+.slide--image-light .slide__overlay {
+  background: rgba(239,224,202,.72);
+}
+.slide--image-light .slide__overlay h1.slide__title { color: var(--dark); }
+.slide--image-light .slide__overlay .slide__footer  { color: var(--mid); }
+
+figure.slide__figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+figure.slide__figure img {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: var(--radius);
+  display: block;
+}
+figcaption.slide__caption {
+  font-size: 15px;
+  color: var(--mid);
+  text-align: center;
+  line-height: 1.55;
+  max-width: 760px;
+}
+.slide__source {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #94A3B8;
+  font-style: italic;
+}
+
+/* ── Utility ────────────────────────────────────────────────── */
+.mt-auto { margin-top: auto; }
+.mb-8  { margin-bottom: 8px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; }
+.mb-32 { margin-bottom: 32px; }
+.mb-40 { margin-bottom: 40px; }
+.ltr { direction: ltr; unicode-bidi: isolate; display: inline; }
+.em  { color: var(--accent); font-weight: 600; }
+.em2 { color: var(--accent2); font-weight: 600; }
+
+/* ── Print / Save as PDF ────────────────────────────────────── */
+@media print {
+  @page { size: 1280px 720px; margin: 0; }
+
+  html, body {
+    height: auto;
+    overflow: visible;
+    background: white;
+  }
+
+  .deck {
+    position: static;
+    width: 1280px;
+    height: auto;
+    transform: none !important;
+  }
+
+  .slide {
+    display: flex !important;
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    page-break-after: always;
+    break-after: page;
+    overflow: hidden;
+  }
+
+  .progress { display: none; }
+}
