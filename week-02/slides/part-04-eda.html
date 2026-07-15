@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>EDA | هفته دوم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ── */
+    .tool-row {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .tool-item {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .tool-item .num {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .tool-item .name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--dark);
+      direction: ltr;
+    }
+    .tool-item .role {
+      font-size: 16px;
+      color: var(--mid);
+    }
+
+    .dt-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 10px 18px;
+      width: 210px;
+    }
+    .dt-row .col-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+      direction: ltr;
+      text-align: center;
+    }
+    .dt-row .arrow { color: var(--accent); font-weight: 700; }
+    .dt-row .col-type { font-size: 16px; color: var(--mid); text-align: center; }
+
+    .step-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      gap: 0;
+      padding-top: 40px;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 132px;
+      flex-shrink: 0;
+    }
+    .step__circle {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step__label {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--dark);
+      text-align: center;
+      line-height: 1.4;
+    }
+    .step-line {
+      height: 2px;
+      background: #E2E8F0;
+      flex: 1;
+      margin-top: 23px;
+      min-width: 16px;
+    }
+
+    table.mv-table {
+      border-collapse: collapse;
+      margin: 0 auto;
+      font-size: 18px;
+      direction: ltr;
+    }
+    table.mv-table th, table.mv-table td {
+      border: 1px solid #E2E8F0;
+      padding: 10px 26px;
+      text-align: center;
+    }
+    table.mv-table th {
+      background: var(--dark);
+      color: var(--white);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: .04em;
+    }
+    table.mv-table td.missing {
+      background: #FEF2F2;
+      color: #EF4444;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته دوم · بخش ۴</div>
+    <h1 class="slide__title">تحلیل اکتشافی داده</h1>
+    <h2 class="slide__subtitle" dir="ltr">Exploratory Data Analysis (EDA)</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 EDA چیست؟ ─────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">معرفی</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;"><span class="ltr">EDA</span> چیست؟</h1>
+    <p class="slide__body mb-28" style="font-size:20px; max-width:820px;">
+      <span class="ltr">EDA</span> یعنی قبل از اینکه بخواهیم یک مدل <span class="ltr">Machine Learning</span>
+      آموزش دهیم، ابتدا داده را بشناسیم.
+    </p>
+    <p class="slide__body mb-16" style="font-size:17px; font-weight:600;">هدف <span class="ltr">EDA</span> پاسخ دادن به سؤال‌هایی مانند این است:</p>
+    <ul class="slide__list mb-28" style="font-size:19px;">
+      <li>این داده درباره‌ی چیست؟</li>
+      <li>آیا می‌توانم به آن اعتماد کنم؟</li>
+      <li>آیا مشکلی در داده وجود دارد؟</li>
+      <li>چه الگوهایی در داده دیده می‌شود؟</li>
+    </ul>
+    <div class="callout--blue callout" style="font-size:19px;">
+      قبل از اینکه از مدل سؤال بپرسیم، باید از داده سؤال بپرسیم.
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · EDA</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 چرا EDA مهم است ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-24" style="font-size:36px; text-align:center;">چرا <span class="ltr">EDA</span> مهم است؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:48px;">
+      <div>
+        <p class="slide__body mb-16" style="font-size:19px;">
+          مدل‌های <span class="ltr">Machine Learning</span> فقط از داده یاد می‌گیرند.
+          اگر داده کیفیت مناسبی نداشته باشد:
+        </p>
+        <ul class="slide__list mb-16" style="font-size:18px;">
+          <li>مدل هم عملکرد خوبی نخواهد داشت.</li>
+          <li>حتی ممکن است الگوهای اشتباه را یاد بگیرد.</li>
+        </ul>
+        <p class="slide__body" style="font-size:17px;">
+          به همین دلیل تقریباً همه‌ی پروژه‌های <span class="ltr">Machine Learning</span> با <span class="ltr">EDA</span> شروع می‌شوند.
+        </p>
+      </div>
+      <div class="flow">
+        <div class="flow-item"><div class="flow-box flow-box--dim" dir="ltr">Raw Data</div></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-item"><div class="flow-box" dir="ltr">EDA</div></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-item"><div class="flow-box flow-box--dim" dir="ltr">Data Preparation</div></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-item"><div class="flow-box flow-box--dim" dir="ltr">Model Training</div></div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · EDA</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 ابزارهای EDA ──────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">جمع‌بندی هفته</div>
+    <h1 class="slide__title mb-28" style="font-size:36px;">ابزارهایی که در <span class="ltr">EDA</span> استفاده می‌کنیم</h1>
+    <p class="slide__body mb-28" style="font-size:19px; max-width:760px;">
+      در این هفته با سه ابزار اصلی آشنا می‌شوید؛ هر کدام نقش متفاوتی دارند، اما در کنار هم به ما کمک می‌کنند داده را بهتر درک کنیم.
+    </p>
+    <div class="tool-row" style="max-width:520px;">
+      <div class="tool-item"><span class="num">۱</span><span class="name">NumPy</span><span class="role"> آرایه و محاسبات عددی</span></div>
+      <div class="tool-item"><span class="num">۲</span><span class="name">pandas</span><span class="role"> جدول داده و پاک‌سازی</span></div>
+      <div class="tool-item"><span class="num">۳</span><span class="name">matplotlib</span><span class="role"> رسم و بررسی بصری</span></div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · EDA</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 ذهنیت کارآگاهی ────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div class="slide__eyebrow">طرز فکر</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;">مثل یک کارآگاه به داده نگاه کنید</h1>
+    <p class="slide__body mb-20" style="font-size:19px; max-width:800px;">
+      یک <span class="ltr">Data Scientist</span> هیچ‌وقت فرض نمی‌کند داده کاملاً درست است.
+      هر ستون را تا زمانی که بررسی نکرده‌ایم، مشکوک در نظر می‌گیریم. ممکن است داده:
+    </p>
+    <ul class="slide__list mb-24" style="font-size:19px;">
+      <li>ناقص باشد.</li>
+      <li>اشتباه ثبت شده باشد.</li>
+      <li>تکراری باشد.</li>
+      <li>مقدارهای غیرعادی داشته باشد.</li>
+      <li>یا حتی معنای آن چیزی نباشد که فکر می‌کنیم.</li>
+    </ul>
+    <div class="callout--red callout" style="font-size:20px; direction:ltr; text-align:left; font-weight:600;">
+      Never trust raw data. Verify it.
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · EDA</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 چک‌لیست EDA ───────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">نقشه راه</div>
+    <h1 class="slide__title mb-16" style="font-size:36px; text-align:center;">یک چک‌لیست ساده برای <span class="ltr">EDA</span></h1>
+    <p class="slide__body mb-28" style="font-size:18px; text-align:center;">
+      تقریباً روی هر دیتاست، همین مسیر را طی می‌کنیم؛ این چک‌لیست را بارها در طول دوره استفاده خواهیم کرد.
+    </p>
+    <div class="step-flow">
+      <div class="step">
+        <div class="step__circle">۱</div>
+        <div class="step__label" dir="ltr">Shape</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step__circle">۲</div>
+        <div class="step__label" dir="ltr">Data Types</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step__circle">۳</div>
+        <div class="step__label" dir="ltr">Missing Values</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step__circle">۴</div>
+        <div class="step__label" dir="ltr">Distribution</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step__circle">۵</div>
+        <div class="step__label" dir="ltr">Relationships</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · EDA</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 Shape & Data Types ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">اولین سؤال‌ها</div>
+    <h1 class="slide__title mb-28" style="font-size:34px;"><span class="ltr">Shape</span> و <span class="ltr">Data Types</span></h1>
+    <div class="cols-2" style="flex:1; align-items:start; gap:48px;">
+      <div>
+        <p class="slide__body mb-12" style="font-size:17px; font-weight:600;"><span class="ltr">Shape</span></p>
+        <ul class="slide__list" style="font-size:18px;">
+          <li>چند سطر داریم؟</li>
+          <li>چند ستون داریم؟</li>
+          <li>هر سطر نماینده‌ی چیست؟</li>
+          <li>هر ستون چه اطلاعاتی را نگه می‌دارد؟</li>
+        </ul>
+      </div>
+      <div>
+        <p class="slide__body mb-12" style="font-size:17px; font-weight:600;"><span class="ltr">Data Types</span> آیا نوع هر ستون درست است؟</p>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+          <div class="dt-row"><span class="col-name">Age</span><span class="arrow">→</span><span class="col-type">عددی</span></div>
+          <div class="dt-row"><span class="col-name">Salary</span><span class="arrow">→</span><span class="col-type">عددی</span></div>
+          <div class="dt-row"><span class="col-name">City</span><span class="arrow">→</span><span class="col-type">متنی</span></div>
+          <div class="dt-row"><span class="col-name">Date</span><span class="arrow">→</span><span class="col-type">تاریخ</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="callout" style="font-size:17px; margin-top:8px;">
+      اگر نوع داده اشتباه باشد، بسیاری از تحلیل‌ها نیز اشتباه خواهند بود.
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · EDA</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 [SECTION] Missing Values ──────────────────────────── -->
+  <div class="slide slide--section">
+    <div class="slide__eyebrow">قدم سوم</div>
+    <h1 class="slide__title">مقدارهای گمشده</h1>
+    <h2 class="slide__subtitle"><span class="ltr">Missing Values</span></h2>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 Missing Values : مفهوم ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Missing Values</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">داده‌ی گمشده همیشه یک اشتباه نیست</h1>
+    <p class="slide__body mb-16" style="font-size:18px; max-width:820px;">
+      گاهی نبودن اطلاعات، خودش یک اطلاعات مهم است؛ مثلاً مشتری درآمدش را اعلام نکرده، یک سنسور هنگام اندازه‌گیری خراب بوده،
+      یا بیمار بعضی آزمایش‌ها را انجام نداده است.
+    </p>
+    <div class="callout--blue callout mb-20" style="font-size:18px; line-height:1.9;">
+      اولین سؤال این نیست که «چطور <span class="ltr">Missing Value</span> را پر کنم؟»
+      بلکه این است: «چرا این مقدار وجود ندارد؟»
+    </div>
+    <p class="slide__body mb-12" style="font-size:16px; font-weight:600;">هنگام بررسی <span class="ltr">Missing Values</span> معمولاً این سؤال‌ها را می‌پرسیم:</p>
+    <ul class="slide__list" style="font-size:17px;">
+      <li>کدام ستون‌ها <span class="ltr">Missing Value</span> دارند؟ چند درصد از داده‌ها <span class="ltr">Missing</span> هستند؟</li>
+      <li>آیا همه‌ی <span class="ltr">Missing</span>ها در یک ستون جمع شده‌اند؟</li>
+      <li>آیا <span class="ltr">Missing</span> بودن با ویژگی دیگری ارتباط دارد؟ <span style="color:var(--mid); font-size:14px;">(مثلاً افراد زیر ۱۸ سال معمولاً <span class="ltr">Income</span> ندارند. این احتمالاً طبیعی است، نه خطا.)</span></li>
+    </ul>
+    <div class="slide__footer">
+      <span>هفته دوم · Missing Values</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 Missing Values : تصویر ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Missing Values</div>
+    <h1 class="slide__title mb-32" style="font-size:32px; text-align:center;">الگوی مقدارهای گمشده در یک جدول</h1>
+    <table class="mv-table mb-24">
+      <tr><th>Name</th><th>Age</th><th>Salary</th></tr>
+      <tr><td>Ali</td><td>25</td><td>5000</td></tr>
+      <tr><td>Sara</td><td class="missing">NaN</td><td>6200</td></tr>
+      <tr><td>Reza</td><td>31</td><td class="missing">NaN</td></tr>
+      <tr><td>Mina</td><td class="missing">NaN</td><td class="missing">NaN</td></tr>
+    </table>
+    <p class="slide__body" style="font-size:16px; text-align:center; color:var(--mid);">
+      خانه‌های قرمز، سلول‌های مقدارهای گم‌شده هستند.
+    </p>
+    <div class="slide__footer">
+      <span>هفته دوم · Missing Values</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 11 [SECTION] Distribution ────────────────────────────── -->
+  <div class="slide slide--section">
+    <div class="slide__eyebrow">قدم چهارم</div>
+    <h1 class="slide__title">توزیع داده</h1>
+    <h2 class="slide__subtitle"><span class="ltr">Distribution</span></h2>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 12 Distribution : مفهوم ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Distribution</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">حتی داده‌ی درست هم باید دیده شود</h1>
+    <p class="slide__body mb-16" style="font-size:18px; max-width:820px;">
+      فرض کنید میانگین قد افراد برابر با ۱۷۰ سانتی‌متر است؛ این عدد به تنهایی چیز زیادی به ما نمی‌گوید.
+      ممکن است بیشتر افراد واقعاً نزدیک ۱۷۰ باشند، یا نصف افراد ۱۵۰ و نصف دیگر ۱۹۰ باشند.
+      در هر دو حالت میانگین یکسان است؛ اما داده کاملاً متفاوت است.
+    </p>
+    <p class="slide__body mb-12" style="font-size:16px; font-weight:600;">در بررسی <span class="ltr">Distribution</span> به دنبال چه چیزهایی هستیم؟</p>
+    <ul class="slide__list mb-20" style="font-size:18px;">
+      <li>آیا داده متقارن است؟ آیا بیشتر داده‌ها در یک بازه جمع شده‌اند؟</li>
+      <li>آیا داده <span class="ltr">Skewed</span> است؟ آیا چند گروه مختلف در داده وجود دارد؟</li>
+    </ul>
+    <div class="callout--blue callout" style="font-size:18px;">
+      به همین دلیل، معمولاً یک نمودار بیشتر از چند عدد به ما اطلاعات می‌دهد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · Distribution</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 13 Distribution : تصویر ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Distribution</div>
+    <h1 class="slide__title mb-16" style="font-size:32px; text-align:center;">میانگین یکسان، داده کاملاً متفاوت</h1>
+    <figure class="slide__figure">
+      <img src="images/eda_distribution_histograms.png" alt="دو هیستوگرام با میانگین یکسان ۵۰؛ یکی Normal و دیگری Right Skewed" style="max-height:390px;">
+    </figure>
+    <div class="slide__footer">
+      <span>هفته دوم · Distribution</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 14 [SECTION] Outliers ────────────────────────────────── -->
+  <div class="slide slide--section">
+    <div class="slide__eyebrow">مشاهدات دور از انتظار</div>
+    <h1 class="slide__title">داده پرت</h1>
+    <h2 class="slide__subtitle"><span class="ltr">Outliers</span></h2>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 15 Outliers : مفهوم ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Outliers</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">هر <span class="ltr">Outlier</span> الزاماً اشتباه نیست</h1>
+    <p class="slide__body mb-16" style="font-size:18px; max-width:820px;">
+      گاهی چند مشاهده کاملاً با بقیه متفاوت هستند؛ به این نقاط <span class="ltr">Outlier</span> می‌گوییم.
+      مثال: سن = ۲۵۰ سال، قد = ۴ متر، درآمد = ۵۰ میلیون دلار.
+    </p>
+    <p class="slide__body mb-12" style="font-size:17px;">ممکن است یک <span class="ltr">Outlier</span>:</p>
+    <ul class="slide__list mb-20" style="font-size:18px;">
+      <li>خطای ورود داده باشد.</li>
+      <li>خطای اندازه‌گیری باشد.</li>
+      <li>یا یک مشاهده‌ی کاملاً واقعی اما نادر باشد.</li>
+    </ul>
+    <div class="callout--red callout" style="font-size:18px; line-height:1.85;">
+      قبل از حذف <span class="ltr">Outlier</span> همیشه بپرسید: آیا این مقدار منطقی است؟ آیا منبع داده قابل اعتماد است؟
+      آیا حذف آن باعث از بین رفتن اطلاعات مهم می‌شود؟
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · Outliers</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 16 Outliers : تصویر ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Outliers</div>
+    <h1 class="slide__title mb-16" style="font-size:32px; text-align:center;">دیدن <span class="ltr">Outlier</span> از دو زاویه</h1>
+    <figure class="slide__figure">
+      <img src="images/eda_outliers_boxplot_scatter.png" alt="Boxplot و Scatter Plot با چند نقطه Outlier مشخص‌شده" style="max-height:390px;">
+    </figure>
+    <p class="slide__body" style="font-size:15px; text-align:center; color:var(--mid);">
+      اول دلیل وجود <span class="ltr">Outlier</span> را بفهمید، بعد درباره‌ی حذف آن تصمیم بگیرید.
+    </p>
+    <div class="slide__footer">
+      <span>هفته دوم · Outliers</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 17 [SECTION] Relationships ───────────────────────────── -->
+  <div class="slide slide--section">
+    <div class="slide__eyebrow">قدم پنجم</div>
+    <h1 class="slide__title">رابطه بین ستون‌ها</h1>
+    <h2 class="slide__subtitle"><span class="ltr">Relationships</span></h2>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 18 Relationships : مفهوم ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Relationships</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">اطلاعات مهم، بین ستون‌ها پنهان است</h1>
+    <p class="slide__body mb-16" style="font-size:18px; max-width:820px;">
+      تا اینجا هر ستون را جداگانه بررسی کردیم؛ اما سؤال‌هایی مانند «آیا با افزایش تجربه، حقوق هم افزایش پیدا می‌کند؟»
+      یا «آیا متراژ خانه روی قیمت اثر دارد؟» فقط با نگاه‌کردن به رابطه‌ی بین دو ستون جواب داده می‌شوند.
+    </p>
+    <p class="slide__body mb-12" style="font-size:17px;">گاهی این رابطه:</p>
+    <ul class="slide__list mb-20" style="font-size:18px;">
+      <li>قوی است، ضعیف است، غیرخطی است، یا اصلاً وجود ندارد.</li>
+    </ul>
+    <div class="callout--blue callout" style="font-size:18px;">
+      به همین دلیل در <span class="ltr">EDA</span> نمودارهایی مثل <span class="ltr">Scatter Plot</span> چیزی را نشان می‌دهند
+      که فقط با نگاه‌کردن به جدول داده قابل تشخیص نیست.
+    </div>
+    <div class="slide__footer">
+      <span>هفته دوم · Relationships</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 19 Relationships : تصویر ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Relationships</div>
+    <h1 class="slide__title mb-16" style="font-size:32px; text-align:center;">سه نوع رابطه بین دو ستون</h1>
+    <figure class="slide__figure">
+      <img src="images/eda_relationships_scatter.png" alt="سه Scatter Plot: رابطه قوی، بدون رابطه، رابطه غیرخطی" style="max-height:390px;">
+    </figure>
+    <div class="slide__footer">
+      <span>هفته دوم · Relationships</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 20 جمع‌بندی ───────────────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">پیام کلیدی</div>
+    <div class="big-statement" style="font-size:30px; color:var(--white); max-width:820px; line-height:1.7;">
+      هدف <span class="ltr" style="color:var(--accent2);">EDA</span> پیدا کردن پاسخ نیست؛<br>
+      هدف، پیدا کردن <span style="color:var(--accent2);">سؤال‌های درست</span> درباره‌ی داده است.
+    </div>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>
