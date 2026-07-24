@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>رگرسیون چندجمله‌ای | هفته سوم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .formula-box {
+      font-family: var(--font-mono);
+      direction: ltr;
+      text-align: center;
+      font-size: 25px;
+      font-weight: 600;
+      color: var(--dark);
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 20px 28px;
+    }
+    .degree-scale {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+    .degree-card {
+      flex: 1;
+      max-width: 220px;
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      text-align: center;
+    }
+    .degree-card__num {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px;
+      direction: ltr;
+    }
+    .degree-card__desc {
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته سوم · بخش ۳</div>
+    <h1 class="slide__title">رگرسیون چندجمله‌ای</h1>
+    <h2 class="slide__subtitle" dir="ltr">Polynomial Regression</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 مسئله ─────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مسئله</div>
+    <h1 class="slide__title mb-24" style="font-size:34px;">وقتی رابطه، یک منحنی است</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <p class="slide__body" style="font-size:19px;">
+        گاهی رابطه‌ی بین <span class="ltr">x</span> و <span class="ltr">y</span> اصلاً خطی نیست.
+        اگر یک خط راست را به اجبار بر داده‌ای منحنی‌شکل برازش دهیم، مدل نتیجه‌ی ضعیفی می‌دهد.
+      </p>
+      <div class="callout--red callout" style="font-size:18px; text-align:center;">
+        خط راست، نمی‌تواند به درستی نماینده یک منحنی باشد، هرچقدر هم داده زیادی در اختیار داشته باشد..
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندجمله‌ای</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 ترفند ──────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">ترفند: ویژگی جدید بساز، نه مدل جدید</h1>
+    <p class="slide__body mb-20" style="font-size:18px;">
+      در کنار <span class="ltr">x</span>،
+      <br>
+      از <span class="ltr">x</span>، <span class="ltr">x²</span>، <span class="ltr">x³</span>، ...
+      به‌عنوان ویژگی‌های جدید استفاده می‌کنیم:
+    </p>
+    <div style="display:flex; justify-content:center; margin-bottom:20px;">
+      <div class="formula-box">ŷ = w₁·x + w₂·x² + w₃·x³ + ... + b</div>
+    </div>
+    <div class="callout--blue callout" style="font-size:18px; line-height:1.9;">
+      این مدل <strong>همچنان یک رگرسیون خطی است</strong>، چون نسبت به ضرایب (<span class="ltr">w₁, w₂, ...</span>) خطی است،
+      فقط ورودی‌هایش دیگر <span class="ltr">x</span> خام نیستند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندجمله‌ای</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 دو مرحله ──────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-28" style="font-size:32px; text-align:center;">دو مرحله، پشت سر هم</h1>
+    <div class="flow" style="flex:1; justify-content:center;">
+      <div class="flow-item">
+        <div class="flow-box" dir="ltr">Step 1: Build new features: x, x², x³, ...</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item">
+        <div class="flow-box flow-box--dim" dir="ltr">Step 2: Run ordinary Linear Regression on them</div>
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:17px; text-align:center;">
+      هیچ الگوریتم جدیدی یاد نمی‌گیریم؛ فقط قبل از رگرسیون خطی معمولی، یک مرحله‌ی ساخت ویژگی اضافه می‌شود.
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندجمله‌ای</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04b چطور ضرایب پیدا می‌شوند ────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یادآوری</div>
+    <h1 class="slide__title mb-24" style="font-size:30px;">و <span class="ltr">w₁, w₂, w₃, ...</span> چطور پیدا می‌شوند؟</h1>
+    <div class="callout--blue callout" style="font-size:19px; line-height:1.9;">
+      دقیقاً همان جست‌وجوی کاسه‌مانندی که در بخش ۱ دیدیم، با همان دو روش
+      (<span class="ltr">Normal Equation</span> یا <span class="ltr">Gradient Descent</span>).
+    </div>
+    <p class="slide__body" style="font-size:17px; text-align:center; margin-top:16px;">
+      تنها تفاوت: حالا به‌جای یک ویژگی خام <span class="ltr">x</span>، چند ویژگی ساخته‌شده
+      (<span class="ltr">x</span>, <span class="ltr">x²</span>, <span class="ltr">x³</span>, ...) در کاسه شرکت می‌کنند.
+      از دید <span class="ltr">scikit-learn</span>، هیچ فرقی با رگرسیون چندگانه ندارد.
+    </p>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندجمله‌ای</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 درجه = دستگیره پیچیدگی ────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-28" style="font-size:32px; text-align:center;"><span class="ltr">degree</span> به‌عنوان دستگیره‌ی پیچیدگی</h1>
+    <div class="degree-scale" style="flex:1; align-items:center;">
+      <div class="degree-card">
+        <div class="degree-card__num">degree = 1</div>
+        <div class="degree-card__desc">همان خط راست<br>(رگرسیون ساده)</div>
+      </div>
+      <div class="degree-card">
+        <div class="degree-card__num">degree = 2, 3</div>
+        <div class="degree-card__desc">منحنی ملایم</div>
+      </div>
+      <div class="degree-card" style="border-color:var(--accent); background:#fff3e8;">
+        <div class="degree-card__num">degree = 15</div>
+        <div class="degree-card__desc">منحنی‌ای که دقیقاً از وسط تک‌تک نقاط رد می‌شود</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندجمله‌ای</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 گام ۱: درجه ۱ ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">درجه ۱</div>
+    <h1 class="slide__title mb-16" style="font-size:30px;">بیایید با <span class="ltr">degree = 1</span> شروع کنیم</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <p class="slide__body" style="font-size:18px;">
+        همان خط راست همیشگی. روی این داده‌ی منحنی‌شکل، خیلی خوب عمل نمی‌کند.
+      </p>
+      <figure class="slide__figure">
+        <img src="images/poly_degree_1.png" alt="برازش با درجه یک" style="max-height:380px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندجمله‌ای</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 گام ۲: درجه ۲ ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">درجه ۲</div>
+    <h1 class="slide__title mb-16" style="font-size:30px;">حالا درجه را به <span class="ltr">۲</span> می‌رسانیم</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <p class="slide__body" style="font-size:18px;">
+        با اضافه‌شدن <span class="ltr">x²</span>، مدل می‌تواند منحنی بکشد. برازش، خیلی بهتر از قبل شده.
+      </p>
+      <figure class="slide__figure">
+        <img src="images/poly_degree_2.png" alt="برازش با درجه دو" style="max-height:380px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندجمله‌ای</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 گام ۳: درجه ۱۵ ────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">درجه ۱۵</div>
+    <h1 class="slide__title mb-16" style="font-size:30px;">و اگر درجه را خیلی بالا ببریم؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <p class="slide__body" style="font-size:18px;">
+        با <span class="ltr">degree = 15</span>، منحنی آن‌قدر آزاد می‌شود که از کنار تک‌تک نقاط رد می‌شود، حتی نقاطی که فقط نویز هستند.
+      </p>
+      <figure class="slide__figure">
+        <img src="images/poly_degree_15.png" alt="برازش با درجه پانزده" style="max-height:380px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندجمله‌ای</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 هر سه با هم ───────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن نتیجه</div>
+    <h1 class="slide__title mb-16" style="font-size:30px; text-align:center;">همان داده، سه درجه‌ی متفاوت، کنار هم</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/polynomial_fits_neutral.png" alt="مقایسه‌ی برازش با درجه ۱، ۲ و ۱۵" style="max-height:400px;">
+    </figure>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندجمله‌ای</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 KEY TAKEAWAY ──────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:32px; text-align:center;">
+      <div class="big-statement" style="font-size:28px;">
+        این دقیقاً همان جایی است که بحث بیش‌برازش/کم‌برازش شروع می‌شود.
+      </div>
+      <div class="callout--blue callout" style="max-width:720px; text-align:right;">
+        اما قبل از آن، باید یاد بگیریم چطور <strong>عددی</strong> بگوییم مدل خوب است یا بد، نه فقط با چشم.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندجمله‌ای</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

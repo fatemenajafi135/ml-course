@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>رگرسیون خطی ساده | هفته سوم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ── */
+    .formula-box {
+      font-family: var(--font-mono);
+      direction: ltr;
+      text-align: center;
+      font-size: 30px;
+      font-weight: 600;
+      color: var(--dark);
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 22px 32px;
+    }
+    .formula-box .var-w { color: var(--accent); }
+    .formula-box .var-b { color: #2563EB; }
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 18px;
+      color: var(--dark);
+    }
+    .legend-dot {
+      width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته سوم · بخش ۱</div>
+    <h1 class="slide__title">رگرسیون خطی ساده</h1>
+    <h2 class="slide__subtitle" dir="ltr">Simple Linear Regression</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 گام ۱: چند نقطه ساده ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مثال ساده</div>
+    <h1 class="slide__title mb-20" style="font-size:32px;">مجموعه نقطه‌های زیر را روی نمودار ببینید</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <p class="slide__body" style="font-size:19px;">
+        <!-- قبل از هر داده‌ی واقعی، با یک مثال کوچک شروع می‌کنیم: -->
+        چند نقطه که هر کدام یک <span class="ltr">x</span> و یک <span class="ltr">y</span> دارند.
+      </p>
+      <figure class="slide__figure">
+        <img src="images/tiny_scatter_raw.png" alt="چند نقطه پراکنده" style="max-height:340px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 گام ۲: اگر بخواهیم حدس بزنیم ──────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">حدس اول</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;">می‌خواهیم رابطه بین نقاط را حدس بزنیم</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure">
+        <img src="images/tiny_scatter_candidates.png" alt="چند خط حدسی روی نقاط" style="max-height:360px;">
+      </figure>
+      <div>
+        <p class="slide__body mb-16" style="font-size:18px;">
+          چند خط حدسی مختلف را روی نقاط رسم کرده‌ایم.
+        </p>
+        <div class="callout--red callout" style="font-size:17px;">
+          خط‌های قرمز و زرد، اصلاً از وسط نقاط رد نمی‌شوند؛ حدس بدی هستند.
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 گام ۳: یک خط از وسط داده ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">بهترین خط</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;">یک خط، از دل داده</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <figure class="slide__figure">
+        <img src="images/tiny_scatter_bestfit.png" alt="بهترین خط روی نقاط" style="max-height:360px;">
+      </figure>
+      <div class="callout--blue callout" style="font-size:19px; line-height:1.9;">
+        این خط نارنجی، به‌جای هر تک نقطه، از میان <span class="em">روند کلی</span> نقاط رد می‌شود.
+        اگر بخواهیم برای یک <span class="ltr">x</span> جدید حدس بزنیم، دنبال همین خط می‌رویم.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 گام ۴: فاصله هر نقطه تا خط ─────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">فاصله تا خط</div>
+    <h1 class="slide__title mb-16" style="font-size:30px;">این خط چقدر به نقاط نزدیک است؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <div>
+        <p class="slide__body mb-16" style="font-size:18px;">
+          برای اینکه بفهمیم این خط چقدر خوب است، فاصله‌ی عمودی هر نقطه تا خط را اندازه می‌گیریم.
+        </p>
+        <div class="callout--blue callout" style="font-size:17px; line-height:1.8;">
+          هرچه این فاصله‌ها، روی هم، کوچک‌تر باشند، خط بهتری داریم.
+        </div>
+      </div>
+      <figure class="slide__figure">
+        <img src="images/tiny_distances.png" alt="فاصله هر نقطه تا بهترین خط" style="max-height:380px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 گام ۵: نوشتن خط با فرمول ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">فرمول</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">حالا این خط را با فرمول می‌نویسیم</h1>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:22px; flex:1; justify-content:center;">
+      <div class="formula-box">
+        ŷ&nbsp;=&nbsp;<span class="var-w">w</span>·x&nbsp;+&nbsp;<span class="var-b">b</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px; max-width:640px; width:100%;">
+        <div class="legend-row">
+          <span class="legend-dot" style="background:var(--accent);"></span>
+          <span><span class="ltr" style="font-weight:700;">w</span> (وزن / شیب): با یک واحد افزایش <span class="ltr">x</span>، <span class="ltr">ŷ</span> چقدر بالا می‌رود.</span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-dot" style="background:#2563EB;"></span>
+          <span><span class="ltr" style="font-weight:700;">b</span> (بایاس / عرض از مبدأ): مقدار <span class="ltr">ŷ</span> وقتی <span class="ltr">x = 0</span> است، جایی که خط محور را قطع می‌کند.</span>
+        </div>
+        <div class="legend-row">
+          <span class="legend-dot" style="background:var(--mid);"></span>
+          <span><span class="ltr" style="font-weight:700;">ŷ</span> (y-hat): مقدار <strong>پیش‌بینی‌شده</strong> روی خط، در برابر <span class="ltr">y</span> که مقدار <strong>واقعی</strong> نقطه است.</span>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 گام ۶: بهترین خط یعنی چه ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;">اما چرا این خط، «بهترین» است؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <div>
+        <p class="slide__body mb-16" style="font-size:18px;">
+          هر خط حدسی، برای هر نقطه یک فاصله (خطا) دارد.
+          «بهترین» خط، خطی است که مجموع مربعات این فاصله‌ها کمترین باشد:
+        </p>
+        <div class="callout--blue callout" style="font-size:16px; direction:ltr; text-align:center; font-family:var(--font-mono);">
+          cost = mean( (y − ŷ)² )
+        </div>
+      </div>
+      <ul class="slide__list" style="font-size:17.5px;">
+        <li>مربع کردن، فاصله‌های مثبت و منفی را خنثی نمی‌کند.</li>
+        <li>خطاهای بزرگ، هزینه‌ی بسیار سنگین‌تری می‌گیرند.</li>
+        <li>برای پیدا کردن دقیق <span class="ltr">w</span> و <span class="ltr">b</span> هزینه را کمینه می‌کنیم؛ به کمک <span class="ltr">scikit-learn</span>  این کار را انجام می‌دهیم.</li>
+      </ul>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07b گام ۷: هزینه بر حسب w ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">جست‌وجوی w و b</div>
+    <h1 class="slide__title mb-16" style="font-size:30px;"> <span class="ltr">w</span> و <span class="ltr">b</span> را از کجا پیدا می‌کنیم؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <div>
+        <p class="slide__body mb-16" style="font-size:17.5px;">
+          فرض کنید <span class="ltr">b</span> را ثابت نگه داریم و فقط <span class="ltr">w</span> را عوض کنیم.
+          برای هر <span class="ltr">w</span>، یک عدد هزینه به‌دست می‌آید.
+        </p>
+        <div class="callout--blue callout" style="font-size:16.5px; line-height:1.8;">
+          این نمودار، شکل یک <strong>کاسه</strong> دارد. هرچه از پایین کاسه دورتر شویم، هزینه بیشتر می‌شود.
+          نقطه‌ای که هزینه کمترین است، همان بهترین <span class="ltr">w</span> است.
+        </div>
+      </div>
+      <figure class="slide__figure">
+        <img src="images/cost_vs_w.png" alt="نمودار هزینه بر حسب w" style="max-height:380px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07c گام ۸: سطح هزینه سه‌بعدی ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">فضای هزینه</div>
+    <h1 class="slide__title mb-16" style="font-size:28px;">در واقعیت، <span class="ltr">w</span> و <span class="ltr">b</span> با هم جابه‌جا می‌شوند</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <figure class="slide__figure">
+        <img src="images/cost_surface.png" alt="سطح سه‌بعدی هزینه بر حسب w و b" style="max-height:400px;">
+      </figure>
+      <div>
+        <p class="slide__body mb-16" style="font-size:17px;">
+          حالا فضای هزینه یک <strong>کاسه‌ی سه‌بعدی</strong> است: یک محور برای <span class="ltr">w</span>، یک محور برای <span class="ltr">b</span>، و ارتفاع یعنی هزینه.
+        </p>
+        <div class="callout--blue callout" style="font-size:16px; line-height:1.8;">
+          خط تیره، مسیر جست‌وجوی مدل را نشان می‌دهد: قدم‌به‌قدم به سمت پایین کاسه حرکت می‌کند، تا به کمترین هزینه برسد.
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07d گام ۹: دو راه برای رسیدن به ته کاسه ───────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:28px; text-align:center;">
+      <!-- <div class="slide__eyebrow" style="color:var(--accent);">این جست‌وجو را چه کسی انجام می‌دهد؟</div> -->
+      <div class="big-statement" style="font-size:30px;">
+        جستجوی <span class="ltr">w</span> و <span class="ltr">b</span> مناسب چگونه انجام می‌شود؟
+        <!-- خودِ <span class="ltr">scikit-learn</span>، با یکی از این دو روش -->
+      </div>
+      <div style="display:flex; gap:28px;">
+        <div style="background:var(--white); border-radius:var(--radius); padding:20px 32px; min-width:220px;">
+          <div style="font-size:22px; font-weight:700; color:var(--accent); direction:ltr;">Normal Equation</div>
+          <div style="font-size:14px; color:var(--mid); margin-top:6px;">یک فرمول، یک محاسبه</div>
+        </div>
+        <div style="background:var(--white); border-radius:var(--radius); padding:20px 32px; min-width:220px;">
+          <div style="font-size:22px; font-weight:700; color:var(--dark); direction:ltr;">Gradient Descent</div>
+          <div style="font-size:14px; color:var(--mid); margin-top:6px;">گام‌به‌گام رو به پایین</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07e گام ۱۰: Normal Equation مفهوم ─────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">روش اول · Normal Equation</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;"><span class="ltr">Normal Equation</span>: حل مستقیم مسئله</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:36px;">
+      <p class="slide__body" style="font-size:18px;">
+        شبیه حل کردن یک معادله‌ی ریاضی معمولی است: عدد ۲x = ۱۰ را حدس نمی‌زنید، مستقیم دو طرف را بر ۲ تقسیم می‌کنید و جواب را می‌گیرید.
+      </p>
+      <div class="callout--blue callout" style="font-size:17px; line-height:1.9;">
+        <span class="ltr">Normal Equation</span> هم دقیقاً همین کار را با داده‌ی ما می‌کند:
+        یک فرمول ریاضی که با <strong>یک بار</strong> جای‌گذاری <span class="ltr">x</span>ها و <span class="ltr">y</span>ها،
+        دقیق‌ترین <span class="ltr">w</span> و <span class="ltr">b</span> را مستقیم محاسبه می‌کند؛ بدون هیچ حدس یا گام تکراری.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07f گام ۱۱: Normal Equation فرمول ─────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">روش اول · فرمول</div>
+    <!-- <h1 class="slide__title mb-24" style="font-size:28px; text-align:center;">فرمول، فقط برای دیدن؛ نه برای حل با دست</h1> -->
+    <div style="display:flex; flex-direction:column; align-items:center; gap:20px; flex:1; justify-content:center;">
+      <div class="formula-box" style="font-size:26px;">θ&nbsp;=&nbsp;(Xᵀ X)⁻¹ Xᵀ y</div>
+      <p class="slide__body" style="font-size:16.5px; max-width:700px; text-align:center;">
+        <span class="ltr">θ</span> (تتا) نماد کلی همان <span class="ltr">w</span> و <span class="ltr">b</span> است،
+        و <span class="ltr">X</span> و <span class="ltr">y</span> کل داده‌ی ما هستند.
+      </p>
+      <!-- <div class="callout--red callout" style="font-size:16px; text-align:center;">
+        این فرمول را هرگز با دست حل نمی‌کنید؛ کافی است بدانید چنین فرمولی وجود دارد و
+        <span class="ltr">scikit-learn</span> آن را در پس‌زمینه محاسبه می‌کند.
+      </div> -->
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07g گام ۱۲: Normal Equation محدودیت ───────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">روش اول · محدودیت</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">پس چرا همیشه از این فرمول استفاده نمی‌کنیم؟</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/normal_eq_growth.png" alt="رشد زمان محاسبه Normal Equation در برابر تعداد ویژگی‌ها" style="max-height:360px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:16px; text-align:center;">
+      وقتی تعداد ویژگی‌ها خیلی زیاد شود، محاسبه‌ی این فرمول بسیار کند می‌شود. اینجاست که به یک روش جایگزین نیاز داریم.
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07h گام ۱۳: Gradient Descent مفهوم ────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">روش دوم · Gradient Descent</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;"><span class="ltr">Gradient Descent</span>: قدم‌به‌قدم به سمت پایین</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:36px;">
+      <p class="slide__body" style="font-size:18px;">
+        تصور کنید چشم‌بسته روی یک تپه ایستاده‌اید و می‌خواهید به پایین‌ترین نقطه برسید.
+        زیر پایتان را حس می‌کنید، یک قدم به‌سمت شیب‌دارترین جهت رو به پایین برمی‌دارید، و این کار را تکرار می‌کنید.
+      </p>
+      <div class="callout--blue callout" style="font-size:17px; line-height:1.9;">
+        <span class="ltr">Gradient Descent</span> همین کار را با <span class="ltr">w</span> و <span class="ltr">b</span> می‌کند:
+        از یک نقطه‌ی تصادفی شروع می‌کند، و در هر قدم، کمی به سمت <strong>کاهش هزینه</strong> حرکت می‌کند، تا وقتی به ته کاسه برسد.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07i گام ۱۴: Gradient Descent نمودار گام‌ها ───────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">روش دوم · گام‌های جست‌وجو</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">هر قدم، کمی نزدیک‌تر به ته کاسه</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/gd_iterations.png" alt="گام‌های Gradient Descent روی نمودار هزینه" style="max-height:400px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:16px; text-align:center;">
+      قدم ۰ شروع تصادفی است. هر قدم بعدی، هزینه را کمی کمتر می‌کند، تا قدم‌های ۴ و ۵ که عملاً به پایین کاسه رسیده‌اند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07j گام ۱۵: نرخ یادگیری ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">روش دوم · نرخ یادگیری</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">اندازه‌ی هر قدم هم مهم است</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/learning_rate_comparison.png" alt="مقایسه نرخ یادگیری کوچک، مناسب و بزرگ" style="max-height:340px;">
+    </figure>
+    <div class="cols-2" style="gap:24px; margin-top:8px;">
+      <div class="callout--red callout" style="font-size:15px; text-align:center;">
+        قدم‌های خیلی کوچک → رسیدن به ته کاسه، بسیار کند
+      </div>
+      <div class="callout--red callout" style="font-size:15px; text-align:center;">
+        قدم‌های خیلی بزرگ → رد شدن از ته کاسه و واگرایی
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07k گام ۱۶: جمع‌بندی مقایسه ───────────────────────────── -->
+  <div class="slide slide--content">
+    <!-- <div class="slide__eyebrow">جمع‌بندی</div> -->
+    <h1 class="slide__title mb-24" style="font-size:30px; text-align:center;">چه زمانی از هر یک از روش‌ها استفاده می‌کنیم؟</h1>
+    <div class="cols-2" style="gap:28px; flex:1; align-items:center;">
+      <div class="callout" style="font-size:16.5px; line-height:1.85;">
+        <strong class="ltr" style="color:var(--accent);">Normal Equation</strong><br>
+        یک محاسبه، جواب دقیق<br>
+        مناسب برای داده با تعداد ویژگی‌های کم تا متوسط
+      </div>
+      <div class="callout" style="font-size:16.5px; line-height:1.85;">
+        <strong class="ltr" style="color:var(--dark);">Gradient Descent</strong><br>
+        تکرار گام‌به‌گام، جواب تقریبی<br>
+        مناسب برای داده‌های بزرگ و تعداد ویژگی‌های زیاد
+      </div>
+    </div>
+    <div class="callout--red callout" style="font-size:16px; margin-top:16px;">
+      جزئیات ریاضی این دو روش از حوزه‌ی این دوره خارج است؛ کافی است بدانید این اتفاق پشت صحنه می‌افتد، و
+      <span class="ltr">scikit-learn</span> خودش روش مناسب را انتخاب می‌کند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 گام ۱۷: حالا داده واقعی ────────────────────────────── -->
+  <div class="slide slide--content">
+    <!-- <div class="slide__eyebrow">داده واقعی</div> -->
+    <h1 class="slide__title mb-16" style="font-size:30px;">رگرسیون ساده روی داده واقعی</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <div>
+        <p class="slide__body mb-16" style="font-size:18px;">
+          حالا به‌جای چند نقطه ساخته‌شده، از داده‌ی واقعی <span class="ltr">California Housing</span> استفاده می‌کنیم:
+        </p>
+        <div class="callout" style="font-size:17px; line-height:1.8;">
+          از روی <span class="em">میانگین درآمد یک منطقه</span> (<span class="ltr">MedInc</span>)،
+          <span class="em">میانگین ارزش خانه</span> (<span class="ltr">MedHouseVal</span>) را پیش‌بینی می‌کنیم.
+        </div>
+      </div>
+      <figure class="slide__figure">
+        <img src="images/simple_regression_fit.png" alt="داده واقعی California Housing با خط برازش" style="max-height:360px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 نکته: همان اصل، داده پرنقطه‌تر ─────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">نکته</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">هزاران نقطه، همان یک اصل</h1>
+    <div class="callout--blue callout" style="font-size:19px; line-height:1.9;">
+      این‌جا به‌جای ۱۴ نقطه، بیش از ۶۰۰ منطقه داریم. اما اصل تغییری نکرده:
+      هنوز دنبال یک خط راست می‌گردیم که مجموع مربعات فاصله‌اش تا نقاط، کمترین باشد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 KEY TAKEAWAY ──────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:32px; text-align:center;">
+      <div class="big-statement" style="font-size:32px;">
+        یک ویژگی، یک خط، دو عدد (<span class="ltr">w</span> و <span class="ltr">b</span>)
+      </div>
+      <div class="callout--blue callout" style="max-width:700px; text-align:right;">
+        قدم بعدی: اگر بیش از یک ویژگی داشته باشیم چه؟ 
+        <br>
+        همین ایده را به چند ویژگی همزمان تعمیم می‌دهیم.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون ساده</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

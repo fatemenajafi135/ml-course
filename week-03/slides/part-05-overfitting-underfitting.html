@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>بیش‌برازش و کم‌برازش | هفته سوم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .verdict-2 {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      flex: 1;
+      align-items: center;
+    }
+    .verdict-2-card {
+      flex: 1;
+      max-width: 420px;
+      border-radius: var(--radius);
+      padding: 24px 28px;
+    }
+    .verdict-2-card__title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .verdict-2-card__body { font-size: 16.5px; line-height: 1.8; }
+    .solution-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .solution-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 17px;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    .solution-list .num {
+      flex-shrink: 0;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .complexity-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 16px;
+      direction: ltr;
+      text-align: left;
+    }
+    .complexity-table th {
+      background: var(--accent);
+      color: var(--white);
+      padding: 10px 16px;
+      font-weight: 600;
+    }
+    .complexity-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+    }
+    .complexity-table tr:nth-child(even) td { background: var(--light); }
+
+    /* split bar */
+    .split-bar {
+      display: flex;
+      direction: ltr;
+      height: 64px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      font-weight: 700;
+      color: white;
+      font-size: 17px;
+    }
+    .split-bar > div { display: flex; align-items: center; justify-content: center; }
+    .split-train { flex: 4; background: var(--accent); }
+    .split-test { flex: 1; background: var(--dark); }
+
+    /* k-fold grid */
+    .kfold-row {
+      display: flex;
+      gap: 8px;
+      direction: ltr;
+      margin-bottom: 10px;
+    }
+    .kfold-cell {
+      flex: 1;
+      height: 40px;
+      border-radius: 6px;
+      background: var(--light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .kfold-cell.valid {
+      background: var(--accent);
+      color: white;
+    }
+    .kfold-label {
+      width: 70px;
+      flex-shrink: 0;
+      font-size: 13px;
+      color: var(--mid);
+      display: flex;
+      align-items: center;
+      direction: rtl;
+    }
+    .kfold-wrap { display: flex; align-items: center; gap: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته سوم · بخش ۵</div>
+    <h1 class="slide__title">بیش‌برازش و کم‌برازش</h1>
+    <h2 class="slide__subtitle" dir="ltr">Overfitting &amp; Underfitting</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 Train/Test Split ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">پیش‌نیاز</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">چرا داده را تقسیم می‌کنیم؟</h1>
+    <div class="callout mb-28" style="font-size:19px; line-height:1.9;">
+      اگر مدل را روی همان داده‌ای ارزیابی کنیم که رویش آموزش دیده، مثل این است که به دانش‌آموز، امتحان را از روی همان برگه‌ی تمرینی که جواب‌هایش را دیده، بدهیم.
+    </div>
+    <div class="split-bar mb-12">
+      <div class="split-train">Train: ۸۰٪</div>
+      <div class="split-test">Test: ۲۰٪</div>
+    </div>
+    <p class="slide__body" style="font-size:16px; color:var(--mid); text-align:center;">
+      مدل فقط روی بخش <span class="ltr">Train</span> آموزش می‌بیند؛ بخش <span class="ltr">Test</span> کنار گذاشته می‌شود تا در پایان، فقط برای ارزیابی استفاده شود.
+    </p>
+    <div class="slide__footer">
+      <span>هفته سوم · بیش/کم‌برازش</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 Underfitting / Overfitting ────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دو حالت خرابی</div>
+    <h1 class="slide__title mb-28" style="font-size:32px; text-align:center;">مدل می‌تواند در دو جهت خراب شود</h1>
+    <div class="verdict-2">
+      <div class="verdict-2-card" style="background:#FEF2F2; border:2px solid #EF4444;">
+        <div class="verdict-2-card__title" style="color:#EF4444;">کم‌برازش <span class="ltr" style="font-size:15px; font-weight:400;">Underfitting</span></div>
+        <div class="verdict-2-card__body">
+          مدل آن‌قدر ساده است که حتی الگوی داده آموزش را هم یاد نمی‌گیرد.<br><br>
+          مثال: خط راست برای داده‌ای منحنی.<br><br>
+          علامت: خطای <span class="ltr">train</span> و <span class="ltr">test</span> هر دو بالا و نزدیک هم.
+        </div>
+      </div>
+      <div class="verdict-2-card" style="background:#fff3e8; border:2px solid var(--accent);">
+        <div class="verdict-2-card__title" style="color:var(--accent);">بیش‌برازش <span class="ltr" style="font-size:15px; font-weight:400;">Overfitting</span></div>
+        <div class="verdict-2-card__body">
+          مدل آن‌قدر پیچیده است که نویز داده آموزش را هم حفظ می‌کند.<br><br>
+          مثال: چندجمله‌ای درجه ۱۵ روی چند ده نقطه.<br><br>
+          علامت: خطای <span class="ltr">train</span> خیلی پایین، خطای <span class="ltr">test</span> بالا.
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · بیش/کم‌برازش</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03b همان مثال چندجمله‌ای ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یادآوری</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">همان سه درجه از بخش قبل را دوباره ببینید، این‌بار با تشخیص</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/polynomial_fits.png" alt="مقایسه‌ی برازش با درجه ۱، ۲ و ۱۵ همراه با تشخیص" style="max-height:400px;">
+    </figure>
+    <div class="slide__footer">
+      <span>هفته سوم · بیش/کم‌برازش</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 Bias/Variance شهودی ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">شهود</div>
+    <h1 class="slide__title mb-20" style="font-size:32px; text-align:center;"><span class="ltr">Bias</span> در برابر <span class="ltr">Variance</span></h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <div>
+        <div class="callout--red callout mb-16" style="font-size:16px; line-height:1.85;">
+          <strong>بایاس <span class="ltr" style="font-weight:400; font-size:14px;">(Bias)</span></strong><br>
+          میزان خطایی است که از فرض‌های ساده‌انگارانه‌ی خودِ مدل می‌آید. وقتی بایاس بالاست، مدل حتی با دیدن داده‌ی بیشتر هم الگوی واقعی را نمی‌بیند، چون از پایه دنیا را ساده‌تر از آنچه هست فرض کرده. نتیجه‌اش همان کم‌برازش است.
+        </div>
+        <div class="callout--blue callout" style="font-size:16px; line-height:1.85;">
+          <strong>واریانس <span class="ltr" style="font-weight:400; font-size:14px;">(Variance)</span></strong><br>
+          میزان حساسیت مدل به تغییرات کوچک در داده‌ی آموزشی است. وقتی واریانس بالاست، مدل به‌جای یادگرفتن الگوی کلی، جزئیات و نویز همان نمونه‌ی خاص را حفظ می‌کند. نتیجه‌اش همان بیش‌برازش است.
+        </div>
+      </div>
+      <figure class="slide__figure">
+        <img src="images/bias_variance_targets.png" alt="چهار حالت بایاس و واریانس روی هدف تیراندازی" style="max-height:420px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · بیش/کم‌برازش</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 Learning Curves ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن نتیجه</div>
+    <h1 class="slide__title mb-12" style="font-size:30px; text-align:center;">منحنی یادگیری: خطای <span class="ltr">Train</span> در برابر <span class="ltr">Test</span></h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/learning_curves.png" alt="خطای آموزش و آزمون در برابر پیچیدگی مدل" style="max-height:420px;">
+    </figure>
+    <div class="slide__footer">
+      <span>هفته سوم · بیش/کم‌برازش</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 راه‌حل کم‌برازش ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">راه‌حل‌ها</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">راه‌حل‌های کم‌برازش</h1>
+    <ul class="solution-list">
+      <li><span class="num">۱</span><span>مدل پیچیده‌تر (مثلاً <span class="ltr">degree</span> بالاتر)</span></li>
+      <li><span class="num">۲</span><span>ویژگی‌های بهتر یا بیشتر (<span class="ltr">Feature Engineering</span>)</span></li>
+      <li><span class="num">۳</span><span>کاهش قدرت <span class="ltr">Regularization</span> (اگر از قبل استفاده می‌شد)</span></li>
+    </ul>
+    <div class="slide__footer">
+      <span>هفته سوم · بیش/کم‌برازش</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 راه‌حل بیش‌برازش ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">راه‌حل‌ها</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">راه‌حل‌های بیش‌برازش</h1>
+    <ul class="solution-list">
+      <li><span class="num">۱</span><span><strong>داده‌ی آموزش بیشتر</strong>: ساده‌ترین و اغلب مؤثرترین راه</span></li>
+      <li><span class="num">۲</span><span><strong>ساده‌تر کردن مدل</strong>: کاهش <span class="ltr">degree</span>، حذف ویژگی‌های غیرضروری</span></li>
+      <li><span class="num">۳</span><span><strong>Regularization</strong>: جریمه‌ی ضرایب بزرگ (<span class="ltr">Ridge</span>، <span class="ltr">Lasso</span>، <span class="ltr">ElasticNet</span>)</span></li>
+      <li><span class="num">۴</span><span><strong>Cross-Validation</strong>: انتخاب درست hyperparameter (مثل <span class="ltr">degree</span> یا <span class="ltr">alpha</span>)</span></li>
+    </ul>
+    <div class="slide__footer">
+      <span>هفته سوم · بیش/کم‌برازش</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 Regularization مقدمه کلی ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تمرکز · <span class="ltr">Regularization</span></div>
+    <h1 class="slide__title mb-24" style="font-size:30px;"><span class="ltr">Regularization</span> چیست؟</h1>
+    <div class="callout mb-16" style="font-size:18px; line-height:1.9;">
+      مدل‌های بیش‌برازش‌شده معمولاً برای رد شدن از وسط تک‌تک نقاط، به ضرایب (<span class="ltr">w</span>) بزرگ و نامنظم نیاز پیدا می‌کنند.
+    </div>
+    <div class="callout--blue callout mb-16" style="font-size:18px; line-height:1.9;">
+      <span class="ltr">Regularization</span> یعنی به تابع هزینه، یک <strong>جریمه‌ی اضافه</strong> برای بزرگ‌بودن ضرایب اضافه کنیم.
+      مدل دیگر فقط دنبال کمترین خطا نیست؛ باید بین «خطای کم» و «ضرایب کوچک و ساده» تعادل برقرار کند.
+    </div>
+    <p class="slide__body" style="font-size:16px; text-align:center; color:var(--mid);">
+      این جریمه با یک عدد به نام <span class="ltr">alpha</span> کنترل می‌شود: هرچه <span class="ltr">alpha</span> بزرگ‌تر، فشار برای ساده‌ماندن مدل بیشتر است.
+    </p>
+    <div class="slide__footer">
+      <span>هفته سوم · بیش/کم‌برازش</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 Regularization رویکردها و نمودار ──────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دو رویکرد رایج</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;"><span class="ltr">Ridge</span> و <span class="ltr">Lasso</span>: دو نوع جریمه</h1>
+    <div class="cols-2" style="gap:28px; flex:1; align-items:center;">
+      <div>
+        <div class="callout mb-14" style="font-size:15.5px; line-height:1.75;">
+          <strong class="ltr">Ridge (L2)</strong><br>
+          جریمه‌ی مجموع مربعات ضرایب؛ ضرایب را کوچک می‌کند، معمولاً صفر نمی‌کند.
+        </div>
+        <div class="callout" style="font-size:15.5px; line-height:1.75;">
+          <strong class="ltr">Lasso (L1)</strong><br>
+          جریمه‌ی مجموع قدرمطلق ضرایب؛ می‌تواند ضرایب را دقیقاً صفر کند (انتخاب ویژگی).
+        </div>
+      </div>
+      <figure class="slide__figure">
+        <img src="images/regularization_curves.png" alt="اثر افزایش alpha روی منحنی برازش" style="max-height:340px;">
+      </figure>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center; margin-top:12px;">
+      همان داده‌ی نویزدار و همان درجه‌ی چندجمله‌ای بالا، فقط <span class="ltr">alpha</span> عوض شده؛ هرچه <span class="ltr">alpha</span> بزرگ‌تر، منحنی مسطح‌تر می‌شود.
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · بیش/کم‌برازش</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 Cross-Validation ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تمرکز · Cross-Validation</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">انتخاب hyperparameter بدون شانس</h1>
+    <p class="slide__body mb-20" style="font-size:18px;">
+      به‌جای امتحان‌کردن روی یک تقسیم ثابت <span class="ltr">train/test</span>، داده‌ی آموزش را چند بار
+      به‌شکل‌های مختلف تقسیم می‌کنیم و میانگین عملکرد را می‌گیریم.
+    </p>
+    <div style="display:flex; flex-direction:column; gap:8px; max-width:760px; margin:0 auto; width:100%;">
+      <div class="kfold-wrap">
+        <div class="kfold-label">دور ۱</div>
+        <div class="kfold-row" style="flex:1; margin-bottom:0;">
+          <div class="kfold-cell valid">validation</div>
+          <div class="kfold-cell">train</div>
+          <div class="kfold-cell">train</div>
+          <div class="kfold-cell">train</div>
+          <div class="kfold-cell">train</div>
+        </div>
+      </div>
+      <div class="kfold-wrap">
+        <div class="kfold-label">دور ۲</div>
+        <div class="kfold-row" style="flex:1; margin-bottom:0;">
+          <div class="kfold-cell">train</div>
+          <div class="kfold-cell valid">validation</div>
+          <div class="kfold-cell">train</div>
+          <div class="kfold-cell">train</div>
+          <div class="kfold-cell">train</div>
+        </div>
+      </div>
+      <div class="kfold-wrap">
+        <div class="kfold-label">...</div>
+        <div class="kfold-row" style="flex:1; margin-bottom:0;">
+          <div class="kfold-cell" style="opacity:.4;">...</div>
+          <div class="kfold-cell" style="opacity:.4;">...</div>
+          <div class="kfold-cell" style="opacity:.4;">...</div>
+          <div class="kfold-cell" style="opacity:.4;">...</div>
+          <div class="kfold-cell" style="opacity:.4;">...</div>
+        </div>
+      </div>
+    </div>
+    <p class="slide__body" style="font-size:15.5px; color:var(--mid); text-align:center; margin-top:12px;">
+      هر دور، بخش دیگری برای اعتبارسنجی کنار گذاشته می‌شود؛ در پایان، میانگین ۵ نتیجه معیار قابل‌اعتمادتری است.
+    </p>
+    <div class="slide__footer">
+      <span>هفته سوم · بیش/کم‌برازش</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 11 خلاصه جدول ────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">خلاصه</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">پیچیدگی مدل و خطا</h1>
+    <table class="complexity-table">
+      <thead>
+        <tr><th>Complexity</th><th>Diagnosis</th><th>Train error</th><th>Test error</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Low</td><td>Underfitting</td><td>High</td><td>High</td></tr>
+        <tr><td>Just right</td><td>Good fit</td><td>Low</td><td>Low</td></tr>
+        <tr><td>High</td><td>Overfitting</td><td>Very low</td><td>High</td></tr>
+      </tbody>
+    </table>
+    <div class="slide__footer">
+      <span>هفته سوم · بیش/کم‌برازش</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 12 جمع‌بندی نهایی هفته ───────────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">جمع‌بندی نهایی هفته</div>
+    <h1 class="slide__title mb-32" style="font-size:36px;">
+      اگر فقط یک چیز از این هفته یادتان بماند:
+    </h1>
+    <div style="background:rgba(255,255,255,.1); border-radius:var(--radius); padding:32px 48px; max-width:860px; text-align:right;">
+      <p style="font-size:22px; line-height:1.9; color:rgba(255,255,255,.85);">
+        هدف، مدلی نیست که خطای <span class="ltr" style="color:var(--accent2); font-weight:700;">Train</span> صفر داشته باشد؛
+        هدف مدلی است که روی داده <span class="ltr" style="color:var(--accent2); font-weight:700;">جدید</span> هم خوب عمل کند.
+        <br><br>
+        این تعادل (نه خیلی ساده، نه خیلی پیچیده) قلب یادگیری ماشین است.
+      </p>
+    </div>
+    <div class="slide__footer" style="color:#94A3B8;">
+      <span>هفته سوم · بیش/کم‌برازش</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

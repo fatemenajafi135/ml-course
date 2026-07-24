@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>ارزیابی مدل: R²، RMSE، MAE | هفته سوم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .formula-box {
+      font-family: var(--font-mono);
+      direction: ltr;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--dark);
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 18px 26px;
+    }
+    .formula-box small {
+      display: block;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--mid);
+      margin-top: 6px;
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 17px;
+    }
+    .compare-table th {
+      background: var(--accent);
+      color: var(--white);
+      padding: 10px 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .compare-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .compare-table tr:nth-child(even) td { background: var(--light); }
+    .r2-scale {
+      display: flex;
+      direction: ltr;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 40px;
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+    }
+    .r2-scale > div { display:flex; align-items:center; justify-content:center; }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته سوم · بخش ۴</div>
+    <h1 class="slide__title">ارزیابی مدل</h1>
+    <h2 class="slide__subtitle" dir="ltr">R² · RMSE · MAE</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 چرا ───────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">چرا اندازه‌گیری کنیم؟</div>
+    <h1 class="slide__title mb-24" style="font-size:34px;">فقط نگاه کردن به پیش‌بینی‌ها کافی نیست</h1>
+    <p class="slide__body mb-24" style="font-size:19px;">
+      یک مدل ممکن است هیچ خطای برنامه‌نویسی نداشته باشد، اما پیش‌بینی‌های بدی بدهد.
+      باید یک <span class="em">عدد</span> داشته باشیم که بگوید مدل چقدر خوب است، تا بتوانیم:
+    </p>
+    <ul class="slide__list" style="font-size:19px;">
+      <li>مدل‌ها را با هم مقایسه کنیم</li>
+      <li>بفهمیم آیا مدل برای استفاده واقعی کافی است</li>
+      <li>پیشرفت (یا افت) بعد از هر تغییر را اندازه بگیریم</li>
+    </ul>
+    <div class="slide__footer">
+      <span>هفته سوم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 یادآوری داده ساده ─────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یادآوری</div>
+    <h1 class="slide__title mb-16" style="font-size:30px;">همان نقاط ساده و همان خط را به یاد بیاورید</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <p class="slide__body" style="font-size:18px;">
+        از همین داده‌ی ساده‌ی بخش ۱ دوباره استفاده می‌کنیم، این‌بار برای اندازه‌گیری خطای مدل.
+      </p>
+      <figure class="slide__figure">
+        <img src="images/tiny_scatter_bestfit.png" alt="داده ساده با بهترین خط" style="max-height:340px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 residual ──────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">باقی‌مانده</div>
+    <h1 class="slide__title mb-16" style="font-size:30px;">فاصله‌ی هر نقطه تا خط، یک «باقی‌مانده» است</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <figure class="slide__figure">
+        <img src="images/tiny_residuals.png" alt="خطوط باقی‌مانده از نقاط تا خط" style="max-height:380px;">
+      </figure>
+      <div>
+        <p class="slide__body mb-16" style="font-size:17px;">
+          خط‌چین‌های قرمز، فاصله‌ی هر نقطه‌ی واقعی (<span class="ltr">y</span>) تا پیش‌بینی مدل (<span class="ltr">ŷ</span>) روی خط را نشان می‌دهند.
+        </p>
+        <div class="formula-box" style="font-size:19px;">residual&nbsp;=&nbsp;y&nbsp;−&nbsp;ŷ</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 خلاصه‌کردن residualها ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">خلاصه‌سازی</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">این باقی‌مانده‌ها را چطور در یک عدد خلاصه کنیم؟</h1>
+    <div class="callout--blue callout" style="font-size:19px; line-height:1.9;">
+      هر متریکی که در ادامه می‌بینیم (<span class="ltr">MAE</span>، <span class="ltr">RMSE</span>، <span class="ltr">R²</span>)،
+      فقط یک روش متفاوت برای <span class="em">میانگین‌گیری</span> از همین باقی‌مانده‌هاست.
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 MAE و MSE با نمودار ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن نتیجه</div>
+    <h1 class="slide__title mb-12" style="font-size:28px; text-align:center;">همان باقی‌مانده‌ها، دو روش خلاصه‌سازی</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/tiny_mae_vs_mse_bars.png" alt="مقایسه قدرمطلق و مربع باقی‌مانده‌ها" style="max-height:380px;">
+    </figure>
+    <div class="slide__footer">
+      <span>هفته سوم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 MAE فرمول ─────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">متریک اول</div>
+    <h1 class="slide__title mb-24" style="font-size:34px;"><span class="ltr">MAE</span>: میانگین قدرمطلق خطا</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <div class="formula-box">MAE = mean( &#124;y − ŷ&#124; )</div>
+      <ul class="slide__list" style="font-size:18px;">
+        <li>هم‌واحد با <span class="ltr">y</span> است 
+        </li>
+        <li>به‌راحتی قابل تفسیر است: «به‌طور میانگین، این‌قدر اشتباه می‌کنیم»</li>
+        <li>به هر خطا، بدون توجه به بزرگی‌اش، وزن یکسان می‌دهد</li>
+      </ul>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 MSE/RMSE فرمول ────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">متریک دوم</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;"><span class="ltr">MSE</span> و <span class="ltr">RMSE</span></h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <div class="formula-box">
+        MSE&nbsp;=&nbsp;mean( (y − ŷ)² )
+        <small>RMSE = √MSE</small>
+      </div>
+      <ul class="slide__list" style="font-size:17.5px;">
+        <li><span class="ltr">MSE</span> همان چیزی است که مدل در پشت صحنه کمینه می‌کند</li>
+        <li>واحد <span class="ltr">MSE</span> «مجذور واحد <span class="ltr">y</span>» است؛ به همین دلیل از <span class="em"><span class="ltr">RMSE</span></span> استفاده می‌کنیم که دوباره هم‌واحد با <span class="ltr">y</span> است</li>
+        <li>چون خطا مجذور می‌شود، خطاهای بزرگ (outlier) جریمه‌ی نامتناسب سنگین‌تری می‌گیرند؛ دقیقاً همان چیزی که در نمودار قبل دیدیم</li>
+      </ul>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 مقایسه جدول ───────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مقایسه</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;"><span class="ltr">MAE</span> در برابر <span class="ltr">RMSE</span></h1>
+    <table class="compare-table mb-20">
+      <thead>
+        <tr><th></th><th>MAE</th><th>RMSE</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>حساسیت به outlier</td><td>کم</td><td>زیاد</td></tr>
+        <tr><td>تفسیر</td><td>ساده‌تر</td><td>کمی پیچیده‌تر، هم‌واحد</td></tr>
+        <tr><td>مناسب وقتی...</td><td>چند خطای بزرگ نباید کل ارزیابی را خراب کند</td><td>خطاهای بزرگ واقعاً «بدتر»ند و باید جریمه شوند</td></tr>
+      </tbody>
+    </table>
+    <div class="callout--blue callout" style="font-size:16.5px;">
+      فاصله‌ی زیاد بین <span class="ltr">MAE</span> و <span class="ltr">RMSE</span> خودش نشانه‌ی وجود چند outlier بزرگ در خطاهاست.
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 نمودار outlier ────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن اثر outlier</div>
+    <h1 class="slide__title mb-16" style="font-size:30px; text-align:center;">یک outlier، اثر متفاوت روی هر متریک</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/mae_rmse_outlier.png" alt="اثر یک باقی‌مانده بزرگ روی MAE و RMSE" style="max-height:380px;">
+    </figure>
+    <div class="slide__footer">
+      <span>هفته سوم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 11 R² با نمودار مقایسه ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن نتیجه</div>
+    <h1 class="slide__title mb-12" style="font-size:28px; text-align:center;">قبل از فرمول R²: با چه چیزی مقایسه می‌کنیم؟</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/tiny_r2_comparison.png" alt="مقایسه خطای مدل با خطای حدس میانگین" style="max-height:400px;">
+    </figure>
+    <div class="slide__footer">
+      <span>هفته سوم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 12 R² فرمول ──────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">متریک سوم</div>
+    <h1 class="slide__title mb-16" style="font-size:32px;"><span class="ltr">R²</span>: ضریب تعیین</h1>
+    <div class="callout--blue callout mb-16" style="font-size:16.5px; line-height:1.8;">
+      به زبان ساده: <span class="ltr">R²</span> می‌گوید مدل ما، در مقایسه با ساده‌ترین حدس ممکن (میانگین <span class="ltr">y</span>)، چند درصد از تغییرات <span class="ltr">y</span> را توضیح داده است.
+    </div>
+    <div class="formula-box mb-20" style="font-size:20px;">
+      R² = 1 − (SS_res / SS_tot)
+    </div>
+    <div class="cols-2" style="gap:32px;">
+      <div class="callout" style="font-size:16px; line-height:1.7;">
+        <span class="ltr">SS_res</span> = مجموع (y − ŷ)²<br>
+        <span style="color:var(--mid);">→ خطای مدل ما (نمودار سمت راست)</span>
+      </div>
+      <div class="callout" style="font-size:16px; line-height:1.7;">
+        <span class="ltr">SS_tot</span> = مجموع (y − ȳ)²<br>
+        <span style="color:var(--mid);">→ خطای «حدس زدن میانگین» (نمودار سمت چپ)</span>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 13 R² تفسیر ──────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تفسیر <span class="ltr">R²</span></div>
+    <h1 class="slide__title mb-28" style="font-size:32px;">مدل چند درصد از پراکندگی را توضیح می‌دهد؟</h1>
+    <div class="r2-scale mb-16">
+      <div style="flex:1; background:#EF4444;">R² &lt; 0: بدتر از میانگین</div>
+      <div style="flex:1; background:#F59E0B;">R² = 0: مثل حدس میانگین</div>
+      <div style="flex:2; background:#22C55E;">R² نزدیک ۱: توضیح خوب</div>
+    </div>
+    <ul class="slide__list" style="font-size:17.5px;">
+      <li><span class="ltr">R² = 1</span> → پیش‌بینی کامل، بدون خطا</li>
+      <li><span class="ltr">R² = 0</span> → مدل، هیچ بهتر از حدس‌زدن میانگین <span class="ltr">y</span> نیست</li>
+      <li><span class="ltr">R² &lt; 0</span> → مدل از حدس ساده‌ی میانگین هم بدتر است (ممکن است روی داده تست پیش بیاید)</li>
+      <li>برخلاف <span class="ltr">MAE</span>/<span class="ltr">RMSE</span>، واحد ندارد → مقایسه‌ی مدل‌ها روی دیتاست‌های مختلف را ساده‌تر می‌کند</li>
+    </ul>
+    <div class="slide__footer">
+      <span>هفته سوم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 14 نکته حیاتی ────────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:32px; text-align:center;">
+      <div class="big-statement" style="font-size:30px;">
+        این متریک‌ها را همیشه روی داده‌ی <span class="ltr">Test</span> حساب کنید.
+      </div>
+      <div class="callout--red callout" style="max-width:740px; text-align:right;">
+        یک عدد خوب روی داده‌ی آموزش، هیچ تضمینی نمی‌دهد که مدل روی داده‌ی جدید هم خوب عمل کند.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

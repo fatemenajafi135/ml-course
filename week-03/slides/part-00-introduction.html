@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>معرفی هفته سوم | یادگیری ماشین</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ──────────────────────────────────────── */
+
+    .week-topics {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      direction: rtl;
+      align-items: flex-start;
+    }
+    .week-topic-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 20px;
+      color: rgba(255,255,255,.8);
+      direction: rtl;
+    }
+    .week-topic-item .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .roadmap-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 10px 20px;
+      border: 2px solid #E2E8F0;
+      direction: rtl;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .roadmap-card__right {
+      text-align: right;
+      flex-shrink: 0;
+      min-width: 190px;
+    }
+    .roadmap-card__num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .08em;
+      margin-bottom: 3px;
+    }
+    .roadmap-card__title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .roadmap-card__left {
+      flex: 1;
+      direction: ltr;
+      text-align: left;
+    }
+    .roadmap-card__desc {
+      font-size: 13.5px;
+      color: var(--mid);
+      line-height: 1.5;
+    }
+    .roadmap-card__note {
+      margin-top: 3px;
+      font-size: 12.5px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .key-quote {
+      font-size: 26px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(255,255,255,.9);
+      text-align: center;
+      max-width: 860px;
+    }
+    .key-quote strong {
+      font-weight: 700;
+      color: var(--accent2);
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ──────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته سوم · مقدمه</div>
+    <h1 class="slide__title mb-16">رگرسیون: پیش‌بینی اعداد پیوسته</h1>
+    <h2 class="slide__subtitle mb-40" dir="ltr">Simple · Multiple · Polynomial Regression</h2>
+    <div class="week-topics">
+      <div class="week-topic-item"><span class="num">۱</span><span>رگرسیون خطی <span class="ltr">ساده</span> و <span class="ltr">چندگانه</span></span></div>
+      <div class="week-topic-item"><span class="num">۲</span><span>رگرسیون <span class="ltr">چندجمله‌ای (Polynomial)</span></span></div>
+      <div class="week-topic-item"><span class="num">۳</span><span>ارزیابی مدل: <span class="ltr">R² · RMSE · MAE</span></span></div>
+      <div class="week-topic-item"><span class="num">۴</span><span>بیش‌برازش، کم‌برازش و راه‌حل‌ها</span></div>
+    </div>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 هدف این هفته ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">هدف</div>
+    <h1 class="slide__title mb-28" style="font-size:40px;">هدف این هفته</h1>
+    <div style="display:flex; flex-direction:column; flex:1; justify-content:flex-start; gap:16px; max-width:780px; margin-right:200px;">
+      <div class="callout" style="font-size:19px; line-height:1.9;">
+        برای اولین بار در این دوره، یک <strong>مدل یادگیری ماشین واقعی</strong> آموزش می‌دهیم.
+      </div>
+      <p class="slide__body" style="font-size:18px; font-weight:600;">سوال‌هایی که جواب می‌دهیم:</p>
+      <ul class="slide__list" style="font-size:19px; margin-bottom:4px;">
+        <li>چطور از روی داده، یک عدد پیوسته را پیش‌بینی کنیم؟</li>
+        <li>وقتی رابطه خطی نیست، چه کار کنیم؟</li>
+        <li>از کجا بفهمیم مدل‌مان واقعاً خوب است؟</li>
+        <li>چرا بعضی مدل‌ها روی داده جدید ضعیف عمل می‌کنند و چطور اصلاحشان کنیم؟</li>
+      </ul>
+      <div class="callout--blue callout" style="font-size:19px; line-height:2;">
+        <strong style="color:var(--dark); display:block; margin-bottom:8px;">نکته مهم:</strong>
+        محاسبه‌ی دستی فرمول‌ها هدف ما نیست؛
+        <span class="ltr">scikit-learn</span> این کار را انجام می‌دهد.
+        هدف ما فهمیدن <span class="em">پشت صحنه</span> و توانایی <span class="em">تحلیل نتیجه</span> است.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 نقشه هفته ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ساختار هفته</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;">نقشه هفته</h1>
+    <div style="display:flex; flex-direction:column; gap:11px; flex:1; justify-content:center; max-width:900px; margin:0 auto; width:100%;">
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۱</div>
+          <div class="roadmap-card__title" dir="ltr">Simple Regression</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">یک ویژگی → یک عدد. خط بهترین برازش.</div>
+          <div class="roadmap-card__note" style="direction:rtl; text-align:right;">اولین مدل واقعی دوره</div>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۲</div>
+          <div class="roadmap-card__title" dir="ltr">Multiple Regression</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">چند ویژگی همزمان → یک عدد.</div>
+          <div class="roadmap-card__note" style="direction:rtl; text-align:right;">همان مدل، ورودی بزرگ‌تر</div>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۳</div>
+          <div class="roadmap-card__title" dir="ltr">Polynomial Regression</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">وقتی رابطه یک منحنی است، نه یک خط.</div>
+          <div class="roadmap-card__note" style="direction:rtl; text-align:right;">اولین «دستگیره‌ی پیچیدگی»</div>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۴</div>
+          <div class="roadmap-card__title" dir="ltr">Evaluation Metrics</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc"><span class="ltr">R² · RMSE · MAE</span>: مدل چقدر خوب است؟</div>
+          <div class="roadmap-card__note" style="direction:rtl; text-align:right;">بدون این، فقط حدس می‌زنیم</div>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۵</div>
+          <div class="roadmap-card__title" dir="ltr">Over / Underfitting</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">چرا مدل روی داده جدید ضعیف است، و راه‌حل‌ها.</div>
+          <div class="roadmap-card__note" style="direction:rtl; text-align:right;">جمع‌بندی و اصلاح</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 چرا این ترتیب ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ترتیب هفته</div>
+    <h1 class="slide__title mb-28" style="font-size:36px; text-align:center;">اول می‌سازیم، بعد اندازه می‌گیریم، بعد اصلاح می‌کنیم</h1>
+    <div class="flow" style="flex:1; justify-content:center;">
+      <div class="flow-item">
+        <div class="flow-box" dir="ltr">Build a model · Simple → Multiple → Polynomial</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item">
+        <div class="flow-box" dir="ltr">Measure it · R² · RMSE · MAE</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item">
+        <div class="flow-box flow-box--dim" dir="ltr">Fix it · Overfitting / Underfitting solutions</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 KEY TAKEAWAY ───────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">پیام کلیدی هفته</div>
+    <p class="key-quote">
+      رگرسیون یعنی پیش‌بینی <strong>یک عدد</strong>، نه یک برچسب.
+      <br><br>
+      یک مدل خوب، مدلی نیست که خطای <span class="ltr">Train</span> پایینی دارد؛<br>
+      مدلی است که روی داده‌ی <span class="ltr">Test</span> هم خوب عمل می‌کند.
+    </p>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

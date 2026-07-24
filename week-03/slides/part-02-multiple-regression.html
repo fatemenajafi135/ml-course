@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>رگرسیون خطی چندگانه | هفته سوم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .formula-box {
+      font-family: var(--font-mono);
+      direction: ltr;
+      text-align: center;
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--dark);
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 20px 28px;
+    }
+    .feature-chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      direction: ltr;
+    }
+    .feature-chip {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    .dim-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      direction: ltr;
+    }
+    .dim-box {
+      background: var(--accent);
+      color: var(--white);
+      font-weight: 700;
+      border-radius: var(--radius);
+      padding: 14px 24px;
+      font-size: 18px;
+      text-align: center;
+    }
+    .dim-box--dim { background: var(--mid); }
+    .dim-arrow { font-size: 22px; color: var(--mid); }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته سوم · بخش ۲</div>
+    <h1 class="slide__title">رگرسیون خطی چندگانه</h1>
+    <h2 class="slide__subtitle" dir="ltr">Multiple Linear Regression</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 مسئله ─────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مسئله</div>
+    <h1 class="slide__title mb-24" style="font-size:34px;">اگر یک ویژگی کافی نباشد؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <p class="slide__body" style="font-size:19px;">
+        در بخش قبل، فقط از <span class="ltr">MedInc</span> استفاده کردیم.
+        اما واقعیت این است که ویژگی‌های مهم دیگری نیز وجود دارند مثل: درآمد منطقه، سن خانه، تعداد اتاق‌ها و موقعیت جغرافیایی.
+      </p>
+      <div class="callout--blue callout" style="font-size:18px; text-align:center;">
+        رگرسیون چندگانه، همان ایده‌ی بخش قبل را به <span class="em">چند ویژگی همزمان</span> تعمیم می‌دهد.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندگانه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 گام ۱: دو ویژگی ساده ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مثال ساده</div>
+    <h1 class="slide__title mb-16" style="font-size:30px;">اول با دو ویژگی ساختگی شروع می‌کنیم</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <div>
+        <p class="slide__body mb-16" style="font-size:18px;">
+          به‌جای یک محور <span class="ltr">x</span>، حالا دو محور ورودی داریم:
+          <span class="ltr">feature 1</span> و <span class="ltr">feature 2</span>.
+        </p>
+        <div class="callout" style="font-size:17px; line-height:1.8;">
+          به‌جای یک <strong>خط</strong>، حالا یک <strong>صفحه</strong> باید از دل نقاط رد شود.
+        </div>
+      </div>
+      <figure class="slide__figure">
+        <img src="images/multi_3d_plane.png" alt="صفحه برازش‌شده روی دو ویژگی" style="max-height:400px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندگانه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 شهود هندسی ────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">شهود هندسی</div>
+    <h1 class="slide__title mb-28" style="font-size:32px; text-align:center;">از خط، به صفحه، به ابرصفحه</h1>
+    <div class="dim-flow" style="flex:1;">
+      <div class="dim-box">Line<br><span style="font-size:13px; font-weight:400;">1 feature</span></div>
+      <div class="dim-arrow">→</div>
+      <div class="dim-box">Plane<br><span style="font-size:13px; font-weight:400;">2 features</span></div>
+      <div class="dim-arrow">→</div>
+      <div class="dim-box dim-box--dim">Hyperplane<br><span style="font-size:13px; font-weight:400;">n features</span></div>
+    </div>
+    <div class="callout--blue callout" style="font-size:17px; text-align:center;">
+      با ویژگی سوم، چهارم و بیشتر، دیگر نمی‌توانیم آن را ترسیم کنیم، اما ریاضیات و منطق دقیقاً همان الگو را دنبال می‌کند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندگانه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 مدل ───────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">فرمول</div>
+    <h1 class="slide__title mb-28" style="font-size:34px;">همان ایده، به چند ویژگی تعمیم داده شده</h1>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:24px; flex:1; justify-content:center;">
+      <div class="formula-box">
+        ŷ&nbsp;=&nbsp;w₁·x₁&nbsp;+&nbsp;w₂·x₂&nbsp;+&nbsp;...&nbsp;+&nbsp;wₙ·xₙ&nbsp;+&nbsp;b
+      </div>
+      <p class="slide__body" style="font-size:18px; max-width:760px; text-align:center;">
+        هر ویژگی، یک ضریب (<span class="ltr">wᵢ</span>) مخصوص به خودش می‌گیرد.
+      </p>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندگانه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05b چطور w۱ و w۲ پیدا می‌شوند ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یادآوری از بخش ۱</div>
+    <h1 class="slide__title mb-16" style="font-size:28px;">همان جست‌وجوی کاسه‌مانند، فقط در ابعاد بیشتر</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <div>
+        <p class="slide__body mb-16" style="font-size:17px;">
+          در بخش ۱ دیدیم هزینه بر حسب <span class="ltr">w</span> و <span class="ltr">b</span> یک کاسه می‌سازد.
+          با دو ویژگی، حالا دو وزن (<span class="ltr">w₁</span>, <span class="ltr">w₂</span>) داریم؛ هزینه هنوز هم یک کاسه است،
+          فقط این‌بار از بالا به آن نگاه می‌کنیم.
+        </p>
+        <div class="callout--blue callout" style="font-size:16px; line-height:1.8;">
+          نقطه‌ی وسط دایره‌ها (قرمز)، پایین‌ترین نقطه‌ی کاسه است، یعنی بهترین <span class="ltr">w₁</span> و <span class="ltr">w₂</span>.
+          با ۸ ویژگی، همین کاسه در ابعاد بالاتر است که دیگر قابل رسم نیست، اما <span class="ltr">scikit-learn</span> با همان روش (<span class="ltr">Normal Equation</span> یا <span class="ltr">Gradient Descent</span>) نقطه بهینه آن را پیدا می‌کند.
+        </div>
+      </div>
+      <figure class="slide__figure">
+        <img src="images/cost_surface_multi.png" alt="نمودار کانتور هزینه بر حسب دو وزن" style="max-height:400px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندگانه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 گام ۲: حالا داده واقعی ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">داده واقعی</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;">حالا با همه‌ی ویژگی‌های واقعی</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <p class="slide__body" style="font-size:18px;">
+        در داده‌ی <span class="ltr">California Housing</span>، به‌جای ۲ ویژگی ساختگی، ۸ ویژگی واقعی داریم:
+      </p>
+      <div class="feature-chip-grid">
+        <span class="feature-chip">MedInc</span>
+        <span class="feature-chip">HouseAge</span>
+        <span class="feature-chip">AveRooms</span>
+        <span class="feature-chip">AveBedrms</span>
+        <span class="feature-chip">Population</span>
+        <span class="feature-chip">AveOccup</span>
+        <span class="feature-chip">Latitude</span>
+        <span class="feature-chip">Longitude</span>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندگانه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 تفسیر ضرایب ───────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تفسیر</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">هر ضریب یعنی چه؟</h1>
+    <div class="callout mb-24" style="font-size:19px; line-height:1.9;">
+      <span class="ltr" style="font-weight:700;">wᵢ</span> یعنی: «اگر <span class="ltr">xᵢ</span> یک واحد افزایش یابد و
+      <strong>بقیه‌ی ویژگی‌ها ثابت بمانند</strong>، <span class="ltr">ŷ</span> چقدر تغییر می‌کند؟»
+    </div>
+    <div class="callout--red callout" style="font-size:18px;">
+      تفسیر تک‌تک ضرایب، جدا از هم، می‌تواند گمراه‌کننده باشد؛ مخصوصاً اگر ویژگی‌ها هم‌بسته باشند (مثلاً تعداد اتاق و متراژ خانه).
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندگانه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 نکته مقیاس ────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">نکته</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">مقیاس ویژگی‌ها</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:40px;">
+      <p class="slide__body" style="font-size:18px;">
+        ویژگی‌ها می‌توانند مقیاس‌های بسیار متفاوتی داشته باشند
+        (مثلاً <span class="ltr">Population</span> در حد هزاران، <span class="ltr">AveRooms</span> در حد واحد).
+      </p>
+      <div class="callout--blue callout" style="font-size:17px; line-height:1.9;">
+        این روی <strong>مقایسه‌ی مستقیم اندازه‌ی ضرایب</strong> اثر می‌گذارد، هرچند دقت رگرسیون خطی ساده را خراب نمی‌کند.
+        وقتی به <span class="em">Regularization</span> برسیم، مقیاس‌بندی دیگر اختیاری نیست.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندگانه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 KEY TAKEAWAY ──────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:32px; text-align:center;">
+      <div class="big-statement" style="font-size:30px;">
+        همان ابزار، ورودی بزرگ‌تر.
+      </div>
+      <div class="callout--blue callout" style="max-width:700px; text-align:right;">
+        قدم بعدی: اگر رابطه بین ویژگی و هدف اصلاً خطی نباشد چه؟
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته سوم · رگرسیون چندگانه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>
