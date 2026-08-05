@@ -25,13 +25,25 @@ over and how.
 - Tools of the course: Python, Jupyter Notebook, VS Code, Miniconda, Google Colab
 - Homework: a pure-Python library management system and a student-scores exercise
 
-### [Week 2: NumPy, pandas, and matplotlib](week-02/)
+### [Week 2: NumPy, pandas, matplotlib, and EDA](week-02/)
 - **NumPy**: creating arrays, array anatomy, indexing/slicing/views, reshaping/joining/splitting, iterating, vectorization and broadcasting, aggregations/sorting/searching, linear algebra essentials, random number generation, inserting/appending/deleting elements, performance
 - **pandas**: Series and DataFrames, inspecting a DataFrame, selecting data (`loc`/`iloc`/boolean masks), adding/transforming/dropping columns, sorting/counting/summarizing, handling missing data, `groupby`, combining DataFrames (`concat`/`merge`), reshaping (pivot/melt), pandas in the ML stack
-- **matplotlib** *(coming soon)*: first plots, the Figure/Axes object model, anatomy of a figure, line/scatter plots, bar charts/histograms, styling, subplot grids, saving/displaying figures, matplotlib in the ML stack
+- **matplotlib**: first plots, the Figure/Axes object model, anatomy of a figure, line/scatter plots, bar charts/histograms, styling, subplot grids, saving/displaying figures, matplotlib in the ML stack
+- **EDA & data cleaning**: first look at a dataset (shape, dtypes, summary stats), univariate and bivariate exploration, missing values, duplicates, outliers, and feature scaling (`StandardScaler` vs `MinMaxScaler`)
 
-### Week 3
+### [Week 3: Regression](week-03/)
+- Simple, multiple, and polynomial linear regression on California Housing (plus a synthetic dataset), and how the weights are found
+- Evaluation metrics: MAE, RMSE, R², and residual plots
+- Overfitting and underfitting, learning curves, and the standard fixes: Ridge, Lasso, ElasticNet, and cross-validation
+
+
+### Week 4: Classification - part I
 *Coming soon ...*
+
+
+### Week 5: Classification - part II
+*Coming soon ...*
+
 
 See each week's own `README.md` for the full breakdown.
 

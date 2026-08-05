@@ -1,6 +1,6 @@
-# Week 2: NumPy, pandas, and matplotlib
+# Week 2: NumPy, pandas, matplotlib, and EDA
 
-This week covers NumPy, pandas, and matplotlib, the core Python libraries the rest of the ML stack is built on.
+This week covers NumPy, pandas, and matplotlib — the core Python libraries the rest of the ML stack is built on — plus a first pass at exploratory data analysis (EDA) and data cleaning.
 
 ## How to work through this week
 
@@ -8,10 +8,12 @@ This week covers NumPy, pandas, and matplotlib, the core Python libraries the re
 2. In your own repo `ml-course-labs`, create a `week-02/` folder.
 3. Copy this week's README, notebooks, and assets into it:
    ```
-   cp ../ml-course/week-02/README.md             week-02/
-   cp ../ml-course/week-02/01_numpy.ipynb        week-02/
-   cp ../ml-course/week-02/02_pandas.ipynb       week-02/
-   cp -r ../ml-course/week-02/assets             week-02/
+   cp ../ml-course/week-02/README.md                    week-02/
+   cp ../ml-course/week-02/01_numpy.ipynb               week-02/
+   cp ../ml-course/week-02/02_pandas.ipynb              week-02/
+   cp ../ml-course/week-02/03_matplotlib.ipynb          week-02/
+   cp ../ml-course/week-02/04_eda_data_cleaning.ipynb   week-02/
+   cp -r ../ml-course/week-02/assets                    week-02/
    ```
 4. Open each notebook and choose **Restart & Run All**, so the outputs reflect your own execution.
 5. For each notebook, create your own `<topic>_hw.ipynb` applying what it covered. This is your homework. It isn't handed to you.
@@ -22,5 +24,6 @@ This week covers NumPy, pandas, and matplotlib, the core Python libraries the re
 - The complete notebooks, explained cell by cell
   - `01_numpy.ipynb`
   - `02_pandas.ipynb`
-  - `03_matplotlib.ipynb` (coming soon!)
+  - `03_matplotlib.ipynb`
+  - `04_eda_data_cleaning.ipynb`
 
