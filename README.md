@@ -36,10 +36,12 @@ over and how.
 - Evaluation metrics: MAE, RMSE, R², and residual plots
 - Overfitting and underfitting, learning curves, and the standard fixes: Ridge, Lasso, ElasticNet, and cross-validation
 
-
-### Week 4: Classification - part I
-*Coming soon ...*
-
+### [Week 4: Classification](week-04/)
+- Logistic Regression (sigmoid, probability, decision boundaries, thresholds)
+- Evaluation metrics: Confusion Matrix, Precision, Recall, F1, Precision/Recall trade-off, ROC/AUC
+- K-Nearest Neighbors as an equation-free classifier
+- Decision Trees and sequential yes/no questions
+- Comparing Logistic Regression, KNN, and Decision Trees
 
 ### Week 5: Classification - part II
 *Coming soon ...*

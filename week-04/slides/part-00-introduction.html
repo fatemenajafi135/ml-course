@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>معرفی هفته چهارم | یادگیری ماشین</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ──────────────────────────────────────── */
+
+    .week-topics {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      direction: rtl;
+      align-items: flex-start;
+    }
+    .week-topic-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 20px;
+      color: rgba(255,255,255,.8);
+      direction: rtl;
+    }
+    .week-topic-item .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .roadmap-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 10px 20px;
+      border: 2px solid #E2E8F0;
+      direction: rtl;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .roadmap-card__right {
+      text-align: right;
+      flex-shrink: 0;
+      min-width: 190px;
+    }
+    .roadmap-card__num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .08em;
+      margin-bottom: 3px;
+    }
+    .roadmap-card__title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .roadmap-card__left {
+      flex: 1;
+      direction: ltr;
+      text-align: left;
+    }
+    .roadmap-card__desc {
+      font-size: 13.5px;
+      color: var(--mid);
+      line-height: 1.5;
+    }
+    .roadmap-card__note {
+      margin-top: 3px;
+      font-size: 12.5px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .key-quote {
+      font-size: 26px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(255,255,255,.9);
+      text-align: center;
+      max-width: 860px;
+    }
+    .key-quote strong {
+      font-weight: 700;
+      color: var(--accent2);
+    }
+
+    .example-chip {
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 14px 24px;
+      font-size: 17px;
+      color: var(--dark);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-width: 220px;
+    }
+    .example-chip .example-chip__en {
+      color: var(--mid);
+      font-size: 13px;
+    }
+    .chips-grid {
+      display: grid;
+      grid-template-columns: repeat(2, auto);
+      gap: 16px;
+      justify-content: center;
+      align-content: center;
+      width: fit-content;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ──────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته چهارم · مقدمه</div>
+    <h1 class="slide__title mb-16">طبقه‌بندی: پیش‌بینی دسته</h1>
+    <h2 class="slide__subtitle mb-40" dir="ltr">Classification Fundamentals</h2>
+    <div class="week-topics">
+      <div class="week-topic-item"><span class="num">۱</span><span><span class="ltr">Logistic Regression</span></span></div>
+      <div class="week-topic-item"><span class="num">۲</span><span>ارزیابی مدل طبقه‌بندی</span></div>
+      <div class="week-topic-item"><span class="num">۳</span><span><span class="ltr">K-Nearest Neighbors</span></span></div>
+      <div class="week-topic-item"><span class="num">۴</span><span><span class="ltr">Decision Tree</span></span></div>
+      <div class="week-topic-item"><span class="num">۵</span><span>مقایسه مدل‌ها</span></div>
+    </div>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 یادآوری رگرسیون ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یادآوری</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;">هفته قبل: پیش‌بینی یک عدد پیوسته</h1>
+    <div class="callout--blue callout mb-20" style="font-size:19px; line-height:1.9;">
+      یادگیری با نظارت (<span class="ltr">Supervised Learning</span>) دو شاخه دارد:
+      <br/>
+      <strong>رگرسیون</strong> (پیش‌بینی عدد)
+      <br/>
+      و
+      <strong>طبقه‌بندی</strong> (پیش‌بینی دسته/برچسب).
+      <br/>
+      هفته‌ی سوم شاخه‌ی اول را دیدیم؛ این هفته کاملاً به شاخه‌ی دوم اختصاص دارد.
+    </div>
+    <p class="slide__body" style="font-size:18px;">
+      سوال این هفته: به‌جای «قیمت خانه چقدر است؟»، حالا می‌پرسیم 
+       «این ایمیل اسپم است یا نه؟»
+    </p>
+    <div class="slide__footer">
+      <span>هفته چهارم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 چرا رگرسیون کافی نیست ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">چرا یک مدل جدید؟</div>
+    <h1 class="slide__title mb-16" style="font-size:30px;">چرا رگرسیون خطی نمی‌تواند طبقه‌بندی کند؟</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/linear_vs_logistic_fit.png" alt="مقایسه برازش رگرسیون خطی و لجستیک روی داده صفر و یک" style="max-height:360px;">
+    </figure>
+    <div class="callout--red callout" style="font-size:16px; text-align:center;">
+      خط رگرسیون خطی می‌تواند از ۰ و ۱ خارج شود؛ عددی مثل «۴.۳» برای یک برچسب، بی‌معناست.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 مثال‌های طبقه‌بندی ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">کاربردها</div>
+    <h1 class="slide__title mb-24" style="font-size:34px;">مثال‌های طبقه‌بندی در دنیای واقعی</h1>
+    <div class="chips-grid" style="flex:1;">
+      <div class="example-chip"><span>تشخیص اسپم</span><span class="ltr example-chip__en">Spam Detection</span></div>
+      <div class="example-chip"><span>پیش‌بینی بیماری</span><span class="ltr example-chip__en">Disease Prediction</span></div>
+      <div class="example-chip"><span>تحلیل احساسات</span><span class="ltr example-chip__en">Sentiment Analysis</span></div>
+      <div class="example-chip"><span>پیش‌بینی ریزش مشتری</span><span class="ltr example-chip__en">Customer Churn</span></div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 binary vs multiclass ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">اصطلاح‌شناسی</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">طبقه‌بندی دودویی در برابر چندکلاسه</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:36px;">
+      <div class="callout--blue callout" style="font-size:18px; line-height:1.8;">
+        <strong class="ltr" style="color:var(--accent); display:block; margin-bottom:6px;">Binary Classification</strong>
+        فقط دو برچسب ممکن (مثلاً اسپم / غیراسپم). 
+      </div>
+      <div class="callout" style="font-size:18px; line-height:1.8;">
+        <strong class="ltr" style="color:var(--dark); display:block; margin-bottom:6px;">Multiclass Classification</strong>
+        بیش از دو برچسب (مثلاً نوع گل بین چند گونه)
+  
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 یک طبقه‌بند چه چیزی پیش‌بینی می‌کند ────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:24px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">مفهوم کلیدی هفته</div>
+      <div class="big-statement" style="font-size:30px;">
+        یک طبقه‌بند خوب، مستقیم برچسب حدس نمی‌زند؛<br>
+        یک <span class="ltr" style="color:var(--accent);">احتمال</span> تولید می‌کند و بعد با یک آستانه تصمیم می‌گیرد.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 نقشه هفته ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ساختار هفته</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;">نقشه هفته</h1>
+    <div style="display:flex; flex-direction:column; gap:11px; flex:1; justify-content:center; max-width:900px; margin:0 auto; width:100%;">
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۱</div>
+          <div class="roadmap-card__title" dir="ltr">Logistic Regression</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">اولین طبقه‌بند: احتمال، مرز تصمیم خطی، آستانه.</div>
+          <div class="roadmap-card__note" style="direction:rtl; text-align:right;">اولین مدل طبقه‌بندی دوره</div>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۲</div>
+          <div class="roadmap-card__title" dir="ltr">Evaluation Metrics</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc"><span class="ltr">Confusion Matrix · Precision · Recall · ROC/AUC</span></div>
+          <div class="roadmap-card__note" style="direction:rtl; text-align:right;">بدون این، مقایسه بی‌معناست</div>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۳</div>
+          <div class="roadmap-card__title" dir="ltr">K-Nearest Neighbors</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">یادگیری بدون معادله؛ رأی‌گیری بر اساس فاصله.</div>
+          <div class="roadmap-card__note" style="direction:rtl; text-align:right;">یک رویکرد کاملاً متفاوت</div>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۴</div>
+          <div class="roadmap-card__title" dir="ltr">Decision Tree</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">تصمیم‌گیری با پرسش‌های پی‌درپی؛ 
+            <span class="ltr">Gini</span>،
+             بیش‌برازش.</div>
+          <div class="roadmap-card__note" style="direction:rtl; text-align:right;">پایه‌ی بسیاری از الگوریتم‌ها مثل جنگل تصادفی</div>
+        </div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۵</div>
+          <div class="roadmap-card__title" dir="ltr">Comparing Models</div>
+        </div>
+        <div class="roadmap-card__left">
+          <div class="roadmap-card__desc">کدام مدل، چه زمانی؟ جمع‌بندی و تکلیف.</div>
+          <div class="roadmap-card__note" style="direction:rtl; text-align:right;">جمع‌بندی هفته</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 دیتاست این هفته ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیتاست‌ها</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">دیتاست‌های این هفته</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:36px;">
+      <div class="callout" style="font-size:17px; line-height:1.8;">
+        <strong class="ltr" style="color:var(--accent);">Breast Cancer Wisconsin</strong><br>
+        دیتاست اصلی، واقعی و دودویی: از روی ویژگی‌های سلولی یک بافت،
+        <span class="em">خوش‌خیم</span> یا <span class="em">بدخیم</span> بودن را تشخیص می‌دهیم.
+        نمونه‌ی مستقیم «پیش‌بینی بیماری».
+      </div>
+      <div class="callout--blue callout" style="font-size:17px; line-height:1.8;">
+        <strong class="ltr" style="color:var(--dark);">Synthetic 2D (make_moons)</strong><br>
+        چون با ۳۰ ویژگی نمی‌شود مرز تصمیم را دید، از یک دیتاست ساختگی دوبعدی
+        برای <span class="em">دیدن</span> مرز تصمیم استفاده می‌کنیم؛ دقیقاً مثل کاری که با رگرسیون چندجمله‌ای کردیم.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 KEY TAKEAWAY ──────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">پیام کلیدی هفته</div>
+    <p class="key-quote">
+      طبقه‌بندی یعنی پیش‌بینی <strong>یک دسته</strong>، نه یک عدد.
+      <br><br>
+      این هفته سه راه کاملاً متفاوت برای این کار می‌بینیم:
+      یکی با <span class="ltr">یک معادله</span>، یکی بدون هیچ معادله‌ای،
+      و یکی با <span class="ltr">پرسش‌های پی‌درپی</span>.
+    </p>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

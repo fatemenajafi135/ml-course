@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>K نزدیک‌ترین همسایه | هفته چهارم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .formula-box {
+      font-family: var(--font-mono);
+      direction: ltr;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--dark);
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 18px 26px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته چهارم · بخش ۳</div>
+    <h1 class="slide__title">K نزدیک‌ترین همسایه</h1>
+    <h2 class="slide__subtitle" dir="ltr">K-Nearest Neighbors (KNN)</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 سوال متفاوت ───────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:24px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">تا اینجا</div>
+      <div class="big-statement" style="font-size:26px; max-width:800px;">
+        رگرسیون لجستیک یک <span class="ltr" style="color:var(--accent);">معادله</span> یاد می‌گیرد (<span class="ltr">w</span>، <span class="ltr">b</span>، یک مرز خطی).
+      </div>
+      <div class="big-statement" style="font-size:30px; max-width:800px;">
+        حالا سوال متفاوتی می‌پرسیم:<br>
+        «اگر اصلاً نخواهیم <span style="color:var(--accent);">هیچ معادله‌ای</span> یاد بگیریم چه؟»
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · KNN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 شهود ──────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">شهود</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">ایده‌ی <span class="ltr">KNN</span> فوق‌العاده ساده است</h1>
+    <ul class="slide__list" style="font-size:19px;">
+      <li><strong>نمونه‌های مشابه، برچسب مشابه دارند.</strong> برای پیش‌بینی یک نمونه‌ی جدید، به «همسایه‌های» نزدیکش در فضای ویژگی‌ها نگاه می‌کنیم.</li>
+      <li><strong>پیش‌بینی مبتنی بر فاصله:</strong> <span class="ltr">k</span> نزدیک‌ترین نمونه‌ی آموزشی را پیدا می‌کنیم و برچسب اکثریت را می‌گیریم (رأی‌گیری).</li>
+    </ul>
+    <div class="slide__footer">
+      <span>هفته چهارم · KNN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 مثال بصری ─────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">همین یک تصویر کافی است</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">یک نمونه‌ی جدید چطور برچسب می‌گیرد؟</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/knn_intuition.png" alt="سه کلاس نمونه؛ نقطه‌ی جدید (ستاره) به ۵ همسایه‌ی نزدیکش وصل شده و برچسب اکثریت را می‌گیرد" style="max-height:380px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:15px; text-align:center;">
+      ستاره نمونه‌ی جدید است؛ دایره‌ی نقطه‌چین محدوده‌ی <span class="ltr">k</span><span>=</span><span class="ltr">5</span> همسایه‌ی نزدیک را نشان می‌دهد. این‌جا رأی ۳ به ۲ به نفع کلاس <span class="ltr">C</span> تمام می‌شود. تعداد کلاس‌ها می‌تواند هر عددی باشد  -  دو، سه، ده  -  منطق همیشه همین است.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · KNN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 lazy learning ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تفاوت اساسی</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;">یادگیری تنبل <span class="ltr">(Lazy Learning)</span></h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:36px;">
+      <div class="callout" style="font-size:16.5px; line-height:1.8;">
+        <strong class="ltr" style="color:var(--dark); display:block; margin-bottom:6px;">Logistic Regression</strong>
+        در <span class="ltr">fit</span> واقعاً چیزی یاد می‌گیرد (مقادیر <span class="ltr">w</span> و <span class="ltr">b</span>).
+        <span class="ltr">predict</span> سریع است: فقط یک محاسبه‌ی ساده.
+      </div>
+      <div class="callout--blue callout" style="font-size:16.5px; line-height:1.8;">
+        <strong class="ltr" style="color:var(--accent); display:block; margin-bottom:6px;">KNN</strong>
+        در <span class="ltr">fit</span> فقط داده‌ی آموزشی را حفظ می‌کند.
+        تمام محاسبات در لحظه‌ی <span class="ltr">predict</span> انجام می‌شود  -  به همین دلیل «تنبل» نامیده می‌شود.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · KNN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 اثر k ──────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دستگیره‌ی پیچیدگی</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;"><span class="ltr">k</span> کوچک در برابر <span class="ltr">k</span> بزرگ</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/knn_k_comparison.png" alt="مقایسه مرز تصمیم KNN برای مقادیر مختلف k" style="max-height:320px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:15px; text-align:center;">
+      k کوچک → مرز پرپیچ‌وخم، حساس به نویز (بیش‌برازش). k بزرگ → مرز صاف، ممکن است الگوی واقعی را نادیده بگیرد (کم‌برازش).
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · KNN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 معیارهای فاصله ────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">فاصله چطور تعریف می‌شود؟</div>
+    <h1 class="slide__title mb-16" style="font-size:28px;">معیارهای فاصله <span class="ltr">(Distance Metrics)</span></h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <figure class="slide__figure">
+        <img src="images/distance_metrics.png" alt="مقایسه فاصله اقلیدسی و منهتن" style="max-height:320px;">
+      </figure>
+      <div>
+        <ul class="slide__list" style="font-size:17px;">
+          <li><strong class="ltr">Euclidean</strong>: خط مستقیم بین دو نقطه؛ پیش‌فرض معمول.</li>
+          <li><strong class="ltr">Manhattan</strong>: مجموع تفاوت‌ها در هر محور جداگانه (مثل خیابان‌های شطرنجی شهر).</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · KNN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 اهمیت مقیاس‌بندی ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">نکته‌ی حیاتی</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">چرا مقیاس‌بندی برای <span class="ltr">KNN</span> حیاتی است</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/knn_scaling_effect.png" alt="یک نمونه‌ی یکسان، دو پیش‌بینی متفاوت: بدون مقیاس‌بندی همسایه‌ها فقط بر اساس ویژگی ۲ انتخاب می‌شوند و پیش‌بینی اشتباه است؛ بعد از StandardScaler هر دو ویژگی سهم دارند و پیش‌بینی درست است" style="max-height:340px;">
+    </figure>
+    <div class="callout--red callout" style="font-size:14.5px; text-align:center;">
+      همان نقطه‌ی جدید، همان ۵ همسایه‌ی نزدیک  -  ولی بدون مقیاس‌بندی (نمودار سمت چپ) محدوده‌ی ویژگی ۲ آن‌قدر بزرگ است که «دایره‌ی همسایگی» کاملاً صاف می‌شود و همسایه‌ها فقط بر اساس ویژگی ۲ انتخاب می‌شوند؛ ویژگی ۱ عملاً نادیده گرفته می‌شود و پیش‌بینی اشتباه از آب درمی‌آید. بعد از <span class="ltr">StandardScaler</span> (نمودار سمت راست) هر دو ویژگی سهم منصفانه دارند و پیش‌بینی درست می‌شود.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · KNN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 راه‌حل استاندارد ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">راه‌حل استاندارد</div>
+    <h1 class="slide__title mb-24" style="font-size:30px; text-align:center;"><span class="ltr">StandardScaler</span> همیشه قبل از <span class="ltr">KNN</span></h1>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:28px;">
+      <div class="flow" style="flex-direction:row; align-items:center; gap:4px; direction:ltr;">
+        <div class="flow-box" style="background:var(--mid);">Raw features</div>
+        <div class="flow-arrow" style="padding:0 6px;">→</div>
+        <div class="flow-box">StandardScaler</div>
+        <div class="flow-arrow" style="padding:0 6px;">→</div>
+        <div class="flow-box">KNN</div>
+        <div class="flow-arrow" style="padding:0 6px;">→</div>
+        <div class="flow-box" style="background:var(--mid);">Prediction</div>
+      </div>
+      <div class="callout--blue callout" style="max-width:760px; text-align:center; font-size:15.5px;">
+        همان‌طور که در نمودار قبل دیدیم، بدون این قدم پیش‌بینی می‌تواند اشتباه از آب دربیاید. پس این دو مرحله را همیشه با هم و به همین ترتیب به کار می‌بریم  -  هیچ‌وقت <span class="ltr">KNN</span> را روی داده‌ی خام تنها نمی‌گذاریم.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · KNN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 KEY TAKEAWAY ──────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:32px; text-align:center;">
+      <div class="big-statement" style="font-size:30px;">
+        هیچ معادله‌ای یاد نگرفتیم؛ فقط بر اساس شباهت رأی گرفتیم.
+      </div>
+      <div class="callout--blue callout" style="max-width:700px; text-align:right;">
+        قدم بعدی: حالا دو مدل کاملاً متفاوت داریم. کدام‌شان را باید انتخاب کنیم؟
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · KNN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

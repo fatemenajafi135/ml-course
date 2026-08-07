@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>ارزیابی مدل طبقه‌بندی | هفته چهارم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .formula-box {
+      font-family: var(--font-mono);
+      direction: ltr;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--dark);
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 18px 26px;
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 16px;
+    }
+    .compare-table th {
+      background: var(--accent);
+      color: var(--white);
+      padding: 10px 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .compare-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .compare-table tr:nth-child(even) td { background: var(--light); }
+
+    /* Confusion matrix built directly in HTML */
+    .cm-wrap {
+      display: grid;
+      grid-template-columns: auto auto auto;
+      grid-template-rows: auto auto auto;
+      gap: 3px;
+      direction: ltr;
+      font-size: 15px;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+    .cm-cell {
+      padding: 18px 20px;
+      border-radius: 6px;
+      text-align: center;
+      line-height: 1.5;
+    }
+    .cm-corner { background: transparent; }
+    .cm-label-top {
+      background: var(--dark);
+      color: var(--white);
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cm-label-side {
+      background: var(--dark);
+      color: var(--white);
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cm-tn { background: #eaf1fd; }
+    .cm-fp { background: #FEF2F2; }
+    .cm-fn { background: #FEF2F2; }
+    .cm-tp { background: #eaf1fd; }
+    .cm-cell strong { display: block; font-size: 19px; margin-bottom: 4px; }
+
+    .legend-note {
+      font-size: 13.5px;
+      color: var(--mid);
+      text-align: center;
+      margin-top: 6px;
+    }
+    .example-note {
+      font-size: 13.5px;
+      color: var(--mid);
+      text-align: center;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed #E2E8F0;
+    }
+    .example-note strong {
+      color: var(--accent);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته چهارم · بخش ۲</div>
+    <h1 class="slide__title">ارزیابی مدل طبقه‌بندی</h1>
+    <h2 class="slide__subtitle" dir="ltr">Confusion Matrix · Precision · Recall · ROC/AUC</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 چرا Accuracy کافی نیست ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">چرا اندازه‌گیری کنیم؟</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">اولین طبقه‌بند را ساختیم؛ حالا چقدر خوب است؟</h1>
+    <div class="callout--blue callout" style="font-size:18px; line-height:1.85;">
+      ساده‌ترین معیار، <strong class="ltr">Accuracy</strong> (درصد پیش‌بینی‌های درست) است. اما همان‌طور که در این بخش می‌بینیم،
+      به‌تنهایی می‌تواند <span class="em">به‌شدت گمراه‌کننده</span> باشد.
+    </div>
+    <p class="slide__body" style="font-size:16px; color:var(--mid); text-align:center; margin-top:16px;">
+      برای اینکه این مفاهیم واقعاً جا بیفتند، در تمام این بخش از یک صحنه‌ی واحد و واقعی استفاده می‌کنیم:
+      ۳۶ نمونه‌ی واقعی از دیتاست <span class="ltr">Breast Cancer</span> و مدلی که رویشان آموزش دیده.
+    </p>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 صحنه: معرفی نمونه‌ها ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">صحنه‌ی اصلی این بخش</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">با ۳۶ نمونه‌ی واقعی شروع می‌کنیم</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/eval_scene_truth.png" alt="۳۶ نمونه واقعی از دیتاست Breast Cancer، رنگ‌بندی‌شده بر اساس برچسب واقعی" style="max-height:340px;">
+    </figure>
+    <p class="legend-note">
+      هر نقطه یک نمونه‌ی واقعی است؛ رنگ = برچسب واقعی (نارنجی = کلاس مثبت، آبی = کلاس منفی). محورها دو ویژگی واقعی از دیتاست‌اند.
+      «مثبت» و «منفی» فقط دو اسم قراردادی‌اند برای دو کلاس؛ هیچ ربطی به خوب یا بد بودن ندارند.
+    </p>
+    <p class="example-note">
+      <strong>مثال</strong>  -  در این دیتاست خاص: مثبت = بدخیم (malignant)، منفی = خوش‌خیم (benign).
+      اما همین دقیقاً همین چارچوب برای هر مسئله‌ی دودویی دیگری هم کار می‌کند: اسپم/غیراسپم، تقلب/تراکنش عادی، قطعه‌ی معیوب/سالم.
+    </p>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 صحنه: مدل و مرز تصمیم ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">حالا یک مدل آموزش می‌دهیم</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">پس‌زمینه رنگی = پیش‌بینی مدل</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/eval_scene_predictions.png" alt="همان نمونه‌ها با مرز تصمیم و ناحیه‌ی پیش‌بینی مدل" style="max-height:380px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:15px; text-align:center;">
+      همین حالا، بدون هیچ فرمولی، می‌توانید با چشم ببینید مدل کجاها اشتباه کرده: هر نقطه‌ای که رنگش با رنگ پس‌زمینه‌ی زیرش فرق دارد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 Confusion Matrix ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">پایه‌ی همه‌ی معیارها</div>
+    <h1 class="slide__title mb-24" style="font-size:30px; text-align:center;">ماتریس درهم‌ریختگی <span class="ltr">(Confusion Matrix)</span></h1>
+    <div class="cm-wrap">
+      <div class="cm-cell cm-corner"></div>
+      <div class="cm-cell cm-label-top">پیش‌بینی: ۰</div>
+      <div class="cm-cell cm-label-top">پیش‌بینی: ۱</div>
+
+      <div class="cm-cell cm-label-side">واقعی: ۰</div>
+      <div class="cm-cell cm-tn"><strong>TN</strong>True Negative</div>
+      <div class="cm-cell cm-fp"><strong>FP</strong>False Positive</div>
+
+      <div class="cm-cell cm-label-side">واقعی: ۱</div>
+      <div class="cm-cell cm-fn"><strong>FN</strong>False Negative</div>
+      <div class="cm-cell cm-tp"><strong>TP</strong>True Positive</div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 صحنه: چهار خانه روی نقشه ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">همان صحنه، این‌بار با اشتباهات مشخص‌شده</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">این چهار خانه، دقیقاً همین ۳۶ نمونه‌اند</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/eval_scene_confusion_annotated.png" alt="صحنه با حلقه قرمز دور نمونه‌های اشتباه طبقه‌بندی‌شده و شمارش TP TN FP FN" style="max-height:400px;">
+    </figure>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 تفسیر چهار خانه ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تفسیر</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;">چهار حالت ممکن</h1>
+    <ul class="slide__list" style="font-size:19px;">
+      <li><strong class="ltr">TP</strong> (۱۶ نمونه): واقعاً مثبت بود، درست تشخیص دادیم.</li>
+      <li><strong class="ltr">TN</strong> (۱۵ نمونه): واقعاً منفی بود، درست تشخیص دادیم.</li>
+      <li><strong class="ltr">FP</strong> (۳ نمونه): واقعاً منفی بود، اشتباهاً مثبت پیش‌بینی کردیم («هشدار غلط»).</li>
+      <li><strong class="ltr">FN</strong> (۲ نمونه): واقعاً مثبت بود، اشتباهاً منفی پیش‌بینی کردیم («از قلم افتاد»).</li>
+    </ul>
+    <div class="callout--red callout" style="font-size:15.5px; margin-top:auto;">
+      این دو نوع اشتباه معمولاً هزینه‌ی یکسانی ندارند  -  دقیقاً همین تفاوت هزینه، دلیل وجود Precision و Recall به‌جای فقط Accuracy است.
+    </div>
+    <p class="example-note">
+      <strong>مثال</strong>  -  تشخیص بیماری: <span class="ltr">FN</span> (از دست‌دادن یک بیمار واقعاً بدخیم) معمولاً خیلی خطرناک‌تر از <span class="ltr">FP</span> (یک هشدار اضافی) است.
+      در فیلتر اسپم، معمولاً برعکس است: <span class="ltr">FP</span> (اسپم‌زدن به یک ایمیل مهم) گران‌تر از <span class="ltr">FN</span> است.
+    </p>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 Accuracy ──────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">معیار اول</div>
+    <h1 class="slide__title mb-16" style="font-size:30px;"><span class="ltr">Accuracy</span>: دقت کلی</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:28px;">
+      <figure class="slide__figure">
+        <img src="images/eval_scene_accuracy.png" alt="محاسبه Accuracy روی صحنه واقعی" style="max-height:340px;">
+      </figure>
+      <div>
+        <div class="formula-box mb-16" style="font-size:18px;">Accuracy = (TP + TN) / n</div>
+        <p class="slide__body" style="font-size:16px;">
+          نسبت کل پیش‌بینی‌های درست به کل نمونه‌ها. ساده و شهودی  -  همان تعداد نقاطی که <span class="em">حلقه‌ی قرمز ندارند</span>، تقسیم بر کل نقاط.
+        </p>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 Precision ─────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">معیار دوم</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;"><span class="ltr">Precision</span>: فقط ناحیه‌ی «پیش‌بینی مثبت» را نگاه کنید</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/eval_scene_precision.png" alt="محاسبه Precision با تمرکز بر ناحیه پیش‌بینی مثبت" style="max-height:340px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:15px; text-align:center;">
+      از میان همه‌ی مواردی که مدل «مثبت» اعلام کرد، چند درصد واقعاً مثبت بودند؟
+      «وقتی مدل زنگ خطر می‌زند، چقدر می‌توانم به آن اعتماد کنم؟»
+    </div>
+    <p class="example-note">
+      <strong>مثال</strong>  -  فیلتر اسپم: از میان همه‌ی ایمیل‌هایی که مدل «اسپم» علامت زد، چند درصد واقعاً اسپم بودند؟
+      <span class="ltr">Precision</span> پایین یعنی ایمیل‌های مهم هم زیاد اشتباهی اسپم می‌خورند.
+    </p>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 Recall ────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">معیار سوم</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;"><span class="ltr">Recall</span>: فقط نمونه‌های واقعاً مثبت را نگاه کنید</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/eval_scene_recall.png" alt="محاسبه Recall با تمرکز بر نمونه‌های واقعاً مثبت" style="max-height:340px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:15px; text-align:center;">
+      از میان همه‌ی مواردی که واقعاً مثبت بودند، چند درصد را مدل پیدا کرد؟
+      «از بین همه‌ی موارد واقعی، چند تا از دست نرفتند؟»
+    </div>
+    <p class="example-note">
+      <strong>مثال</strong>  -  تشخیص بیماری: از میان همه‌ی بیمارانی که واقعاً بدخیم بودند، چند درصد را مدل پیدا کرد؟
+      <span class="ltr">Recall</span> پایین یعنی چند بیمار واقعی از دست رفته‌اند.
+    </p>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 11 مقایسه‌ی مستقیم Precision/Recall روی صحنه ─────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تفاوت کلیدی</div>
+    <h1 class="slide__title mb-20" style="font-size:28px; text-align:center;">این دو معیار، دو زیرمجموعه‌ی متفاوت از همین صحنه را می‌بینند</h1>
+    <ul class="slide__list" style="font-size:17px;">
+      <li><span class="ltr">Precision</span> فقط سراغ نقاطی می‌رود که <strong>مدل</strong> «مثبت» گفته (یک طرف مرز تصمیم).</li>
+      <li><span class="ltr">Recall</span> فقط سراغ نقاطی می‌رود که <strong>واقعاً</strong> مثبت‌اند (یک رنگ خاص، فارغ از مرز).</li>
+      <li>همین تفاوت زاویه‌ی دید، باعث می‌شود این دو عدد تقریباً همیشه با هم فرق داشته باشند.</li>
+    </ul>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 12 F1 ────────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">معیار چهارم</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;"><span class="ltr">F1-score</span>: تعادل بین این دو</h1>
+    <div class="formula-box mb-16" style="font-size:18px; text-align:center;">F1 = 2 · (Precision · Recall) / (Precision + Recall)</div>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/eval_pr_f1_bar.png" alt="مقایسه Precision، Recall و F1 برای سه استراتژی مختلف" style="max-height:320px;">
+    </figure>
+    <div class="callout--red callout" style="font-size:14.5px; text-align:center;">
+      مدلی که همیشه «مثبت» می‌گوید، Recall کامل دارد اما Precision افتضاح؛ مدل خیلی محتاط برعکس.
+      <span class="ltr">F1</span> هر دو افراط را جریمه می‌کند و فقط به مدل متعادل ما نمره‌ی بالا می‌دهد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 13 مقایسه Precision/Recall ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مقایسه  -  با چند مثال از حوزه‌های مختلف</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;"><span class="ltr">Precision</span> در برابر <span class="ltr">Recall</span></h1>
+    <table class="compare-table" style="font-size:14.5px;">
+      <thead>
+        <tr><th style="width:18%;"></th><th>Precision بالا مهم‌تر است</th><th>Recall بالا مهم‌تر است</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>هزینه‌ی گران‌تر</td><td>هشدار غلط (FP)</td><td>از قلم افتادن مورد واقعی (FN)</td></tr>
+        <tr><td>مثال ۱</td><td>فیلتر اسپم  -  ایمیل مهم را اسپم نزنیم</td><td>تشخیص بیماری  -  بیمار واقعی را از دست ندهیم</td></tr>
+        <tr><td>مثال ۲</td><td>پیشنهاد محتوا  -  چیز نامرتبط پیشنهاد ندهیم</td><td>تشخیص تقلب بانکی  -  تراکنش متقلبانه را از دست ندهیم</td></tr>
+        <tr><td>مثال ۳</td><td>تعدیل محتوا  -  کاربر بی‌گناه را مسدود نکنیم</td><td>کنترل کیفیت کارخانه  -  قطعه‌ی معیوب را رد نکنیم</td></tr>
+        <tr><td>مثال ۴</td><td>دستیار صوتی  -  با صدای اشتباه فعال نشود</td><td>تشخیص نفوذ سایبری  -  حمله‌ی واقعی را از دست ندهیم</td></tr>
+      </tbody>
+    </table>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 14 Class Imbalance ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">وقتی Accuracy دروغ می‌گوید</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">مثال: عدم توازن کلاس‌ها (Class Imbalance)</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/class_imbalance_trap.png" alt="مدلی که همیشه کلاس اکثریت را پیش‌بینی می‌کند" style="max-height:340px;">
+    </figure>
+    <div class="callout--red callout" style="font-size:15.5px; text-align:center;">
+      یک مدل «تنبل» که همیشه پیش‌بینی «سالم» می‌دهد، بدون یادگرفتن هیچ چیزی، به Accuracy = ۹۵٪ می‌رسد  -  اما Recall آن روی کلاس بیمار دقیقاً صفر است.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 15 نتیجه کلیدی imbalance ─────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:24px; text-align:center;">
+      <div class="big-statement" style="font-size:28px;">
+        هر وقت کلاس‌ها نامتوازن‌اند (تقلب، بیماری‌های نادر، خرابی ماشین‌آلات)،<br>
+        حتماً <span class="ltr" style="color:var(--accent);">Precision</span>، <span class="ltr" style="color:var(--accent);">Recall</span> و <span class="ltr" style="color:var(--accent);">F1</span> را هم کنار <span class="ltr">Accuracy</span> نگاه کنید.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 16 آستانه هم روی همین صحنه اثر می‌گذارد ──────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">فراتر از یک آستانه‌ی ثابت</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">همان صحنه، سه آستانه‌ی متفاوت</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/eval_threshold_sweep_scene.png" alt="اثر تغییر آستانه روی مرز تصمیم و شمارش TP TN FP FN" style="max-height:330px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      با جابه‌جایی آستانه، مرز حرکت می‌کند و چهار عدد <span class="ltr">TP/TN/FP/FN</span> عوض می‌شوند  -  دقیقاً همان چیزی که <span class="ltr">Precision</span> و <span class="ltr">Recall</span> را در بخش بعد به «تبادل» می‌رساند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 17 تبادل Precision/Recall ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">فراتر از سه آستانه‌ی دستی</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">تبادل <span class="ltr">Precision</span> و <span class="ltr">Recall</span></h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/precision_recall_tradeoff.png" alt="نمودار تبادل Precision و Recall بر حسب آستانه" style="max-height:320px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:15px; text-align:center;">
+      همان اتفاقِ اسلاید قبل، این‌بار روی مدل کامل و برای <span class="em">همه‌ی</span> آستانه‌های ممکن، نه فقط سه‌تا:
+      با بالا رفتن آستانه، <span class="ltr">Precision</span> بالا می‌رود، <span class="ltr">Recall</span> پایین می‌آید.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 18 ROC Curve ─────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">فقط شهود</div>
+    <h1 class="slide__title mb-16" style="font-size:28px;"><span class="ltr">ROC Curve</span>: عملکرد در همه‌ی آستانه‌ها</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <figure class="slide__figure">
+        <img src="images/roc_curve.png" alt="منحنی ROC برای رگرسیون لجستیک" style="max-height:340px;">
+      </figure>
+      <ul class="slide__list" style="font-size:16px;">
+        <li>هر نقطه روی منحنی، مربوط به یک آستانه‌ی متفاوت است</li>
+        <li>محور افقی: نرخ <span class="ltr">False Positive</span> · محور عمودی: نرخ <span class="ltr">True Positive</span></li>
+        <li>خط قطری = حدس تصادفی؛ هرچه منحنی از آن دورتر و به گوشه‌ی بالا-چپ نزدیک‌تر، بهتر</li>
+      </ul>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 19 AUC به‌زبان رتبه‌بندی ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یک شهود دیگر برای AUC</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">همه‌ی نمونه‌ها، مرتب‌شده بر اساس احتمال پیش‌بینی مدل</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/eval_auc_ranking_strip.png" alt="نمونه‌های تست مرتب‌شده بر اساس احتمال پیش‌بینی، رنگ‌بندی‌شده بر اساس برچسب واقعی" style="max-height:220px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:15px; text-align:center;">
+      مدل خوب، نارنجی‌ها (کلاس مثبت) را در سمت راست و آبی‌ها (کلاس منفی) را در سمت چپ جمع می‌کند.
+      <span class="ltr">AUC</span> یعنی: اگر یک نمونه‌ی مثبت و یک نمونه‌ی منفی را تصادفی انتخاب کنیم، چقدر احتمال دارد مدل امتیاز بالاتری به نمونه‌ی مثبت داده باشد؟
+    </div>
+    <p class="example-note">
+      <strong>مثال</strong>  -  این‌جا مثبت = بدخیم، منفی = خوش‌خیم؛ اکثر نارنجی‌ها درست سمت راست‌اند و اکثر آبی‌ها سمت چپ، جز چند نمونه‌ی مرزی نزدیک آستانه.
+    </p>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 20 AUC اعداد کلیدی ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">خلاصه‌ی یک عدد</div>
+    <h1 class="slide__title mb-16" style="font-size:28px;"><span class="ltr">AUC</span>: مساحت زیر منحنی</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:28px;">
+      <figure class="slide__figure">
+        <img src="images/eval_auc_curve_examples.png" alt="شکل منحنی ROC برای چند سطح مختلف AUC، از حدس تصادفی تا جداسازی تقریباً کامل" style="max-height:360px;">
+      </figure>
+      <ul class="slide__list" style="font-size:16.5px;">
+        <li><span class="ltr">AUC = 0.5</span> → منحنی دقیقاً روی خط قطری؛ مدل هیچ بهتر از حدس تصادفی نیست</li>
+        <li>هرچه منحنی به گوشه‌ی بالا-چپ نزدیک‌تر شود، <span class="ltr">AUC</span> بزرگ‌تر است</li>
+        <li><span class="ltr">AUC = 1.0</span> → جداسازی کامل بین دو کلاس</li>
+        <li>کاربرد اصلی: <span class="em">مقایسه‌ی رتبه‌ای مدل‌ها</span> بدون قفل‌شدن به یک آستانه‌ی خاص</li>
+      </ul>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 20b فراتر از دو کلاس: انگیزه ─────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:24px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">تا این‌جا فقط دو کلاس</div>
+      <div class="big-statement" style="font-size:28px; max-width:820px;">
+        همه‌ی این‌ها را با «مثبت» و «منفی» یاد گرفتیم  -  یعنی دقیقاً دو کلاس.
+      </div>
+      <div class="big-statement" style="font-size:24px; max-width:820px; color:var(--mid);">
+        اما خیلی از مسائل واقعی بیش از دو کلاس دارند: تشخیص نوع حیوان در یک عکس از روی ۱۰ گزینه‌ی ممکن (سگ، گربه، پرنده، ...)، تشخیص نوع محصول، دسته‌بندی خبر.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 20c ماتریس درهم‌ریختگی چندکلاسه ──────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">همان ایده، جدول بزرگ‌تر</div>
+    <h1 class="slide__title mb-12" style="font-size:26px; text-align:center;">ماتریس درهم‌ریختگی برای ۱۰ کلاس</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/eval_multiclass_confusion.png" alt="ماتریس درهم‌ریختگی ۱۰ در ۱۰ برای طبقه‌بندی ده نوع حیوان" style="max-height:400px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      دقیقاً همان ایده‌ی جدول ۲×۲ قبلی، فقط این‌بار ۱۰×۱۰: هر سطر یک کلاس واقعی، هر ستون یک کلاس پیش‌بینی‌شده.
+      قطر = پیش‌بینی‌های درست؛ هر عدد خارج از قطر یعنی «این کلاس با آن یکی اشتباه گرفته شده».
+    </div>
+    <p class="example-note">
+      <strong>نکته</strong>  -  اشتباهات تصادفی پخش نیستند: «گاو» و «گوسفند» بیشتر با هم قاطی می‌شوند تا با «ماهی»، چون از نظر ظاهری و ویژگی‌ها به هم نزدیک‌ترند.
+    </p>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 20d تعمیم TP/TN/FP/FN با one-vs-rest ─────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">TP · TN · FP · FN دیگر هم معنا دارند</div>
+    <h1 class="slide__title mb-12" style="font-size:24px; text-align:center;">برای هر کلاس، آن یکی را «مثبت» و بقیه را «منفی» در نظر بگیرید</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/eval_multiclass_onevsrest.png" alt="تعمیم TP TN FP FN با رویکرد یک-در-برابر-بقیه روی ردیف و ستون گربه" style="max-height:410px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      این روش را <span class="ltr">One-vs-Rest</span> می‌نامند: برای محاسبه‌ی Precision و Recall «گربه»، همان تعریف‌های همیشگی را به کار می‌بریم  -  فقط این‌بار «مثبت» یعنی «گربه» و «منفی» یعنی «هر چیز دیگری».
+      همین کار را برای هر ۱۰ کلاس، یکی‌یکی، تکرار می‌کنیم.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 20e Precision/Recall به ازای هر کلاس ─────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یک عدد به ازای هر کلاس</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">دیگر یک Precision نداریم؛ ۱۰ تا داریم</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/eval_multiclass_per_class_bar.png" alt="نمودار Precision و Recall جداگانه برای هر یک از ده کلاس حیوان" style="max-height:340px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      کلاس‌هایی مثل «فیل» و «ماهی» که ظاهر متمایزی دارند، هم Precision و هم Recall بالایی می‌گیرند؛
+      «گربه»، «گاو» و «گوسفند» که با کلاس‌های مشابه قاطی می‌شوند، عدد پایین‌تری می‌گیرند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 20f جمع‌بندی به یک عدد: macro/weighted ───────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">و اگر فقط یک عدد بخواهیم؟</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;">میانگین‌گیری بین کلاس‌ها</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <div class="callout" style="font-size:15.5px; line-height:1.85;">
+        <strong class="ltr" style="color:var(--dark);">Macro average</strong><br>
+        میانگین ساده‌ی Precision (یا Recall) روی ۱۰ کلاس، بدون توجه به تعداد نمونه‌ی هر کلاس.
+        هر کلاس، هرچقدر هم کوچک، وزن یکسان دارد.
+      </div>
+      <div class="callout--blue callout" style="font-size:15.5px; line-height:1.85;">
+        <strong class="ltr" style="color:var(--accent);">Weighted average</strong><br>
+        همان میانگین، اما با وزن تعداد نمونه‌ی هر کلاس؛ کلاس‌های پرتعداد‌تر، اثر بیشتری روی عدد نهایی می‌گذارند.
+      </div>
+    </div>
+    <div class="callout--red callout" style="font-size:14px; text-align:center; margin-top:12px;">
+      اگر کلاس‌ها نامتوازن‌اند (بخش پیش)، <span class="ltr">Macro average</span> معمولاً تصویر صادق‌تری می‌دهد  -  چون کلاس‌های کوچک را در میانگین گم نمی‌کند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · ارزیابی مدل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 21 KEY TAKEAWAY ──────────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">پیام کلیدی</div>
+    <p class="key-quote" style="font-size:26px; font-weight:300; line-height:1.9; color:rgba(255,255,255,.9); max-width:860px;">
+      یک عدد واحد (<span class="ltr">Accuracy</span>) هرگز کل داستان را نمی‌گوید.
+      <br><br>
+      همیشه <span style="color:var(--accent2); font-weight:700;">Confusion Matrix</span> را نگاه کنید،
+      بپرسید کدام خطا گران‌تر است، و معیار را متناسب با آن انتخاب کنید.
+    </p>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

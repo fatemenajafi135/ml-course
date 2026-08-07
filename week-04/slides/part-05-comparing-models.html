@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>مقایسه مدل‌ها | هفته چهارم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+    .compare-table th {
+      background: var(--accent);
+      color: var(--white);
+      padding: 9px 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .compare-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .compare-table tr:nth-child(even) td { background: var(--light); }
+    .toolbox-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+    }
+    .toolbox-table th {
+      background: var(--dark);
+      color: var(--white);
+      padding: 8px 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .toolbox-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .toolbox-table tr.done td { background: #fff3e8; }
+    .toolbox-table tr.done td:first-child { border-right: 3px solid var(--accent); }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 18px;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    .check-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--accent); color: var(--white);
+      font-size: 14px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته چهارم · بخش ۵</div>
+    <h1 class="slide__title">مقایسه مدل‌ها</h1>
+    <h2 class="slide__subtitle" dir="ltr">Logistic Regression vs. KNN vs. Decision Tree</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 شرط‌های یک مقایسه‌ی عادلانه ────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">پیش از مقایسه</div>
+    <h1 class="slide__title mb-20" style="font-size:26px; text-align:center;">یک مقایسه‌ی عادلانه چه شرایطی دارد؟</h1>
+    <div style="display:flex; flex-direction:column; gap:16px; flex:1; justify-content:center;">
+      <div class="check-item"><span class="check-num">۱</span><span>همان دیتاست و همان تقسیم <span class="ltr">train/test</span> (یا همان <span class="ltr">folds</span> در <span class="ltr">Cross-Validation</span>) برای هر سه مدل.</span></div>
+      <div class="check-item"><span class="check-num">۲</span><span>همان پیش‌پردازش  -  مثلاً اگر <span class="ltr">KNN</span> به مقیاس‌بندی ویژگی‌ها نیاز دارد، باید همان نسخه‌ی مقیاس‌بندی‌شده برای هر سه مدل استفاده شود.</span></div>
+      <div class="check-item"><span class="check-num">۳</span><span>همان معیارهای ارزیابی  -  <span class="ltr">Accuracy</span>، <span class="ltr">Precision</span>، <span class="ltr">Recall</span> و <span class="ltr">F1</span>، نه فقط یکی از آن‌ها.</span></div>
+      <div class="check-item"><span class="check-num">۴</span><span>نتیجه به دیتاست بستگی دارد  -  مدلی که روی یک دیتاست بهتر است، لزوماً روی دیتاست دیگر هم برنده نیست.</span></div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · مقایسه مدل‌ها</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 جدول مقایسه کیفی ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مقایسه‌ی کیفی</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;">سرعت و تفسیرپذیری هم مهم‌اند</h1>
+    <table class="compare-table">
+      <thead>
+        <tr><th></th><th dir="ltr">Logistic Regression</th><th dir="ltr">KNN</th><th dir="ltr">Decision Tree</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>سرعت پیش‌بینی</td><td>سریع</td><td>کندتر با داده‌ی بزرگ</td><td>سریع</td></tr>
+        <tr><td>تفسیرپذیری</td><td>ضرایب قابل تفسیرند</td><td>هیچ معادله‌ای ندارد</td><td>خودِ درخت قابل مشاهده است</td></tr>
+        <tr><td>مرز تصمیم</td><td>همیشه خطی</td><td>هر شکلی، بسته به k</td><td>پله‌ای، بسته به max_depth</td></tr>
+        <tr><td>ثبات</td><td>پایدار</td><td>نسبتاً پایدار</td><td>به‌تنهایی بی‌ثبات</td></tr>
+      </tbody>
+    </table>
+    <div class="slide__footer">
+      <span>هفته چهارم · مقایسه مدل‌ها</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 چه زمانی کدام ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تصمیم‌گیری</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;">چه زمانی کدام مدل را انتخاب کنیم؟</h1>
+    <div style="display:flex; gap:20px; flex:1; align-items:center;">
+      <div class="callout" style="font-size:15px; line-height:1.8; flex:1;">
+        <strong class="ltr" style="color:var(--dark);">Logistic Regression</strong><br>
+        مدل ساده، سریع، قابل‌تفسیر؛ مرز تصمیم تقریباً خطی به‌نظر می‌رسد.
+      </div>
+      <div class="callout--blue callout" style="font-size:15px; line-height:1.8; flex:1;">
+        <strong class="ltr" style="color:var(--accent);">KNN</strong><br>
+        مرز تصمیم پیچیده و غیرخطی است؛ دیتاست کوچک تا متوسط؛ تفسیرپذیری اولویت نیست.
+      </div>
+      <div class="callout" style="font-size:15px; line-height:1.8; flex:1; background:#fff3e8;">
+        <strong class="ltr" style="color:var(--dark);">Decision Tree</strong><br>
+        تفسیرپذیری خیلی مهم است؛ باید دقیقاً بتوانیم توضیح دهیم چرا این تصمیم گرفته شد.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · مقایسه مدل‌ها</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 نقشه راه طبقه‌بندی ─────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">جمع‌بندی بصری</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;">نقشه‌ی راه طبقه‌بندی</h1>
+    <table class="toolbox-table">
+      <thead>
+        <tr><th>خانواده</th><th>الگوریتم نمونه</th></tr>
+      </thead>
+      <tbody>
+        <tr class="done"><td>خطی (Linear)</td><td dir="ltr">Logistic Regression</td></tr>
+        <tr class="done"><td>مبتنی بر نمونه (Instance-based)</td><td dir="ltr">KNN</td></tr>
+        <tr class="done"><td>مبتنی بر درخت (Tree-based)</td><td dir="ltr">Decision Tree</td></tr>
+        <tr><td>گروهی (Ensemble)</td><td dir="ltr">Random Forest, Boosting</td></tr>
+        <tr><td>مبتنی بر مارجین (Margin-based)</td><td dir="ltr">SVM</td></tr>
+        <tr><td>احتمالاتی (Probabilistic)</td><td dir="ltr">Naive Bayes</td></tr>
+      </tbody>
+    </table>
+    <div class="slide__footer">
+      <span>هفته چهارم · مقایسه مدل‌ها</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 مسیر کار با هر مدل ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">جمع‌بندی بصری</div>
+    <h1 class="slide__title mb-24" style="font-size:28px; text-align:center;">فارغ از خانواده، مسیر کار با هر مدل یکسان است</h1>
+    <div class="flow" style="flex-direction:row; justify-content:center; align-items:center; gap:18px; flex:1;">
+      <div class="flow-item"><div class="flow-box flow-box--dim" style="min-width:160px; font-size:17px; padding:16px 22px;">تقسیم داده<br><span class="ltr" style="font-size:13px; opacity:.85;">train / test</span></div></div>
+      <div class="flow-arrow" style="font-size:28px;">←</div>
+      <div class="flow-item"><div class="flow-box" style="min-width:160px; font-size:17px; padding:16px 22px;">آموزش مدل<br><span class="ltr" style="font-size:13px;">fit</span></div></div>
+      <div class="flow-arrow" style="font-size:28px;">←</div>
+      <div class="flow-item"><div class="flow-box" style="min-width:160px; font-size:17px; padding:16px 22px;">پیش‌بینی<br><span class="ltr" style="font-size:13px;">predict</span></div></div>
+      <div class="flow-arrow" style="font-size:28px;">←</div>
+      <div class="flow-item"><div class="flow-box flow-box--dim" style="min-width:190px; font-size:17px; padding:16px 22px;">ارزیابی<br><span class="ltr" style="font-size:13px;">Accuracy · Precision · Recall · F1</span></div></div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · مقایسه مدل‌ها</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 KEY TAKEAWAY نهایی ────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">جمع‌بندی نهایی هفته</div>
+    <p class="key-quote" style="font-size:23px; font-weight:300; line-height:1.9; color:rgba(255,255,255,.9); max-width:900px;">
+      طبقه‌بندی یعنی پیش‌بینی <strong>یک دسته</strong>، با خروجی مفیدتر یعنی <strong>یک احتمال</strong>.
+      <br><br>
+      دیدیم که یک مدل با معادله (<span class="ltr">Logistic Regression</span>)، یک مدل بدون معادله (<span class="ltr">KNN</span>)، و یک مدل با پرسش‌های پی‌درپی (<span class="ltr">Decision Tree</span>) هر سه به یک هدف می‌رسند.
+      <br><br>
+      و یاد گرفتیم <strong style="color:var(--accent2);">هیچ‌وقت</strong> فقط به <span class="ltr">Accuracy</span> اکتفا نکنیم.
+    </p>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

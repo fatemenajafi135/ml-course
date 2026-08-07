@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>رگرسیون لجستیک | هفته چهارم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ── */
+    .formula-box {
+      font-family: var(--font-mono);
+      direction: ltr;
+      text-align: center;
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--dark);
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 20px 28px;
+    }
+    .formula-box small {
+      display: block;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--mid);
+      margin-top: 6px;
+    }
+    .hp-card {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+    .hp-card__name {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      direction: ltr;
+      text-align: left;
+      margin-bottom: 6px;
+    }
+    .hp-card__desc {
+      font-size: 15px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته چهارم · بخش ۱</div>
+    <h1 class="slide__title">رگرسیون لجستیک</h1>
+    <h2 class="slide__subtitle" dir="ltr">Logistic Regression</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 شهود: چرا احتمال ─────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">شهود</div>
+    <h1 class="slide__title mb-20" style="font-size:32px;">چرا پیش‌بینی احتمال بهتر از پیش‌بینی عدد خام است؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:36px;">
+      <p class="slide__body" style="font-size:18px;">
+        به‌جای اینکه مستقیم بگوییم «این ایمیل اسپم است»، بهتر است بگوییم «۹۲٪ احتمال دارد اسپم باشد».
+      </p>
+      <ul class="slide__list" style="font-size:17px;">
+        <li>احتمال بین نمونه‌های مختلف قابل مقایسه است</li>
+        <li>می‌توانیم آستانه‌ی تصمیم را متناسب با مسئله تنظیم کنیم</li>
+        <li>میزان «اطمینان» مدل را هم حفظ می‌کند، نه فقط یک برچسب خام</li>
+      </ul>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 sigmoid ───────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تابع کلیدی</div>
+    <h1 class="slide__title mb-16" style="font-size:30px;">تابع <span class="ltr">Sigmoid</span></h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <figure class="slide__figure">
+        <img src="images/sigmoid_curve.png" alt="نمودار تابع سیگموید" style="max-height:340px;">
+      </figure>
+      <div>
+        <div class="formula-box mb-16" style="font-size:20px;">σ(z) = 1 / (1 + e<sup>−z</sup>)</div>
+        <ul class="slide__list" style="font-size:16.5px;">
+          <li>خروجی همیشه بین ۰ و ۱ است، مهم نیست <span class="ltr">z</span> چقدر بزرگ یا کوچک باشد</li>
+          <li><span class="ltr">z = 0</span> → دقیقاً وسط، <span class="ltr">σ(z) = 0.5</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 مدل کامل (یک ویژگی) ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مدل کامل · یک ویژگی</div>
+    <h1 class="slide__title mb-24" style="font-size:30px;">همان ترکیب خطی هفته قبل، رد شده از <span class="ltr">sigmoid</span></h1>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:20px; flex:1; justify-content:center;">
+      <div class="formula-box">z&nbsp;=&nbsp;w·x&nbsp;+&nbsp;b</div>
+      <div style="font-size:28px; color:var(--mid);">↓</div>
+      <div class="formula-box">P(کلاس = ۱) = σ(z)</div>
+    </div>
+    <div class="callout--blue callout" style="font-size:16px; text-align:center;">
+      رگرسیون لجستیک، دقیقاً همان ترکیب خطی رگرسیون معمولی را می‌سازد؛ فقط قبل از خروجی دادن، آن را از <span class="ltr">sigmoid</span> رد می‌کند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 داده‌ی خام در برابر رگرسیون لجستیک ─────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن روی داده‌ی واقعی</div>
+    <h1 class="slide__title mb-12" style="font-size:28px;">این فرمول، دقیقاً چه تبدیلی روی داده انجام می‌دهد؟</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/bc_single_feature_raw_vs_fit.png" alt="داده‌ی خام شعاع میانگین تومور روی یک محور، در برابر برازش رگرسیون لجستیک" style="max-height:340px;">
+      <figcaption class="slide__caption">
+        دیتاست واقعی <span class="ltr">Breast Cancer Wisconsin</span>: چون طبقه‌بندی است نه رگرسیون، داده‌ی خام (چپ) اصلاً محور <span class="ltr">y</span> ندارد  -  فقط یک محور (شعاع میانگین) و رنگ نمونه‌ها.
+      </figcaption>
+    </figure>
+    <div class="callout--blue callout" style="font-size:15.5px; text-align:center;">
+      محور <span class="ltr">y</span> در نمودار راست (احتمال) بخشی از داده‌ی خام نیست؛ چیزی است که خودِ مدل می‌سازد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 مرز تصمیم به‌عنوان یک نقطه ─────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مرز تصمیم</div>
+    <h1 class="slide__title mb-12" style="font-size:28px;">همین منحنی، حالا با مرز تصمیم مشخص‌شده</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/logistic_single_feature_fit.png" alt="برازش رگرسیون لجستیک روی داده‌ی شعاع میانگین تومور با مرز تصمیم" style="max-height:340px;">
+      <figcaption class="slide__caption">
+        جایی که منحنی از ۰.۵ رد می‌شود، <span class="em">مرز تصمیم</span> مدل است  -  اینجا حدود <span class="ltr">شعاع = ۱۴.۸</span>.
+      </figcaption>
+    </figure>
+    <div class="callout--blue callout" style="font-size:15.5px; text-align:center;">
+      با یک ویژگی، مرز تصمیم فقط یک <span class="em">نقطه</span> روی محور است؛ کمتر از آن «خوش‌خیم»، بیشتر «بدخیم» پیش‌بینی می‌شود.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 آستانه ۰.۵ همیشه بهترین نیست ──────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">آستانه</div>
+    <h1 class="slide__title mb-16" style="font-size:28px;">آستانه <span class="ltr">۰.۵</span> یک قرارداد است، نه یک قانون</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <div class="callout--red callout" style="font-size:16px; line-height:1.8;">
+        در <span class="em">تشخیص بیماری</span>، این‌که مدل یک بیمار واقعی را «سالم» تشخیص بدهد معمولاً خیلی گران‌تر از این است که یک فرد سالم را به‌اشتباه «بیمار» علامت بزند
+        → آستانه را پایین می‌آوریم.
+      </div>
+      <div class="callout--blue callout" style="font-size:16px; line-height:1.8;">
+        در <span class="em">فیلتر اسپم</span>، برچسب‌زدن اشتباه یک ایمیل مهم به‌عنوان اسپم، آزاردهنده‌تر از رد شدن چند اسپم واقعی است
+        → آستانه را بالا می‌بریم.
+      </div>
+    </div>
+    <p style="font-size:13px; color:var(--mid); text-align:center; margin-top:4px;">
+      اسم‌های رسمی این دو نوع خطا (<span class="ltr">False Negative / False Positive</span>) را هفته‌ی بعد در «ارزیابی مدل» با جزئیات می‌بینیم؛ فعلاً همین شهود کافی است.
+    </p>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 اثر تغییر آستانه (یک ویژگی) ───────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن اثر آستانه</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">همان مدل، سه آستانه‌ی متفاوت</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/logistic_threshold_1d.png" alt="اثر تغییر آستانه روی مرز تصمیم با یک ویژگی" style="max-height:340px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:15.5px; text-align:center;">
+      مدل عوض نشده؛ فقط جایی که تصمیم عوض می‌شود (خط عمودی) جابه‌جا شده. آستانه‌ی پایین‌تر یعنی راحت‌تر به «بدخیم» مشکوک می‌شویم.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 چگونه وزن‌ها پیدا می‌شوند: Log Loss ───────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">آموزش مدل</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;">مدل چطور بهترین <span class="ltr">w</span> و <span class="ltr">b</span> را پیدا می‌کند؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <div class="formula-box" style="font-size:17px;">
+        Loss&nbsp;=&nbsp;−[y·log(p)&nbsp;+&nbsp;(1−y)·log(1−p)]
+        <small>معروف به <span class="ltr">Log Loss</span></small>
+      </div>
+      <ul class="slide__list" style="font-size:16.5px;">
+        <li>هر چقدر احتمال پیش‌بینی‌شده (<span class="ltr">p</span>) به برچسب واقعی (<span class="ltr">y</span>) نزدیک‌تر باشد، جریمه کمتر است</li>
+        <li>پیش‌بینی مطمئن ولی غلط، بیشترین جریمه را می‌گیرد</li>
+        <li>الگوریتمی به اسم <span class="ltr">Gradient Descent</span>، وزن‌ها را قدم‌به‌قدم عوض می‌کند تا مجموع این جریمه روی کل داده‌ی آموزشی کمینه شود  -  دقیقاً همین‌طور <span class="ltr">w ≈ 1.03</span> در مدل «شعاع میانگین» پیدا شد</li>
+      </ul>
+    </div>
+    <div class="callout--blue callout" style="font-size:15px; text-align:center;">
+      اگر برچسب واقعی «بدخیم» باشد (<span class="ltr">y = 1</span>):&nbsp;
+      <span class="ltr">p = 0.9 → Loss ≈ 0.10</span> (کم) &nbsp;&nbsp;اما&nbsp;&nbsp;
+      <span class="ltr">p = 0.1 → Loss ≈ 2.30</span> (خیلی زیاد)
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 تفسیر ضرایب: Log-Odds ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تفسیر مدل</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;">وزن واقعاً چه معنایی دارد؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <div class="formula-box" style="font-size:18px;">
+        Odds&nbsp;=&nbsp;p&nbsp;/&nbsp;(1−p)
+        <small>نسبت «احتمال وقوع» به «احتمال عدم وقوع»</small>
+      </div>
+      <ul class="slide__list" style="font-size:16.5px;">
+        <li>در مدل «شعاع میانگین تومور»، وزن <span class="ltr">w ≈ 1.03</span> به دست آمد (همان منحنی چند اسلاید قبل)</li>
+        <li>یعنی: هر ۱ واحد افزایش در شعاع میانگین، شانس بدخیم‌بودن را افزایش می‌دهد  -  به همین دلیل منحنی رو به بالا حرکت می‌کند</li>
+        <li>وزن منفی دقیقاً برعکس عمل می‌کند: افزایش آن ویژگی، احتمال کلاس ۱ را کم می‌کند</li>
+        <li>در ریاضیات دقیق‌تر، <span class="ltr">z</span> همان <span class="ltr">log(Odds)</span> است  -  ولی برای این درس، همین شهود «وزن مثبت/منفی» کافی است</li>
+      </ul>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 11 گسترش به چند ویژگی ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">بخش دوم · گسترش مدل</div>
+    <h1 class="slide__title mb-24" style="font-size:30px;">حالا با بیش از یک ویژگی چه اتفاقی می‌افتد؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:36px;">
+      <div class="formula-box" style="font-size:19px;">
+        z&nbsp;=&nbsp;w<sub>1</sub>x<sub>1</sub>&nbsp;+&nbsp;w<sub>2</sub>x<sub>2</sub>&nbsp;+&nbsp;⋯&nbsp;+&nbsp;w<sub>n</sub>x<sub>n</sub>&nbsp;+&nbsp;b
+        <small>یک وزن (<span class="ltr">w</span>) مستقل برای هر ویژگی، به‌علاوه‌ی یک بایاس (<span class="ltr">bias</span>) مشترک</small>
+      </div>
+      <ul class="slide__list" style="font-size:17px;">
+        <li>فرمول همان <span class="ltr">z = w·x + b</span> است که تا اینجا با یک ویژگی دیدیم؛ فقط این‌بار چند ویژگی داریم که هرکدام وزن خودشان را می‌گیرند</li>
+        <li>هر ویژگی وزن خودش را دارد: وزن مثبت یعنی افزایش آن ویژگی، احتمال کلاس ۱ را بالا می‌برد؛ وزن منفی برعکس</li>
+        <li>دیتاست <span class="ltr">Breast Cancer Wisconsin</span> دقیقاً همین‌طور کار می‌کند: ۳۰ ویژگی → ۳۰ وزن، به‌علاوه‌ی یک <span class="ltr">b</span></li>
+      </ul>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 12 مثال عددی با دو ویژگی ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یک مثال عددی</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;">محاسبه‌ی <span class="ltr">z</span> با دو ویژگی واقعی</h1>
+    <p class="slide__body" style="font-size:14px; text-align:center; color:var(--mid); margin-bottom:10px;">
+      یک <span class="em">بیمار واقعی</span> از دیتاست، و وزن‌های <span class="em">واقعی</span> یک مدل دو-ویژگی که روی کل دیتاست آموزش دیده:
+    </p>
+    <table style="width:fit-content; margin:0 auto 16px; border-collapse:collapse; font-size:16px;">
+      <thead>
+        <tr style="border-bottom:2px solid #E2E8F0;">
+          <th style="text-align:right; padding:8px 18px; color:var(--mid); font-weight:600;">ویژگی</th>
+          <th style="text-align:center; padding:8px 18px; color:var(--mid); font-weight:600;">مقدار بیمار</th>
+          <th style="text-align:center; padding:8px 18px; color:var(--mid); font-weight:600;">وزن آموخته‌شده</th>
+          <th style="text-align:center; padding:8px 18px; color:var(--mid); font-weight:600;">جمله</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #E2E8F0;">
+          <td style="padding:8px 18px;">شعاع میانگین <span class="ltr" style="color:var(--mid); font-size:13px;">(mean radius)</span></td>
+          <td style="text-align:center; padding:8px 18px;" class="ltr">17.35</td>
+          <td style="text-align:center; padding:8px 18px;" class="ltr">1.05</td>
+          <td style="text-align:center; padding:8px 18px;" class="ltr">18.15</td>
+        </tr>
+        <tr style="border-bottom:1px solid #E2E8F0;">
+          <td style="padding:8px 18px;">بافت میانگین <span class="ltr" style="color:var(--mid); font-size:13px;">(mean texture)</span></td>
+          <td style="text-align:center; padding:8px 18px;" class="ltr">23.06</td>
+          <td style="text-align:center; padding:8px 18px;" class="ltr">0.22</td>
+          <td style="text-align:center; padding:8px 18px;" class="ltr">5.00</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 18px;">بایاس <span class="ltr" style="color:var(--mid); font-size:13px;">(bias, b)</span></td>
+          <td style="text-align:center; padding:8px 18px;" class="ltr"> - </td>
+          <td style="text-align:center; padding:8px 18px;" class="ltr">−19.67</td>
+          <td style="text-align:center; padding:8px 18px;" class="ltr">−19.67</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout--blue callout" style="font-size:16px; text-align:center;">
+      <span class="ltr">z = 18.15 + 5.00 − 19.67 = 3.48 → σ(3.48) ≈ 0.97</span> → مدل ۹۷٪ مطمئن است این تومور «بدخیم» است  -  و طبق دیتاست، واقعاً بدخیم بود
+    </div>
+    <p style="font-size:13px; color:var(--mid); text-align:center; margin-top:10px;">
+      این وزن‌ها فرضی نیستند: خروجی واقعی <span class="ltr">LogisticRegression.fit()</span> روی دیتاست <span class="ltr">Breast Cancer Wisconsin</span>‌اند  -  دقیقاً همان چیزی که چند اسلاید قبل با <span class="ltr">Log Loss</span> و <span class="ltr">Gradient Descent</span> توضیح دادیم.
+    </p>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 13 مرز تصمیم با دو ویژگی ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مرز تصمیم با دو ویژگی</div>
+    <h1 class="slide__title mb-12" style="font-size:28px;">در دو بعد، آن نقطه به یک خط تبدیل می‌شود</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/logistic_decision_boundary.png" alt="مرز تصمیم رگرسیون لجستیک روی داده دوبعدی" style="max-height:340px;">
+      <figcaption class="slide__caption">
+        همان قانون قبلی: جایی که <span class="ltr">σ(z) = 0.5</span> است، یعنی <span class="ltr">z = 0</span>. با یک ویژگی این مرز یک نقطه بود؛ با دو ویژگی (اینجا یک دیتاست ساختگی دوبعدی) یک خط راست است.
+      </figcaption>
+    </figure>
+    <div class="callout--blue callout" style="font-size:15.5px; text-align:center;">
+      با سی ویژگی مثل <span class="ltr">Breast Cancer Wisconsin</span>، همین مرز یک «ابرصفحه‌ی» خطی در فضای سی‌بعدی می‌شود  -  دیگر قابل دیدن نیست، ولی مفهوم دقیقاً همان است.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 14 آستانه با دو ویژگی ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">همان اثر، در دو بعد</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">آستانه در دو بعد هم همین‌طور کار می‌کند</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/threshold_effect.png" alt="اثر تغییر آستانه روی مرز تصمیم با دو ویژگی" style="max-height:340px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:15.5px; text-align:center;">
+      دقیقاً مثل نسخه‌ی تک‌ویژگی: مدل عوض نشده، فقط این‌بار خط مرز (به‌جای نقطه) جابه‌جا شده.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 15 هایپرپارامترها ────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">هایپرپارامترهای مهم</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;">سه هایپرپارامتر که باید بشناسید</h1>
+    <div style="display:flex; flex-direction:column; gap:12px; flex:1; justify-content:center;">
+      <div class="hp-card">
+        <div class="hp-card__name">penalty</div>
+        <div class="hp-card__desc">نوع Regularization روی ضرایب (پیش‌فرض 'l2')؛ همان ایده‌ی Ridge/Lasso هفته قبل، اینجا هم از بیش‌برازش جلوگیری می‌کند.</div>
+      </div>
+      <div class="hp-card">
+        <div class="hp-card__name">C</div>
+        <div class="hp-card__desc">معکوس قدرت Regularization. برخلاف alpha: C کوچک‌تر = جریمه‌ی قوی‌تر (ساده‌تر)، C بزرگ‌تر = جریمه‌ی ضعیف‌تر (آزادتر).</div>
+      </div>
+      <div class="hp-card">
+        <div class="hp-card__name">solver</div>
+        <div class="hp-card__desc">الگوریتم بهینه‌سازی داخلی. فقط دانستن اینکه گزینه‌های مختلفی هست کافی است؛ جزئیاتش خارج از دوره است.</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 16 KEY TAKEAWAY ──────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:32px; text-align:center;">
+      <div class="big-statement" style="font-size:30px;">
+        یک ترکیب خطی، رد شده از <span class="ltr">sigmoid</span>، یک احتمال می‌سازد  -  از یک ویژگی تا سی‌تا.
+      </div>
+      <div class="callout--blue callout" style="max-width:700px; text-align:right;">
+        قدم بعدی: حالا که یک طبقه‌بند داریم، از کجا بفهمیم واقعاً خوب است؟
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · رگرسیون لجستیک</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>درخت تصمیم | هفته چهارم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .hp-card {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+    .hp-card__name {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      direction: ltr;
+      text-align: left;
+      margin-bottom: 6px;
+    }
+    .hp-card__desc {
+      font-size: 15px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+    .gini-scale {
+      display: flex;
+      direction: ltr;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 40px;
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+    }
+    .gini-scale > div { display:flex; align-items:center; justify-content:center; }
+
+    /* ── pure-CSS decision-tree diagram ─────────────────────── */
+    .dtree, .dtree ul { list-style: none; margin: 0; padding: 0; }
+    .dtree { display: flex; justify-content: center; }
+    .dtree ul { display: flex; padding-top: 20px; position: relative; }
+    .dtree li {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 10px 0;
+      position: relative;
+    }
+    .dtree li::before, .dtree li::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 50%;
+      height: 20px;
+      border-top: 2px solid #CBD5E1;
+    }
+    .dtree li::before { right: 50%; border-right: 2px solid #CBD5E1; }
+    .dtree li::after  { left: 50%;  border-left: 2px solid #CBD5E1; }
+    .dtree li:only-child::before, .dtree li:only-child::after { display: none; }
+    .dtree li:only-child { padding-top: 0; }
+    .dtree li:first-child::before, .dtree li:last-child::after { border: 0 none; }
+    .dtree li:last-child::before { border-right: 2px solid #CBD5E1; border-radius: 0 6px 0 0; }
+    .dtree li:first-child::after { border-left: 2px solid #CBD5E1; border-radius: 6px 0 0 0; }
+    .dtree li > ul::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 50%;
+      border-right: 2px solid #CBD5E1;
+      width: 0;
+      height: 20px;
+    }
+    .dtree-edge {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--mid);
+      margin-bottom: 6px;
+      direction: ltr;
+    }
+    .dtree-node {
+      background: var(--accent);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 8px;
+      direction: ltr;
+      white-space: nowrap;
+    }
+    .dtree-leaf {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 7px 18px;
+      border-radius: 8px;
+      direction: ltr;
+    }
+    .dtree-leaf--yes { background: #22C55E; }
+    .dtree-leaf--no  { background: #EF4444; }
+    .legend-row { display: flex; gap: 20px; justify-content: center; align-items: center; font-size: 13px; color: var(--mid); }
+    .legend-swatch { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-inline-end: 6px; vertical-align: middle; }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته چهارم · بخش ۴</div>
+    <h1 class="slide__title">درخت تصمیم</h1>
+    <h2 class="slide__subtitle" dir="ltr">Decision Tree</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 شهود: تصمیم‌گیری با پرسش ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یک رویکرد سوم</div>
+    <h1 class="slide__title mb-24" style="font-size:30px;">تصمیم‌گیری، دقیقاً مثل یک انسان</h1>
+    <p class="slide__body mb-16" style="font-size:18px;">
+      رگرسیون لجستیک یک معادله یاد می‌گیرد، KNN بر اساس شباهت رأی می‌گیرد. درخت تصمیم، رویکرد سومی دارد: دقیقاً همان‌طور تصمیم می‌گیرد که یک انسان با چند پرسش بله/خیر تصمیم می‌گیرد. یکی از معروف‌ترین مثال‌های کتاب‌های درسی هوش مصنوعی همین سؤال ساده‌ی روزمره است:
+    </p>
+    <div class="callout--blue callout mb-16" style="font-size:16px; text-align:center; padding:12px 24px;">
+      «با توجه به وضعیت هوای امروز، بازی تنیس بکنیم یا نه؟»
+    </div>
+    <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+      <ul class="dtree">
+        <li>
+          <div class="dtree-node">Outlook?</div>
+          <ul>
+            <li>
+              <span class="dtree-edge">Sunny</span>
+              <div class="dtree-node">Humidity?</div>
+              <ul>
+                <li><span class="dtree-edge">High</span><div class="dtree-leaf dtree-leaf--no">No</div></li>
+                <li><span class="dtree-edge">Normal</span><div class="dtree-leaf dtree-leaf--yes">Yes</div></li>
+              </ul>
+            </li>
+            <li>
+              <span class="dtree-edge">Overcast</span>
+              <div class="dtree-leaf dtree-leaf--yes">Yes</div>
+            </li>
+            <li>
+              <span class="dtree-edge">Rain</span>
+              <div class="dtree-node">Wind?</div>
+              <ul>
+                <li><span class="dtree-edge">Strong</span><div class="dtree-leaf dtree-leaf--no">No</div></li>
+                <li><span class="dtree-edge">Weak</span><div class="dtree-leaf dtree-leaf--yes">Yes</div></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="callout" style="font-size:14px; text-align:center;">
+      اگر «ابری» باشد همیشه بازی می‌کنیم؛ در «آفتابی» رطوبت تصمیم می‌گیرد، در «بارانی» شدت باد. هر مسیر از ریشه تا برگ، دقیقاً یک زنجیره از پرسش‌هاست  -  بدون هیچ معادله‌ای.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 گره، شاخه، برگ ────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">اصطلاح‌شناسی</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">گره، شاخه، برگ</h1>
+    <div class="cols-2" style="flex:1; align-items:center;">
+      <ul class="slide__list" style="font-size:19px;">
+        <li>هر <strong>گره (node)</strong> یک سوال درباره‌ی یک ویژگی است.</li>
+        <li>هر <strong>شاخه</strong> یک جواب ممکن به آن سوال است.</li>
+        <li>هر <strong>برگ (leaf)</strong> یک تصمیم نهایی است (برچسب کلاس).</li>
+      </ul>
+      <div>
+        <ul class="dtree mb-16">
+          <li>
+            <div class="dtree-node">Humidity?</div>
+            <ul>
+              <li><span class="dtree-edge">High</span><div class="dtree-leaf dtree-leaf--no">No</div></li>
+              <li><span class="dtree-edge">Normal</span><div class="dtree-leaf dtree-leaf--yes">Yes</div></li>
+            </ul>
+          </li>
+        </ul>
+        <div class="legend-row">
+          <span><span class="legend-swatch" style="background:var(--accent);"></span>گره</span>
+          <span><span class="legend-swatch" style="background:#94A3B8;"></span>شاخه</span>
+          <span><span class="legend-swatch" style="background:#22C55E;"></span>برگ</span>
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 شکافتن داده ───────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">شکافتن داده</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;">مدل به دنبال «بهترین سوال» در هر گره است</h1>
+    <div class="callout--blue callout" style="font-size:18px; line-height:1.9;">
+      در هر گره، مدل به دنبال سوالی می‌گردد که داده را به دو گروه <span class="em">تا حد ممکن خالص</span> تقسیم کند.
+      «خالص» یعنی هر گروه تا حد ممکن فقط از یک کلاس تشکیل شده باشد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 Gini ──────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">معیار خالص‌بودن</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;"><span class="ltr">Gini impurity</span>: خالص‌بودن هر گروه</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/gini_bar.png" alt="مقایسه Gini impurity برای سطوح مختلف خالص‌بودن" style="max-height:300px;">
+    </figure>
+    <div class="gini-scale mb-8">
+      <div style="flex:1; background:#22C55E;">Gini = 0: کاملاً خالص</div>
+      <div style="flex:2; background:#F59E0B;">Gini نزدیک ۰.۵: کاملاً مخلوط</div>
+    </div>
+    <div class="callout" style="font-size:14.5px; text-align:center;">
+      مدل، سوالی را انتخاب می‌کند که مجموع <span class="ltr">Gini</span> دو گروه فرزند را کمینه کند.
+      <span class="ltr">Entropy</span> معیار مشابه دیگری با همین هدف است؛ جزئیات فرمول لازم نیست، فقط این‌که این عدد «خالص‌بودن» را می‌سنجد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 شهود بیش‌برازش ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">هشدار</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">درخت بدون محدودیت، داده را «حفظ» می‌کند</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/tree_overfitting_curve.png" alt="خطای train و test بر حسب max_depth" style="max-height:320px;">
+    </figure>
+    <div class="callout--red callout" style="font-size:15px; text-align:center;">
+      اگر هر برگ اجازه داشته باشد فقط یک نمونه داشته باشد، درخت داده‌ی آموزشی را کامل حفظ می‌کند  -  دقیقاً مثل چندجمله‌ای درجه‌بالا در هفته‌ی سوم یا <span class="ltr">k=1</span> در <span class="ltr">KNN</span>.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 هایپرپارامترها ────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">راه مقابله: محدودکردن رشد درخت</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;">دو هایپرپارامتر کلیدی</h1>
+    <div style="display:flex; flex-direction:column; gap:14px; flex:1; justify-content:center;">
+      <div class="hp-card">
+        <div class="hp-card__name">max_depth</div>
+        <div class="hp-card__desc">حداکثر عمق درخت؛ کوچک‌تر = ساده‌تر و کم‌برازش‌تر، بزرگ‌تر = پیچیده‌تر و در معرض بیش‌برازش.</div>
+      </div>
+      <div class="hp-card">
+        <div class="hp-card__name">min_samples_split</div>
+        <div class="hp-card__desc">حداقل تعداد نمونه لازم برای اینکه یک گره اصلاً اجازه‌ی شکافتن داشته باشد؛ بزرگ‌تر یعنی محدودیت بیشتر روی رشد درخت.</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 اثر max_depth روی مرز ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن اثر عمق</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">همان طیف کم‌برازش / بیش‌برازش، این‌بار با <span class="ltr">max_depth</span></h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/tree_depth_boundary.png" alt="مقایسه مرز تصمیم درخت برای مقادیر مختلف max_depth" style="max-height:300px;">
+    </figure>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 دیدن خود درخت ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مزیت بزرگ</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">می‌توانیم مستقیم خود درخت را ببینیم</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/tree_plot.png" alt="نمایش تصویری یک درخت تصمیم عمق ۲" style="max-height:320px;">
+    </figure>
+    <div class="callout" style="font-size:14.5px; text-align:center;">
+      هر جعبه یک گره است: سؤالی که پرسیده، میزان <span class="ltr">Gini</span>، تعداد نمونه‌ها، و کلاس غالب در آن گره؛ رنگ جعبه هم همان کلاس غالب را نشان می‌دهد. برخلاف رگرسیون لجستیک یا KNN که تصمیم‌شان در یک معادله یا مجموعه‌ی همسایه‌ها پنهان است، این‌جا کل منطق تصمیم‌گیری مدل، مستقیم روی صفحه قابل دیدن است.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 جمع‌بندی + قلاب هفته‌ی بعد ─────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div class="slide__eyebrow" style="text-align:center;">جمع‌بندی این بخش</div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:28px; text-align:center;">
+      <div class="big-statement" style="font-size:28px;">
+        قابل‌فهم‌ترین مدل تا این‌جای دوره
+      </div>
+      <ul class="slide__list" style="text-align:right; max-width:660px; font-size:18px;">
+        <li>با چند پرسش پی‌درپی تصمیم می‌گیرد  -  دقیقاً مثل مثال تنیس  -  و برخلاف <span class="ltr">KNN</span> نیازی به مقیاس‌بندی ویژگی‌ها ندارد.</li>
+        <li>برخلاف رگرسیون لجستیک، می‌تواند مرزهای کاملاً غیرخطی بسازد.</li>
+        <li>اما بدون محدودیت عمق، داده‌ی آموزشی را «حفظ» می‌کند: به تغییرات کوچک در داده حساس و بی‌ثبات است.</li>
+      </ul>
+      <div class="callout--blue callout" style="max-width:700px; text-align:right;">
+        اگر به‌جای اعتماد به یک درخت، صدها درخت کمی متفاوت بسازیم و بین‌شان رأی‌گیری کنیم چه؟ همین ایده، هفته‌ی بعد به «جنگل تصادفی» (<span class="ltr">Random Forest</span>) می‌رسد.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>
