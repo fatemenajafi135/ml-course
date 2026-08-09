@@ -106,6 +106,57 @@
     .dtree-leaf--no  { background: #EF4444; }
     .legend-row { display: flex; gap: 20px; justify-content: center; align-items: center; font-size: 13px; color: var(--mid); }
     .legend-swatch { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-inline-end: 6px; vertical-align: middle; }
+
+    /* ── Gini / entropy calculation slides ──────────────────── */
+    .formula-box {
+      font-family: var(--font-mono);
+      direction: ltr;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--dark);
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 14px 22px;
+    }
+    .mini-table { width: 100%; border-collapse: collapse; font-size: 16px; direction: ltr; }
+    .mini-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 18px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .mini-table td {
+      padding: 10px 18px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .mini-table tr:nth-child(even) td { background: var(--light); }
+    .mini-table .cell-no  { color: #EF4444; font-weight: 700; }
+    .mini-table .cell-yes { color: #22C55E; font-weight: 700; }
+    .calc-row { display: flex; gap: 16px; direction: ltr; }
+    .calc-card {
+      flex: 1;
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      text-align: center;
+      direction: ltr;
+    }
+    .calc-card__title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--mid);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .calc-card__data { font-size: 14px; color: var(--dark); margin-bottom: 8px; }
+    .calc-card__gini { font-family: var(--font-mono); font-size: 19px; font-weight: 700; color: var(--accent); }
+    .calc-arrow { text-align: center; font-size: 14px; color: var(--mid); direction: ltr; }
   </style>
 </head>
 <body>
@@ -222,7 +273,50 @@
     <div class="progress"></div>
   </div>
 
-  <!-- ── 05 Gini ──────────────────────────────────────────────── -->
+  <!-- ── 05a نمونه‌ی داده‌ی کوچک ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">قبل از فرمول: یک دادهٔ کوچک ولی واقعی</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;">همان مثال تنیس، این‌بار با ۱۴ نمونه‌ی کامل</h1>
+    <p class="slide__body mb-16" style="font-size:15.5px; text-align:center;">
+      این نسخه‌ی کامل مثال اول است  -  دیتاست کلاسیک <span class="ltr">Play Tennis</span>. روی این ۱۴ روز، محاسبه می‌کنیم.
+    </p>
+    <div class="cols-2" style="gap:24px;">
+      <table class="mini-table" style="font-size:13px;">
+        <thead><tr><th>Day</th><th>Outlook</th><th>Humidity</th><th>Wind</th><th>Play</th></tr></thead>
+        <tbody>
+          <tr><td>D1</td><td>Sunny</td><td>High</td><td>Weak</td><td class="cell-no">No</td></tr>
+          <tr><td>D2</td><td>Sunny</td><td>High</td><td>Strong</td><td class="cell-no">No</td></tr>
+          <tr><td>D3</td><td>Overcast</td><td>High</td><td>Weak</td><td class="cell-yes">Yes</td></tr>
+          <tr><td>D4</td><td>Rain</td><td>High</td><td>Weak</td><td class="cell-yes">Yes</td></tr>
+          <tr><td>D5</td><td>Rain</td><td>Normal</td><td>Weak</td><td class="cell-yes">Yes</td></tr>
+          <tr><td>D6</td><td>Rain</td><td>Normal</td><td>Strong</td><td class="cell-no">No</td></tr>
+          <tr><td>D7</td><td>Overcast</td><td>Normal</td><td>Strong</td><td class="cell-yes">Yes</td></tr>
+        </tbody>
+      </table>
+      <table class="mini-table" style="font-size:13px;">
+        <thead><tr><th>Day</th><th>Outlook</th><th>Humidity</th><th>Wind</th><th>Play</th></tr></thead>
+        <tbody>
+          <tr><td>D8</td><td>Sunny</td><td>High</td><td>Weak</td><td class="cell-no">No</td></tr>
+          <tr><td>D9</td><td>Sunny</td><td>Normal</td><td>Weak</td><td class="cell-yes">Yes</td></tr>
+          <tr><td>D10</td><td>Rain</td><td>Normal</td><td>Weak</td><td class="cell-yes">Yes</td></tr>
+          <tr><td>D11</td><td>Sunny</td><td>Normal</td><td>Strong</td><td class="cell-yes">Yes</td></tr>
+          <tr><td>D12</td><td>Overcast</td><td>High</td><td>Strong</td><td class="cell-yes">Yes</td></tr>
+          <tr><td>D13</td><td>Overcast</td><td>Normal</td><td>Weak</td><td class="cell-yes">Yes</td></tr>
+          <tr><td>D14</td><td>Rain</td><td>High</td><td>Strong</td><td class="cell-no">No</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout" style="font-size:14.5px; text-align:center; margin-top:16px;">
+      در گره‌ی ریشه، قبل از هر شکافتنی: از ۱۴ روز، ۹ تا <span class="ltr">Yes</span> و ۵ تا <span class="ltr">No</span>  -  مخلوط، و نه به‌اندازه‌ای که با چشم بشود گفت کدام سوال بهتر جدا می‌کند. حالا با همین داده، «خالص‌بودن» را اندازه می‌گیریم.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05b Gini ─────────────────────────────────────────────── -->
   <div class="slide slide--content">
     <div class="slide__eyebrow">معیار خالص‌بودن</div>
     <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;"><span class="ltr">Gini impurity</span>: خالص‌بودن هر گروه</h1>
@@ -236,6 +330,272 @@
     <div class="callout" style="font-size:14.5px; text-align:center;">
       مدل، سوالی را انتخاب می‌کند که مجموع <span class="ltr">Gini</span> دو گروه فرزند را کمینه کند.
       <span class="ltr">Entropy</span> معیار مشابه دیگری با همین هدف است؛ جزئیات فرمول لازم نیست، فقط این‌که این عدد «خالص‌بودن» را می‌سنجد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05c محاسبه‌ی Gini قدم‌به‌قدم ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">محاسبه‌ی دستی · سوال «Wind؟»</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;"><span class="ltr">Gini</span> را قدم‌به‌قدم حساب می‌کنیم</h1>
+    <div class="formula-box mb-16">Gini = 1 − Σ pᵢ²</div>
+    <div class="calc-row mb-8">
+      <div class="calc-card">
+        <div class="calc-card__title">Before split (root, n=14)</div>
+        <div class="calc-card__data">9 Yes, 5 No → p(Yes)=0.643, p(No)=0.357</div>
+        <div class="calc-card__gini">Gini = 1 − (0.643² + 0.357²) = 0.459</div>
+      </div>
+    </div>
+    <div class="calc-arrow mb-8">split by Wind ↓</div>
+    <div class="calc-row mb-16">
+      <div class="calc-card">
+        <div class="calc-card__title">Weak (n=8)</div>
+        <div class="calc-card__data">6 Yes, 2 No → p(Yes)=0.75, p(No)=0.25</div>
+        <div class="calc-card__gini">Gini = 1 − (0.75² + 0.25²) = 0.375</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card__title">Strong (n=6)</div>
+        <div class="calc-card__data">3 Yes, 3 No → p(Yes)=0.5, p(No)=0.5</div>
+        <div class="calc-card__gini">Gini = 1 − (0.5² + 0.5²) = 0.5</div>
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      میانگین وزنی: <span class="ltr">(8/14)·0.375 + (6/14)·0.5 = 0.429</span>. <span class="ltr">Gini</span> فقط از <span class="ltr">0.459</span> به <span class="ltr">0.429</span> رسید  -  نه صفر. یعنی «باد» به‌تنهایی داده را خالص نمی‌کند؛ ببینیم بقیه‌ی سوال‌ها چطورند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05c2 محاسبه‌ی Gini · Humidity ─────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">محاسبه‌ی دستی · سوال «Humidity؟»</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;">همین کار را برای <span class="ltr">Humidity</span> هم انجام می‌دهیم</h1>
+    <div class="formula-box mb-16">Gini = 1 − Σ pᵢ²</div>
+    <div class="calc-row mb-8">
+      <div class="calc-card">
+        <div class="calc-card__title">Before split (root, n=14)</div>
+        <div class="calc-card__data">9 Yes, 5 No → p(Yes)=0.643, p(No)=0.357</div>
+        <div class="calc-card__gini">Gini = 0.459</div>
+      </div>
+    </div>
+    <div class="calc-arrow mb-8">split by Humidity ↓</div>
+    <div class="calc-row mb-16">
+      <div class="calc-card">
+        <div class="calc-card__title">High (n=7)</div>
+        <div class="calc-card__data">3 Yes, 4 No → p(Yes)=0.429, p(No)=0.571</div>
+        <div class="calc-card__gini">Gini = 1 − (0.429² + 0.571²) = 0.490</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card__title">Normal (n=7)</div>
+        <div class="calc-card__data">6 Yes, 1 No → p(Yes)=0.857, p(No)=0.143</div>
+        <div class="calc-card__gini">Gini = 1 − (0.857² + 0.143²) = 0.245</div>
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      میانگین وزنی: <span class="ltr">(7/14)·0.490 + (7/14)·0.245 = 0.367</span>. <span class="ltr">Gini</span> از <span class="ltr">0.459</span> به <span class="ltr">0.367</span> رسید  -  کاهش بیشتری نسبت به <span class="ltr">Wind</span> (که فقط به <span class="ltr">0.429</span> رسیده بود)، یعنی «رطوبت» سوال بهتری است.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05c3 محاسبه‌ی Gini · Outlook ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">محاسبه‌ی دستی · سوال «Outlook؟»</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;">و در آخر <span class="ltr">Outlook</span> (این‌بار سه شاخه)</h1>
+    <div class="formula-box mb-16">Gini = 1 − Σ pᵢ²</div>
+    <div class="calc-row mb-8">
+      <div class="calc-card">
+        <div class="calc-card__title">Before split (root, n=14)</div>
+        <div class="calc-card__data">9 Yes, 5 No → p(Yes)=0.643, p(No)=0.357</div>
+        <div class="calc-card__gini">Gini = 0.459</div>
+      </div>
+    </div>
+    <div class="calc-arrow mb-8">split by Outlook ↓</div>
+    <div class="calc-row mb-16">
+      <div class="calc-card">
+        <div class="calc-card__title">Sunny (n=5)</div>
+        <div class="calc-card__data">2 Yes, 3 No</div>
+        <div class="calc-card__gini">Gini = 0.480</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card__title">Overcast (n=4)</div>
+        <div class="calc-card__data">4 Yes, 0 No</div>
+        <div class="calc-card__gini">Gini = 0</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card__title">Rain (n=5)</div>
+        <div class="calc-card__data">3 Yes, 2 No</div>
+        <div class="calc-card__gini">Gini = 0.480</div>
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      میانگین وزنی: <span class="ltr">(5/14)·0.48 + (4/14)·0 + (5/14)·0.48 = 0.343</span>  -  کمترین مقدار در میان هر سه سوال (<span class="ltr">Wind</span>: 0.429، <span class="ltr">Humidity</span>: 0.367، <span class="ltr">Outlook</span>: 0.343). برای همین در همان درخت مثال اول، <span class="ltr">Outlook</span> اولین سوالی بود که پرسیده شد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05c4 معرفی Entropy ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">معیار دوم خالص‌بودن</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;"><span class="ltr">Entropy</span>: مفهومی از نظریه‌ی اطلاعات</h1>
+    <div class="formula-box mb-20">H = − Σ pᵢ · log₂(pᵢ)</div>
+    <div class="gini-scale mb-16">
+      <div style="flex:1; background:#22C55E;">Entropy = 0: کاملاً خالص</div>
+      <div style="flex:2; background:#F59E0B;">Entropy = 1: کاملاً مخلوط (دو کلاس هم‌اندازه)</div>
+    </div>
+    <div class="callout" style="font-size:14.5px; text-align:center;">
+      <span class="ltr">Entropy</span> از نظریه‌ی اطلاعات می‌آید و «میزان عدم‌قطعیت» یک گروه را اندازه می‌گیرد: هرچه کلاس‌ها مخلوط‌تر باشند، حدس‌زدن کلاس یک نمونه‌ی تصادفی نامطمئن‌تر است، پس <span class="ltr">Entropy</span> بالاتر می‌رود. درست مثل <span class="ltr">Gini</span>، مدل به دنبال سوالی می‌گردد که مجموع <span class="ltr">Entropy</span> گروه‌های فرزند را کمینه کند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05d محاسبه‌ی Entropy · Wind ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">محاسبه‌ی دستی · برگردیم به سوال «Wind؟»</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;"><span class="ltr">Entropy</span> را هم قدم‌به‌قدم حساب می‌کنیم</h1>
+    <p class="slide__body mb-16" style="font-size:15px; text-align:center;">
+      برای مقایسه‌ی مستقیم با <span class="ltr">Gini</span>، همان سه سوال قبلی را این‌بار با <span class="ltr">Entropy</span> حساب می‌کنیم  -  اول <span class="ltr">Wind</span>.
+    </p>
+    <div class="formula-box mb-16">H = − Σ pᵢ · log₂(pᵢ)</div>
+    <div class="calc-row mb-8">
+      <div class="calc-card">
+        <div class="calc-card__title">Before split (root, n=14)</div>
+        <div class="calc-card__data">9 Yes, 5 No → p(Yes)=0.643, p(No)=0.357</div>
+        <div class="calc-card__gini">H = −(0.643·log₂0.643 + 0.357·log₂0.357) = 0.940</div>
+      </div>
+    </div>
+    <div class="calc-arrow mb-8">split by Wind ↓</div>
+    <div class="calc-row mb-16">
+      <div class="calc-card">
+        <div class="calc-card__title">Weak (n=8)</div>
+        <div class="calc-card__data">6 Yes, 2 No → p(Yes)=0.75, p(No)=0.25</div>
+        <div class="calc-card__gini">H = −(0.75·log₂0.75 + 0.25·log₂0.25) = 0.811</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card__title">Strong (n=6)</div>
+        <div class="calc-card__data">3 Yes, 3 No → p(Yes)=0.5, p(No)=0.5</div>
+        <div class="calc-card__gini">H = −(0.5·log₂0.5 + 0.5·log₂0.5) = 1.0</div>
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      میانگین وزنی: <span class="ltr">(8/14)·0.811 + (6/14)·1.0 = 0.892</span>. <span class="ltr">Entropy</span> از <span class="ltr">0.940</span> به <span class="ltr">0.892</span> رسید  -  دقیقاً همان روند کاهشی (و نه صفرشدن) که <span class="ltr">Gini</span> روی همین سوال نشان داد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05d2 محاسبه‌ی Entropy · Humidity ──────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">محاسبه‌ی دستی · سوال «Humidity؟»</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;">حالا <span class="ltr">Entropy</span> برای <span class="ltr">Humidity</span></h1>
+    <div class="formula-box mb-16">H = − Σ pᵢ · log₂(pᵢ)</div>
+    <div class="calc-row mb-8">
+      <div class="calc-card">
+        <div class="calc-card__title">Before split (root, n=14)</div>
+        <div class="calc-card__data">9 Yes, 5 No → p(Yes)=0.643, p(No)=0.357</div>
+        <div class="calc-card__gini">H = 0.940</div>
+      </div>
+    </div>
+    <div class="calc-arrow mb-8">split by Humidity ↓</div>
+    <div class="calc-row mb-16">
+      <div class="calc-card">
+        <div class="calc-card__title">High (n=7)</div>
+        <div class="calc-card__data">3 Yes, 4 No → p(Yes)=0.429, p(No)=0.571</div>
+        <div class="calc-card__gini">H = −(0.429·log₂0.429 + 0.571·log₂0.571) = 0.985</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card__title">Normal (n=7)</div>
+        <div class="calc-card__data">6 Yes, 1 No → p(Yes)=0.857, p(No)=0.143</div>
+        <div class="calc-card__gini">H = −(0.857·log₂0.857 + 0.143·log₂0.143) = 0.592</div>
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      میانگین وزنی: <span class="ltr">(7/14)·0.985 + (7/14)·0.592 = 0.788</span>. <span class="ltr">Entropy</span> از <span class="ltr">0.940</span> به <span class="ltr">0.788</span> رسید  -  کاهش بیشتری نسبت به <span class="ltr">Wind</span> (که فقط به <span class="ltr">0.892</span> رسیده بود)؛ دقیقاً همان رتبه‌بندی‌ای که <span class="ltr">Gini</span> هم نشان داد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05d3 محاسبه‌ی Entropy · Outlook ───────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">محاسبه‌ی دستی · سوال «Outlook؟»</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;">و در آخر <span class="ltr">Entropy</span> برای <span class="ltr">Outlook</span></h1>
+    <div class="formula-box mb-16">H = − Σ pᵢ · log₂(pᵢ)</div>
+    <div class="calc-row mb-8">
+      <div class="calc-card">
+        <div class="calc-card__title">Before split (root, n=14)</div>
+        <div class="calc-card__data">9 Yes, 5 No → p(Yes)=0.643, p(No)=0.357</div>
+        <div class="calc-card__gini">H = 0.940</div>
+      </div>
+    </div>
+    <div class="calc-arrow mb-8">split by Outlook ↓</div>
+    <div class="calc-row mb-16">
+      <div class="calc-card">
+        <div class="calc-card__title">Sunny (n=5)</div>
+        <div class="calc-card__data">2 Yes, 3 No</div>
+        <div class="calc-card__gini">H = 0.971</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card__title">Overcast (n=4)</div>
+        <div class="calc-card__data">4 Yes, 0 No</div>
+        <div class="calc-card__gini">H = 0</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card__title">Rain (n=5)</div>
+        <div class="calc-card__data">3 Yes, 2 No</div>
+        <div class="calc-card__gini">H = 0.971</div>
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      میانگین وزنی: <span class="ltr">(5/14)·0.971 + (4/14)·0 + (5/14)·0.971 = 0.694</span>  -  باز هم کمترین مقدار در میان هر سه سوال (<span class="ltr">Wind</span>: 0.892، <span class="ltr">Humidity</span>: 0.788، <span class="ltr">Outlook</span>: 0.694). <span class="ltr">Gini</span> و <span class="ltr">Entropy</span>، هر دو، یک نتیجه می‌دهند: <span class="ltr">Outlook</span> بهترین سوال اول است.
+    </div>
+    <div class="slide__footer">
+      <span>هفته چهارم · درخت تصمیم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05e مقایسه‌ی Gini و Entropy ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">جمع‌بندی این دو معیار</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;"><span class="ltr">Gini</span> در برابر <span class="ltr">Entropy</span></h1>
+    <table class="mini-table mb-16" style="font-size:15px;">
+      <thead><tr><th>ویژگی</th><th>Gini</th><th>Entropy</th></tr></thead>
+      <tbody>
+        <tr><td>فرمول</td><td>1 − Σ pᵢ²</td><td>− Σ pᵢ·log₂(pᵢ)</td></tr>
+        <tr><td>بازه (۲ کلاس)</td><td>۰ تا ۰.۵</td><td>۰ تا ۱</td></tr>
+        <tr><td>روی سوال Wind (این مثال)</td><td>0.459 → 0.429</td><td>0.940 → 0.892</td></tr>
+        <tr><td>هزینه‌ی محاسبه</td><td>سریع‌تر (بدون لگاریتم)</td><td>کمی کندتر (با لگاریتم)</td></tr>
+        <tr><td>پیش‌فرض <span class="ltr">scikit-learn</span></td><td>بله (<span class="ltr">criterion="gini"</span>)</td><td>خیر  -  باید صریح انتخاب شود</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="font-size:14.5px; text-align:center;">
+      هر دو، «مخلوط‌بودن» یک گروه را می‌سنجند و در عمل معمولاً همان سوال را به‌عنوان بهترین انتخاب می‌کنند؛ تفاوت نتیجه‌ی نهایی درخت‌ها اغلب ناچیز است. چون <span class="ltr">Gini</span> نیازی به لگاریتم ندارد و کمی سریع‌تر محاسبه می‌شود، به‌صورت پیش‌فرض در <span class="ltr">scikit-learn</span> انتخاب شده است.
     </div>
     <div class="slide__footer">
       <span>هفته چهارم · درخت تصمیم</span>
