@@ -43,9 +43,16 @@ over and how.
 - Decision Trees and sequential yes/no questions
 - Comparing Logistic Regression, KNN, and Decision Trees
 
-### Week 5: Classification - part II
-*Coming soon ...*
+### [Week 5: Classification part II - Combining Models and Specialized Approaches](week-05/)
+- Random Forest: bagging many trees together, effect of `n_estimators`, feature importance
+- Ensemble Learning as a full topic: Bagging vs. Boosting, with hands-on AdaBoost and Gradient Boosting
+- Support Vector Machines: maximum margin, support vectors, the kernel trick
+- Naive Bayes: Bayes' theorem, the independence assumption, a worked spam-filter example
+- Final comparison of all eight models seen across weeks 4–5
 
+
+### Week 6
+*Coming soon ...*
 
 See each week's own `README.md` for the full breakdown.
 

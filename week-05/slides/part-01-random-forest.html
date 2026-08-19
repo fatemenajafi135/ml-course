@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>جنگل تصادفی | هفته پنجم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .step-card {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .step-card .num {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--accent); color: var(--white);
+      font-size: 15px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-card__text { font-size: 16.5px; color: var(--dark); line-height: 1.6; }
+
+    /* ── forest of small trees ────────────────────────────────── */
+    .forest-cols {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+    .tree-card {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 14px;
+      text-align: center;
+    }
+    .tree-card__label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .tree-card__note {
+      font-size: 12px;
+      color: var(--mid);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    /* ── pure-CSS decision-tree diagram (small) ───────────────── */
+    .dtree, .dtree ul { list-style: none; margin: 0; padding: 0; }
+    .dtree { display: flex; justify-content: center; direction: ltr; }
+    .dtree ul { display: flex; padding-top: 16px; position: relative; }
+    .dtree li {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 6px 0;
+      position: relative;
+    }
+    .dtree li::before, .dtree li::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 50%;
+      height: 16px;
+      border-top: 2px solid #CBD5E1;
+    }
+    .dtree li::before { right: 50%; border-right: 2px solid #CBD5E1; }
+    .dtree li::after  { left: 50%;  border-left: 2px solid #CBD5E1; }
+    .dtree li:only-child::before, .dtree li:only-child::after { display: none; }
+    .dtree li:only-child { padding-top: 0; }
+    .dtree li:first-child::before, .dtree li:last-child::after { border: 0 none; }
+    .dtree li:last-child::before { border-right: 2px solid #CBD5E1; border-radius: 0 6px 0 0; }
+    .dtree li:first-child::after { border-left: 2px solid #CBD5E1; border-radius: 6px 0 0 0; }
+    .dtree li > ul::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 50%;
+      border-right: 2px solid #CBD5E1;
+      width: 0;
+      height: 16px;
+    }
+    .dtree-edge {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--mid);
+      margin-bottom: 5px;
+      direction: ltr;
+    }
+    .dtree-node {
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 8px;
+      direction: ltr;
+      white-space: nowrap;
+    }
+    .dtree-leaf {
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 8px;
+      direction: ltr;
+      white-space: nowrap;
+    }
+    .dtree-leaf--yes { background: #22C55E; }
+    .dtree-leaf--no  { background: #EF4444; }
+
+    /* ── voting ────────────────────────────────────────────────── */
+    .vote-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .vote-card {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 14px;
+      text-align: center;
+    }
+    .vote-card__tree {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 4px;
+    }
+    .vote-card__rule {
+      font-size: 12px;
+      color: var(--mid);
+      direction: ltr;
+      margin-bottom: 10px;
+    }
+    .vote-card__pred {
+      display: inline-block;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 6px 18px;
+      border-radius: 999px;
+      color: #fff;
+      direction: ltr;
+    }
+    .vote-final {
+      text-align: center;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته پنجم · بخش ۱</div>
+    <h1 class="slide__title">جنگل تصادفی</h1>
+    <h2 class="slide__subtitle" dir="ltr">Random Forest</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 انگیزه ─────────────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:24px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">از هفته قبل</div>
+      <div class="big-statement" style="font-size:26px; max-width:800px;">
+        یک درخت تصمیم، به‌تنهایی <span style="color:var(--accent);">بی‌ثبات</span> است.
+      </div>
+      <div class="big-statement" style="font-size:30px; max-width:800px;">
+        «چطور می‌شود چند درخت ضعیف را قوی‌تر کرد؟»
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · جنگل تصادفی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 شهود سه‌قدمی ───────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">شهود</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">سه قدم ساده</h1>
+    <div style="display:flex; flex-direction:column; gap:12px; flex:1; justify-content:center;">
+      <div class="step-card">
+        <span class="num">۱</span>
+        <span class="step-card__text"><strong class="ltr">درخت‌های متفاوت</strong> به‌جای یک درخت، صدها درخت می‌سازیم.</span>
+      </div>
+      <div class="step-card">
+        <span class="num">۲</span>
+        <span class="step-card__text"><strong>نمونه‌های تصادفی (Bagging):</strong> هر درخت روی یک نمونه‌ی تصادفی (با جایگزینی) از داده ساخته می‌شود؛ در هر شکاف هم فقط زیرمجموعه‌ی تصادفی از ویژگی‌ها دیده می‌شود.</span>
+      </div>
+      <div class="step-card">
+        <span class="num">۳</span>
+        <span class="step-card__text"><strong>رأی‌گیری (Voting):</strong> برای پیش‌بینی نهایی، از همه‌ی درخت‌ها رأی می‌گیریم و اکثریت را انتخاب می‌کنیم.</span>
+      </div>
+    </div>
+    <!-- <p class="slide__body" style="font-size:14.5px; color:var(--mid); text-align:center; margin-top:8px;">
+      در دو صفحه‌ی بعد، همین سه قدم را با عدد واقعی می‌بینیم.
+    </p> -->
+    <div class="slide__footer">
+      <span>هفته پنجم · جنگل تصادفی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 یک جنگل کوچک واقعی ─────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">قدم ۱ و ۲ با عدد واقعی</div>
+    <h1 class="slide__title mb-12" style="font-size:25px; text-align:center;">مسئله ۱۴ روز <span class="ltr">Play Tennis</span>، این‌بار به‌صورت جنگل</h1>
+    <p class="slide__body mb-16" style="font-size:14px; text-align:center;">
+      برای شهود، فرض کنید جنگل ما فقط <strong>۳ درخت</strong> دارد. هر درخت روی یک نمونه‌ی تصادفی <em>با جایگزینی</em> از همان ۱۴ روز آموزش دیده، و در تنها شکافش، فقط بین ۲ ویژگی تصادفی (نه هر سه) بهترین سؤال را انتخاب کرده است.
+    </p>
+    <div class="forest-cols">
+      <div class="tree-card">
+        <div class="tree-card__label">درخت ۱ · نمونه‌ی A</div>
+        <ul class="dtree">
+          <li>
+            <div class="dtree-node">Wind?</div>
+            <ul>
+              <li><span class="dtree-edge">Weak (5Y·2N)</span><div class="dtree-leaf dtree-leaf--yes">Yes</div></li>
+              <li><span class="dtree-edge">Strong (2Y·5N)</span><div class="dtree-leaf dtree-leaf--no">No</div></li>
+            </ul>
+          </li>
+        </ul>
+        <div class="tree-card__note">از بین <span class="ltr">Outlook</span> و <span class="ltr">Wind</span>، تصادفی همین دو در دسترس بودند؛ <span class="ltr">Wind</span> بیشترین کاهش <span class="ltr">Gini</span> را داد.</div>
+      </div>
+      <div class="tree-card">
+        <div class="tree-card__label">درخت ۲ · نمونه‌ی B</div>
+        <ul class="dtree">
+          <li>
+            <div class="dtree-node">Outlook?</div>
+            <ul>
+              <li><span class="dtree-edge">Sunny (3Y·4N)</span><div class="dtree-leaf dtree-leaf--no">No</div></li>
+              <li><span class="dtree-edge">Overcast (3Y·0N)</span><div class="dtree-leaf dtree-leaf--yes">Yes</div></li>
+              <li><span class="dtree-edge">Rain (3Y·1N)</span><div class="dtree-leaf dtree-leaf--yes">Yes</div></li>
+            </ul>
+          </li>
+        </ul>
+        <div class="tree-card__note">از بین <span class="ltr">Wind</span> و <span class="ltr">Outlook</span>، تصادفی همین دو در دسترس بودند؛ <span class="ltr">Outlook</span> بیشترین کاهش <span class="ltr">Gini</span> را داد.</div>
+      </div>
+      <div class="tree-card">
+        <div class="tree-card__label">درخت ۳ · نمونه‌ی C</div>
+        <ul class="dtree">
+          <li>
+            <div class="dtree-node">Humidity?</div>
+            <ul>
+              <li><span class="dtree-edge">Normal (7Y·0N)</span><div class="dtree-leaf dtree-leaf--yes">Yes</div></li>
+              <li><span class="dtree-edge">High (3Y·4N)</span><div class="dtree-leaf dtree-leaf--no">No</div></li>
+            </ul>
+          </li>
+        </ul>
+        <div class="tree-card__note">از بین <span class="ltr">Wind</span> و <span class="ltr">Humidity</span>، تصادفی همین دو در دسترس بودند؛ <span class="ltr">Humidity</span> بیشترین کاهش <span class="ltr">Gini</span> را داد.</div>
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:13.5px; text-align:center; margin-top:14px;">
+      سه نمونه‌ی متفاوت (قدم ۲)، سه سؤال متفاوت در ریشه؛ دقیقاً همان تصادفی‌بودنی که «درخت‌های متفاوت» (قدم ۱) را می‌سازد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · جنگل تصادفی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 رأی‌گیری روی یک روز جدید ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">قدم ۳ با عدد واقعی</div>
+    <h1 class="slide__title mb-12" style="font-size:25px; text-align:center;">یک روز جدید می‌رسد: رأی‌گیری بین همین ۳ درخت</h1>
+    <div class="callout" style="font-size:14px; text-align:center; margin-bottom:16px;">
+      روز جدید: <span class="ltr">Outlook = Sunny, Humidity = Normal, Wind = Weak</span>
+    </div>
+    <div class="vote-row mb-16">
+      <div class="vote-card">
+        <div class="vote-card__tree">درخت ۱</div>
+        <div class="vote-card__rule">Wind = Weak</div>
+        <span class="vote-card__pred" style="background:#22C55E;">Yes</span>
+      </div>
+      <div class="vote-card">
+        <div class="vote-card__tree">درخت ۲</div>
+        <div class="vote-card__rule">Outlook = Sunny</div>
+        <span class="vote-card__pred" style="background:#EF4444;">No</span>
+      </div>
+      <div class="vote-card">
+        <div class="vote-card__tree">درخت ۳</div>
+        <div class="vote-card__rule">Humidity = Normal</div>
+        <span class="vote-card__pred" style="background:#22C55E;">Yes</span>
+      </div>
+    </div>
+    <div class="vote-final mb-16">
+      ۲ رأی <span class="ltr" style="color:#22C55E;">Yes</span> در برابر ۱ رأی <span class="ltr" style="color:#EF4444;">No</span>
+      ← جنگل تصادفی پیش‌بینی می‌کند: <span class="ltr" style="color:#22C55E;">Yes</span>
+    </div>
+    <div class="callout--blue callout" style="font-size:13.5px; text-align:center;">
+      درخت ۲ این‌بار تنها ماند؛ چون خطای تک‌تک درخت‌ها با هم هم‌راستا نیست، رأی اکثریت آن را خنثی کرد. همین رفتار، در مقیاس صدها درخت، دلیل قدرت جنگل تصادفی است.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · جنگل تصادفی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 چرا کار می‌کند ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">چرا کار می‌کند</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;">خطاهای تصادفی، همدیگر را خنثی می‌کنند</h1>
+    <div class="callout--blue callout" style="font-size:18px; line-height:1.9;">
+      تک‌تک درخت‌ها ممکن است ضعیف و بیش‌برازش‌کرده باشند، اما خطاهایشان معمولاً با هم هم‌راستا نیستند.
+      رأی‌گیری این خطاهای تصادفی را خنثی می‌کند و یک مدل قوی‌تر و پایدارتر می‌سازد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · جنگل تصادفی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 مقایسه با یک درخت تنها ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن اثر</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">یک درخت در برابر جنگل تصادفی</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/rf_vs_tree_boundary.png" alt="مقایسه مرز تصمیم یک درخت تنها با جنگل تصادفی" style="max-height:320px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:15px; text-align:center;">
+      مرز جنگل تصادفی، به‌طور معمول صاف‌تر و پایدارتر از مرز یک درخت تنهاست و روی داده‌ی تست بهتر تعمیم می‌یابد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · جنگل تصادفی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 اثر تعداد درخت‌ها ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">آزمایش</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">اثر <span class="ltr">n_estimators</span></h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/rf_ntrees_effect.png" alt="اثر تعداد درخت‌ها روی دقت مدل" style="max-height:320px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:15px; text-align:center;">
+      دقت با افزایش تعداد درخت‌ها بالا می‌رود، اما بعد از یک نقطه، ثابت می‌ماند؛ درخت بیشتر معمولاً ضرر ندارد، فقط از یک جا به بعد سود چندانی هم ندارد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · جنگل تصادفی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 اهمیت ویژگی‌ها ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یک مزیت اضافه</div>
+    <h1 class="slide__title mb-16" style="font-size:28px;">اهمیت ویژگی‌ها <span class="ltr">(Feature Importance)</span></h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <figure class="slide__figure">
+        <img src="images/rf_feature_importance.png" alt="اهمیت ویژگی‌های جنگل تصادفی روی دیتاست Breast Cancer" style="max-height:320px;">
+      </figure>
+      <p class="slide__body" style="font-size:17px;">
+        جنگل تصادفی می‌تواند بگوید کدام ویژگی‌ها، در مجموع همه‌ی درخت‌ها، بیشترین نقش را در تصمیم‌گیری داشته‌اند.
+      </p>
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · جنگل تصادفی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 KEY TAKEAWAY ──────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:32px; text-align:center;">
+      <div class="big-statement" style="font-size:30px;">
+        بسیاری از درخت‌های ضعیف و متفاوت، با رأی‌گیری، یک مدل قوی می‌سازند.
+      </div>
+      <div class="callout--blue callout" style="max-width:700px; text-align:right;">
+        قدم بعدی: جنگل تصادفی فقط یک نمونه از یک ایده‌ی بزرگ‌تر است؛ یادگیری گروهی، این‌بار کامل‌تر.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · جنگل تصادفی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

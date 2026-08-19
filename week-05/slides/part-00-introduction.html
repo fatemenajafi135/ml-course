@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>معرفی هفته پنجم | یادگیری ماشین</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── Page-specific ──────────────────────────────────────── */
+
+    .week-topics {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      direction: rtl;
+      align-items: flex-start;
+    }
+    .week-topic-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 20px;
+      color: rgba(255,255,255,.8);
+      direction: rtl;
+    }
+    .week-topic-item .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .roadmap-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 10px 20px;
+      border: 2px solid #E2E8F0;
+      direction: rtl;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .roadmap-card__right {
+      text-align: right;
+      flex-shrink: 0;
+      min-width: 190px;
+    }
+    .roadmap-card__num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .08em;
+      margin-bottom: 3px;
+    }
+    .roadmap-card__title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .roadmap-card__desc {
+      flex: 2;
+      font-size: 13.5px;
+      color: var(--mid);
+      line-height: 1.5;
+      direction: rtl;
+      text-align: left;
+    }
+    .roadmap-card__note {
+      flex: 1;
+      font-size: 12.5px;
+      color: var(--accent);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .key-quote {
+      font-size: 26px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(255,255,255,.9);
+      text-align: center;
+      max-width: 860px;
+    }
+    .key-quote strong {
+      font-weight: 700;
+      color: var(--accent2);
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ──────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته پنجم · مقدمه</div>
+    <h1 class="slide__title mb-16">طبقه‌بندی: ترکیب مدل‌ها و رویکردهای دیگر</h1>
+    <h2 class="slide__subtitle mb-40" dir="ltr">Ensembles, SVM &amp; Naive Bayes</h2>
+    <div class="week-topics">
+      <div class="week-topic-item"><span class="num">۱</span><span>درخت تصادفی یا <span class="ltr">Random Forest</span></span></div>
+      <div class="week-topic-item"><span class="num">۲</span><span><span class="ltr">Ensemble Learning</span>: Bagging و Boosting</span></div>
+      <div class="week-topic-item"><span class="num">۳</span><span><span class="ltr">SVM</span> و <span class="ltr">Naive Bayes</span>، و جمع‌بندی نهایی</span></div>
+    </div>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 یادآوری هفته قبل ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یادآوری</div>
+    <h1 class="slide__title mb-24" style="font-size:32px;">هفته قبل: سه طبقه‌بند، سه محدودیت</h1>
+    <div style="display:flex; gap:18px; flex:1; align-items:center;">
+      <div class="callout" style="font-size:15px; line-height:1.85; flex:1;">
+        <strong class="ltr" style="color:var(--dark);">Logistic Regression</strong><br>
+        سریع و قابل‌تفسیر، اما مرزش همیشه <span class="em">خطی</span> است.
+      </div>
+      <div class="callout--blue callout" style="font-size:15px; line-height:1.85; flex:1;">
+        <strong class="ltr" style="color:var(--accent);">KNN</strong><br>
+        مرز غیرخطی می‌سازد، اما هیچ معادله‌ای یاد نمی‌گیرد و در پیش‌بینی کند است.
+      </div>
+      <div class="callout" style="font-size:15px; line-height:1.85; flex:1; background:#fff3e8;">
+        <strong class="ltr" style="color:var(--dark);">Decision Tree</strong><br>
+        قابل‌مشاهده‌ترین مدل، اما به‌تنهایی <span class="em">بی‌ثبات</span> است.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 نقشه هفته ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ساختار هفته</div>
+    <h1 class="slide__title mb-24" style="font-size:36px;">نقشه هفته</h1>
+    <div style="display:flex; flex-direction:column; gap:11px; flex:1; justify-content:center; max-width:900px; margin:0 auto; width:100%;">
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۱</div>
+          <div class="roadmap-card__title" dir="ltr">Random Forest</div>
+        </div>
+        <div class="roadmap-card__note">حل بی‌ثباتی هفته‌ی قبل</div>
+        <div class="roadmap-card__desc">همان درخت تصمیم هفته‌ی قبل، این‌بار صدها تا، با رأی‌گیری.</div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۲</div>
+          <div class="roadmap-card__title" dir="ltr">Ensemble Learning</div>
+        </div>
+        <div class="roadmap-card__note">چرا ترکیب مدل‌ها کار می‌کند</div>
+        <div class="roadmap-card__desc"><span class="ltr">Bagging</span> در برابر <span class="ltr">Boosting</span></div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش ۳</div>
+          <div class="roadmap-card__title" dir="ltr">SVM &amp; Naive Bayes</div>
+        </div>
+        <div class="roadmap-card__note">دو رویکرد تخصصی‌تر، و جمع‌بندی</div>
+        <div class="roadmap-card__desc">بیشترین حاشیه‌ی امن، یک رویکرد احتمالاتی سریع، و نقشه‌ی راه کامل طبقه‌بندی با مقایسه‌ی نهایی.</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 KEY TAKEAWAY ──────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">پیام کلیدی هفته</div>
+    <p class="key-quote">
+      یک مدل، یک نگاه به مسئله است؛ نه یک جواب مطلق.
+      <br><br>
+      این هفته می‌بینیم چطور <strong>ترکیب مدل‌ها</strong> از تک‌تک اجزایشان قوی‌تر می‌شود،
+      و دو نگاه کاملاً متفاوت دیگر را هم اضافه می‌کنیم.
+    </p>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

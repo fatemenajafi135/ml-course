@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>یادگیری گروهی | هفته پنجم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .ens-card {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+    .ens-card__name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 6px;
+    }
+    .ens-card__desc {
+      font-size: 15px;
+      color: var(--mid);
+      line-height: 1.7;
+    }
+    .lib-chip {
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 12px 18px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--dark);
+      text-align: center;
+      direction: ltr;
+    }
+    .lib-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    /* ── two-family map (bagging fan-out vs boosting chain) ─────── */
+    .family-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      flex: 1;
+      align-items: stretch;
+    }
+    .family-card {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 18px 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .family-card__title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .family-card__eng {
+      font-size: 12.5px;
+      color: var(--mid);
+      direction: ltr;
+      margin-bottom: 14px;
+    }
+    .family-flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      justify-content: center;
+    }
+    .family-node {
+      background: var(--dark);
+      color: #fff;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 8px;
+      direction: ltr;
+      white-space: nowrap;
+    }
+    .family-node--step {
+      background: var(--accent);
+    }
+    .family-row {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .family-arrow {
+      color: var(--mid);
+      font-size: 15px;
+      line-height: 1;
+    }
+    .family-card__caption {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته پنجم · بخش ۲</div>
+    <h1 class="slide__title">یادگیری گروهی</h1>
+    <h2 class="slide__subtitle" dir="ltr">Ensemble Learning: Bagging &amp; Boosting</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 چرا کار می‌کند ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ایده‌ی کلی</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;">چرا یادگیری گروهی کار می‌کند</h1>
+    <div class="callout--blue callout" style="font-size:18px; line-height:1.9;">
+      جنگل تصادفی (بخش قبل)، فقط یک نمونه از یک ایده‌ی بزرگ‌تر است:
+      <span class="em">چند مدل ضعیف، اگر خطاهایشان مستقل باشد، می‌توانند یک مدل قوی بسازند.</span>
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 نقشه‌ی دو خانواده ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">پیش از جزئیات</div>
+    <h1 class="slide__title mb-16" style="font-size:28px; text-align:center;">دو خانواده، دو مسیر کاملاً متفاوت</h1>
+    <div class="family-wrap">
+      <div class="family-card">
+        <div class="family-card__title"><span class="ltr">Bagging</span></div>
+        <div class="family-card__eng">bootstrap aggregating · parallel</div>
+        <div class="family-flow">
+          <div class="family-node">Training data</div>
+          <div class="family-arrow">↓</div>
+          <div class="family-row">
+            <div class="family-node family-node--step">Sample 1</div>
+            <div class="family-node family-node--step">Sample 2</div>
+            <div class="family-node family-node--step">Sample 3</div>
+          </div>
+          <div class="family-arrow">↓</div>
+          <div class="family-row">
+            <div class="family-node family-node--step">Model 1</div>
+            <div class="family-node family-node--step">Model 2</div>
+            <div class="family-node family-node--step">Model 3</div>
+          </div>
+          <div class="family-arrow">↓</div>
+          <div class="family-node">Vote / Average</div>
+        </div>
+        <div class="family-card__caption">
+          مدل‌ها هم‌زمان و <strong>مستقل</strong> از هم ساخته می‌شوند؛ هرکدام روی نمونه‌ای متفاوت. نمونه: جنگل تصادفی.
+        </div>
+      </div>
+      <div class="family-card">
+        <div class="family-card__title"><span class="ltr">Boosting</span></div>
+        <div class="family-card__eng">sequential · corrective</div>
+        <div class="family-flow">
+          <div class="family-node family-node--step">Model 1</div>
+          <div class="family-arrow">↓ خطاها</div>
+          <div class="family-node family-node--step">Model 2</div>
+          <div class="family-arrow">↓ خطاهای باقی‌مانده</div>
+          <div class="family-node family-node--step">Model 3</div>
+          <div class="family-arrow">↓</div>
+          <div class="family-node">Combine (weighted)</div>
+        </div>
+        <div class="family-card__caption">
+          مدل‌ها یکی‌یکی و <strong>پی‌درپی</strong> ساخته می‌شوند؛ هر مدل جدید، دقیقاً روی خطاهای مدل(های) قبلی متمرکز می‌شود.
+        </div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 Bagging مروری رسمی ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مسیر اول</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;"><span class="ltr">Bagging</span></h1>
+    <div class="ens-card">
+      <div class="ens-card__desc" style="font-size:17px; line-height:1.9;">
+        مدل‌های مستقل، <strong>موازی</strong>، هر کدام روی یک نمونه‌ی تصادفی متفاوت از داده آموزش می‌بینند، و در پایان رأی‌گیری می‌شود.
+        جنگل تصادفی معروف‌ترین نمونه‌ی <span class="ltr">Bagging</span> است؛ ایده قابل تعمیم به هر مدل پایه‌ای دیگری هم هست، نه فقط درخت؛
+        مثلاً می‌توان همین ایده را با رگرسیون لجستیک یا <span class="ltr">KNN</span> به‌عنوان مدل پایه هم تکرار کرد.
+      </div>
+    </div>
+    <div class="callout" style="font-size:14.5px; margin-top:16px;">
+      اسم «<span class="ltr">Bagging</span>» از همین‌جا می‌آید: <span class="em">B</span>ootstrap <span class="em">Agg</span>regat<span class="em">ing</span>؛
+      «بوت‌استرپ» یعنی نمونه‌گیری تصادفی <em>با جایگزینی</em>؛ «Aggregating» یعنی جمع کردن (رأی‌گیری) نتیجه‌ی مدل‌ها. صفحه‌ی بعد، همین نمونه‌گیری را با عدد واقعی نشان می‌دهد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 Bagging نمونه‌گیری بوت‌استرپ ───────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن اثر</div>
+    <h1 class="slide__title mb-12" style="font-size:26px; text-align:center;">نمونه‌گیری بوت‌استرپ، روی ۱۰ نمونه‌ی فرضی</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/bagging_bootstrap.png" alt="سه نمونه‌ی بوت‌استرپ از یک مجموعه‌ی ۱۰ تایی، با جایگزینی" style="max-height:300px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14px; text-align:center;">
+      هر نمونه‌ی بوت‌استرپ، به‌اندازه‌ی داده‌ی اصلی است اما با تکرار: بعضی نمونه‌ها چند بار انتخاب می‌شوند، بعضی اصلاً انتخاب نمی‌شوند
+      (نقاط توخالی؛ به این‌ها <span class="ltr">Out-of-Bag</span> می‌گویند). همین تفاوت‌های تصادفی است که باعث می‌شود هر مدل، چیز کمی متفاوت یاد بگیرد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 Boosting شهود ──────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مسیر دوم</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;"><span class="ltr">Boosting</span>: یادگیری از اشتباهات قبلی</h1>
+    <div class="callout--blue callout" style="font-size:18px; line-height:1.9;">
+      این‌بار مدل‌ها <span class="em">پی‌درپی</span> ساخته می‌شوند، نه موازی. مدل اول را می‌سازیم، ببینیم کجا اشتباه کرد؛
+      مدل دوم را مخصوص همان اشتباهات می‌سازیم؛ مدل سوم مخصوص چیزی که هنوز مانده، و به همین ترتیب.
+      پیش‌بینی نهایی، ترکیب همه‌ی این مدل‌های کوچک و متوالی است.
+    </div>
+    <p class="slide__body" style="font-size:15px; color:var(--mid); text-align:center; margin-top:12px;">
+      دو نسخه‌ی معروف 
+      <span class="ltr">AdaBoost</span> و <span class="ltr">Gradient Boosting</span>.
+    </p>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 AdaBoost توضیح کامل ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Boosting · نسخه‌ی اول</div>
+    <h1 class="slide__title mb-16" style="font-size:28px;"><span class="ltr">AdaBoost</span> <span style="color:var(--mid); font-size:18px; font-weight:400;">(Adaptive Boosting)</span></h1>
+    <div class="ens-card">
+      <div class="ens-card__desc" style="font-size:16.5px; line-height:1.9;">
+        مدل اول (معمولاً یک درخت خیلی کوچک، تنها یک شکاف) روی داده آموزش می‌بیند. نمونه‌هایی که اشتباه طبقه‌بندی شده‌اند، در دور بعد
+        <strong>وزن بیشتری</strong> می‌گیرند؛ یعنی مدل بعدی مجبور است بیشتر روی همان نمونه‌های سخت تمرکز کند. این چرخه چند بار تکرار می‌شود؛
+        پیش‌بینی نهایی، رأی‌گیری وزن‌دار همه‌ی این مدل‌های کوچک است؛ مدلی که دقیق‌تر بوده، رأی بیشتری در تصمیم نهایی دارد.
+      </div>
+    </div>
+    <div class="callout" style="font-size:14.5px; margin-top:16px;">
+      تنها تنظیمی که معمولاً لازم است، تعداد این دورهاست (<span class="ltr">n_estimators</span>)؛ مثل جنگل تصادفی و
+      <span class="ltr">Gradient Boosting</span>، بیشتر شدنش تا یک سقف کمک می‌کند و بعد اثرش کم می‌شود.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 AdaBoost اثر وزن‌دهی مجدد ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن اثر</div>
+    <h1 class="slide__title mb-10" style="font-size:25px; text-align:center;">وزن نمونه‌ها، دور به دور</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/adaboost_reweighting.png" alt="سه دور اول AdaBoost؛ اندازه‌ی هر نقطه متناسب با وزن آن در آن دور" style="max-height:280px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14px; text-align:center;">
+      اندازه‌ی هر نقطه = وزن آن نمونه در آن دور؛ نقاط با حاشیه‌ی مشکی، همان‌هایی هستند که آن دور اشتباه طبقه‌بندی شدند.
+      دور به دور، نقاطِ سخت (نزدیک مرز) بزرگ‌تر می‌شوند و مدل بعدی را وادار می‌کنند دقیقاً همان‌جا تمرکز کند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 Gradient Boosting توضیح کامل ───────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Boosting · نسخه‌ی دوم</div>
+    <h1 class="slide__title mb-16" style="font-size:28px;"><span class="ltr">Gradient Boosting</span></h1>
+    <div class="ens-card">
+      <div class="ens-card__desc" style="font-size:16.5px; line-height:1.9;">
+        مکانیزمی متفاوت، با همان روح پی‌درپی: به‌جای وزن‌دهی مجدد نمونه‌ها، هر مدل جدید مستقیم روی
+        <strong>«باقی‌مانده‌ی خطای» (residual)</strong> مدل‌های قبلی آموزش می‌بیند؛ یعنی یاد می‌گیرد هنوز چقدر تا پاسخ درست فاصله هست، و همان فاصله را کم می‌کند.
+      </div>
+    </div>
+    <div class="callout" style="font-size:14.5px; margin-top:16px;">
+      هایپرپارامتر <span class="ltr">learning_rate</span> تعیین می‌کند هر مدل جدید چقدر از این باقی‌مانده را همین حالا جبران کند:
+      مقدار کوچک‌تر یعنی قدم‌های کوچک‌تر و امن‌تر (نیاز به مراحل بیشتر)، مقدار بزرگ‌تر یعنی قدم‌های بزرگ‌تر (سریع‌تر ولی پرخطرتر). در ادامه، اثر هر دو را با عدد واقعی می‌بینیم.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 Gradient Boosting باقی‌مانده ───────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن اثر</div>
+    <h1 class="slide__title mb-8" style="font-size:24px; text-align:center;">هر درخت، دنبال چیزی می‌گردد که درخت قبلی جا انداخته</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/gb_residual_fitting.png" alt="سه مرحله‌ی Gradient Boosting روی یک مثال رگرسیون یک‌بعدی: هر درخت روی باقی‌مانده‌ی خطای قبلی آموزش می‌بیند" style="max-height:370px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:13.5px; text-align:center;">
+      ردیف بالا: هر درخت (نارنجی) چه چیزی را یاد می‌گیرد؛ درخت اول خودِ داده را، درخت دوم و سوم فقط باقی‌مانده‌ی خطای قبلی را.
+      ردیف پایین: جمع تجمعی این درخت‌ها (سرمه‌ای) با هر درخت جدید، به داده‌ی واقعی نزدیک‌تر می‌شود.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 11 اثر تعداد مراحل ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن اثر</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">دقت با افزایش تعداد مراحل <span class="ltr">Boosting</span></h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/boosting_staged_accuracy.png" alt="دقت AdaBoost و Gradient Boosting بر حسب تعداد مراحل" style="max-height:300px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      دقیقاً شبیه اثری که با تعداد درخت در جنگل تصادفی دیدیم: با افزایش مراحل، دقت بالا می‌رود و بعد تثبیت می‌شود؛
+      اما این‌بار چون مراحل پی‌درپی و مکمل هم‌اند، نه مستقل و موازی.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 12 Gradient Boosting اثر learning_rate ────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن اثر</div>
+    <h1 class="slide__title mb-12" style="font-size:25px; text-align:center;">اثر <span class="ltr">learning_rate</span> روی <span class="ltr">Gradient Boosting</span></h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/gb_learning_rate_effect.png" alt="دقت تست Gradient Boosting بر حسب learning_rate، با n_estimators ثابت" style="max-height:300px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14px; text-align:center;">
+      نرخ خیلی کوچک (<span class="ltr">0.01</span>) با همین تعداد مرحله‌ی ثابت هنوز کامل «نرسیده» و دقت پایین‌تر است.
+      از یک نقطه به بعد (این‌جا حدود <span class="ltr">0.1</span>، مقدار پیش‌فرض) دقت تثبیت می‌شود؛ نرخ‌های خیلی بزرگ‌تر معمولاً سود بیشتری نمی‌دهند و روی داده‌های نویزی‌تر می‌توانند بی‌ثبات یا بیش‌برازش‌کرده هم بشوند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 13 مقایسه بصری ───────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مقایسه‌ی بصری</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;"><span class="ltr">Bagging</span> در برابر <span class="ltr">Boosting</span>، روی مرز تصمیم</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/ensemble_boundary_comparison.png" alt="مقایسه مرز تصمیم Random Forest، AdaBoost و Gradient Boosting" style="max-height:290px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      هر سه، از یک ایده‌ی مشترک («ترکیب مدل‌های ضعیف») به نتیجه‌ی قوی و مشابهی می‌رسند، هرچند مسیرشان (موازی در برابر پی‌درپی) متفاوت است.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 14 کتابخانه‌های صنعتی ─────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">فراتر از scikit-learn</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;">کتابخانه‌های صنعتی <span class="ltr">Boosting</span></h1>
+    <div class="lib-grid mb-16">
+      <div class="lib-chip">XGBoost</div>
+      <div class="lib-chip">LightGBM</div>
+      <div class="lib-chip">CatBoost</div>
+    </div>
+    <div class="callout" style="font-size:15px; text-align:center;">
+      نسخه‌های سریع‌تر و بهینه‌شده‌ی <span class="ltr">Gradient Boosting</span>؛ رایج‌ترین انتخاب صنعتی روی داده‌ی جدولی، .
+      همان الگوی <span class="ltr">fit</span>/<span class="ltr">predict</span> را دنبال می‌کنند؛ فقط باید جداگانه نصب شوند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 15 KEY TAKEAWAY ──────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:32px; text-align:center;">
+      <div class="big-statement" style="font-size:28px;">
+        <span class="ltr">Bagging</span>: مستقل و موازی، با نمونه‌گیری بوت‌استرپ. <span class="ltr">Boosting</span>: پی‌درپی، هرکدام مکمل خطای قبلی.
+      </div>
+      <div class="callout--blue callout" style="max-width:760px; text-align:right;">
+        <span class="ltr">AdaBoost</span> با وزن‌دهی مجدد نمونه‌ها یاد می‌گیرد، <span class="ltr">Gradient Boosting</span> با تعقیب باقی‌مانده‌ی خطا؛
+        دو مکانیزم متفاوت برای همان ایده‌ی «یادگیری از اشتباه قبلی». قدم بعدی: دو رویکرد کاملاً متفاوت دیگر؛ مرزی با بیشترین فاصله‌ی امن، و یک رویکرد احتمالاتی سریع.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · یادگیری گروهی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

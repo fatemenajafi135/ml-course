@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>SVM، Naive Bayes و جمع‌بندی | هفته پنجم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .hp-card {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 14px 20px;
+    }
+    .hp-card__name {
+      font-family: var(--font-mono);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--accent);
+      direction: ltr;
+      text-align: left;
+      margin-bottom: 4px;
+    }
+    .hp-card__desc {
+      font-size: 15px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+
+    /* ── small email dataset table ────────────────────────────── */
+    .nb-table { width: 100%; border-collapse: collapse; font-size: 15px; direction: ltr; }
+    .nb-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 9px 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .nb-table td {
+      padding: 9px 16px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .nb-table tr:nth-child(even) td { background: var(--light); }
+    .nb-table .cell-yes { color: #22C55E; font-weight: 700; }
+    .nb-table .cell-no  { color: #CBD5E1; font-weight: 700; }
+    .nb-table .cell-spam     { color: #EF4444; font-weight: 700; }
+    .nb-table .cell-notspam  { color: #22C55E; font-weight: 700; }
+
+    /* ── probability calculation cards ────────────────────────── */
+    .formula-box {
+      font-family: var(--font-mono);
+      direction: ltr;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--dark);
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 12px 20px;
+    }
+    .calc-row { display: flex; gap: 14px; direction: ltr; }
+    .calc-card {
+      flex: 1;
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      text-align: center;
+      direction: ltr;
+    }
+    .calc-card__title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--mid);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .calc-card__val { font-family: var(--font-mono); font-size: 17px; font-weight: 700; color: var(--accent); }
+
+    /* ── final toolbox / comparison ───────────────────────────── */
+    .toolbox-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .toolbox-table th {
+      background: var(--dark);
+      color: var(--white);
+      padding: 7px 10px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .toolbox-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .toolbox-table tr.done td { background: #fff3e8; }
+    .toolbox-table tr.done td:first-child { border-right: 3px solid var(--accent); }
+    .key-quote {
+      font-size: 24px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(255,255,255,.9);
+      text-align: center;
+      max-width: 880px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته پنجم · بخش ۳</div>
+    <h1 class="slide__title">SVM و Naive Bayes</h1>
+    <h2 class="slide__subtitle" dir="ltr">Support Vector Machine &amp; Naive Bayes</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 شروع با یک تصویر ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">شروع با یک تصویر</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">بی‌نهایت خط، کدامش بهترین است؟</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/svm_margin_intuition.png" alt="چند خط حدسی جداکننده در برابر مرز بیشترین حاشیه SVM" style="max-height:360px;">
+    </figure>
+    <div class="slide__footer">
+      <span>هفته پنجم · SVM</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 شهود: بیشترین حاشیه ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">شهود</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;">بیشترین حاشیه <span class="ltr">(Maximum Margin)</span></h1>
+    <div class="callout--blue callout" style="font-size:18px; line-height:1.9;">
+      <span class="ltr">SVM</span> خطی را انتخاب می‌کند که <span class="em">بیشترین فاصله</span> را از نزدیک‌ترین نقاط هر دو کلاس داشته باشد.
+      خطی که به هر دو کلاس فاصله‌ی زیادی دارد، در برابر نمونه‌های جدید و کمی نویزی، مطمئن‌تر عمل می‌کند تا خطی که به‌سختی و از نزدیک، دو کلاس را رد کرده.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · SVM</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 بردارهای پشتیبان ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفهوم کلیدی</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;">بردارهای پشتیبان <span class="ltr">(Support Vectors)</span></h1>
+    <ul class="slide__list" style="font-size:18px;">
+      <li>تنها نقاطی که دقیقاً روی مرز حاشیه قرار دارند، «بردارهای پشتیبان» نامیده می‌شوند.</li>
+      <li>موقعیت مرز نهایی فقط به همین چند نقطه بستگی دارد.</li>
+      <li>باقی نقاط، حتی اگر حذف شوند، مرز را عوض نمی‌کنند.</li>
+    </ul>
+    <div class="slide__footer">
+      <span>هفته پنجم · SVM</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 کرنل‌ها ────────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">فقط مفهومی</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;">کرنل‌ها <span class="ltr">(Kernels)</span>: فراتر از خط راست</h1>
+    <div class="callout--blue callout" style="font-size:17px; line-height:1.9;">
+      <span class="ltr">SVM</span> خطی، مثل رگرسیون لجستیک، فقط مرز خطی می‌سازد. اما با یک تابع به نام <strong>کرنل</strong>،
+      داده را به‌طور ضمنی به فضایی «تصور می‌کند» که در آن جداسازی خطی ممکن است، بدون این‌که واقعاً محاسبات را در آن فضای پیچیده انجام دهد.
+    </div>
+    <p class="slide__body" style="font-size:15.5px; color:var(--mid); text-align:center;">
+      جزئیات ریاضی این ترفند (<span class="ltr">Kernel Trick</span>) از حوزه‌ی این دوره خارج است؛ کافی است بدانید این قابلیت با یک پارامتر در دسترس است.
+    </p>
+    <div class="slide__footer">
+      <span>هفته پنجم · SVM</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 مقایسه بصری کرنل‌ها ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن اثر کرنل</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;"><span class="ltr">Linear</span> در برابر <span class="ltr">RBF</span></h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/svm_kernel_comparison.png" alt="مقایسه مرز تصمیم SVM با کرنل خطی و RBF" style="max-height:300px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:15px; text-align:center;">
+      کرنل <span class="ltr">RBF</span> می‌تواند مرزی منحنی و منعطف بسازد؛ دقیقاً وقتی مفید است که داده مثل این‌جا، به‌شکل خطی جداشدنی نیست.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · SVM</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 نکته مقیاس‌بندی ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">نکته‌ی مهم</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;">SVM هم به مقیاس ویژگی‌ها حساس است</h1>
+    <div class="hp-card">
+      <div class="hp-card__name">StandardScaler قبل از SVM</div>
+      <div class="hp-card__desc">
+        SVM، مثل KNN هفته‌ی قبل، فاصله‌محور است؛ اگر ویژگی‌ها مقیاس‌های خیلی متفاوتی داشته باشند،
+        مرزی که پیدا می‌کند می‌تواند به‌شدت اشتباه باشد. همیشه قبل از SVM، ویژگی‌ها را مقیاس‌بندی کنید.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · SVM</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 گذار به Naive Bayes ───────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:24px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">یک رویکرد کاملاً متفاوت دیگر</div>
+      <div class="big-statement" style="font-size:28px; max-width:800px;">
+        <span class="ltr">SVM</span> هندسی فکر می‌کند: فاصله و حاشیه.<br>
+        حالا یک مدل که <span style="color:var(--accent);">احتمالاتی</span> فکر می‌کند.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · SVM &amp; Naive Bayes</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 Naive Bayes شهود ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">فقط یک نگاه</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;"><span class="ltr">Naive Bayes</span></h1>
+    <div class="callout--blue callout" style="font-size:17px; line-height:1.9;">
+      به‌جای یادگرفتن یک معادله یا رأی‌گیری بر اساس فاصله، <span class="ltr">Naive Bayes</span> مستقیم از
+      <strong>قضیه‌ی بیز</strong> استفاده می‌کند تا احتمال هر کلاس را، با فرض ساده‌کننده‌ی
+      «همه‌ی ویژگی‌ها از هم مستقل‌اند» (همان فرض <span class="em">Naive</span>)، محاسبه کند.
+    </div>
+    <p class="slide__body" style="font-size:16px; text-align:center; margin-top:14px;">
+      این فرض تقریباً هیچ‌وقت دقیقاً درست نیست، اما در عمل، مخصوصاً برای داده‌ی متنی، شگفت‌آور خوب کار می‌کند؛
+      دقیقاً به همین دلیل، کلاسیک‌ترین الگوریتم <strong>فیلترهای اسپم</strong> است، همان مثالی که این دوره را با آن شروع کردیم.
+    </p>
+    <p class="slide__body" style="font-size:14px; color:var(--mid); text-align:center; margin-top:10px;">
+      در سه صفحه‌ی بعد، همین فیلتر اسپم را با یک دیتاست کوچک و عدد واقعی می‌سازیم.
+    </p>
+    <div class="slide__footer">
+      <span>هفته پنجم · SVM &amp; Naive Bayes</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 دیتاست کوچک: فیلتر اسپم ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مثال واقعی</div>
+    <h1 class="slide__title mb-12" style="font-size:26px; text-align:center;">۸ ایمیل، دو کلمه‌ی کلیدی</h1>
+    <p class="slide__body mb-16" style="font-size:14.5px; text-align:center;">
+      همان قانون دستی هفته‌ی اول («اگر <span class="ltr">Free</span> در ایمیل بود → اسپم») را به‌خاطر بیاورید؛
+      حالا به‌جای یک قانون قطعی، از حضور/غیاب دو کلمه (<span class="ltr">Free</span> و <span class="ltr">Meeting</span>) در ۸ ایمیل قبلی، احتمال یاد می‌گیریم.
+    </p>
+    <table class="nb-table">
+      <thead><tr><th>Email</th><th>Free</th><th>Meeting</th><th>Label</th></tr></thead>
+      <tbody>
+        <tr><td>#1</td><td class="cell-yes">✓</td><td class="cell-no">✗</td><td class="cell-spam">Spam</td></tr>
+        <tr><td>#2</td><td class="cell-yes">✓</td><td class="cell-no">✗</td><td class="cell-spam">Spam</td></tr>
+        <tr><td>#3</td><td class="cell-yes">✓</td><td class="cell-yes">✓</td><td class="cell-spam">Spam</td></tr>
+        <tr><td>#4</td><td class="cell-no">✗</td><td class="cell-no">✗</td><td class="cell-spam">Spam</td></tr>
+        <tr><td>#5</td><td class="cell-no">✗</td><td class="cell-yes">✓</td><td class="cell-notspam">Not Spam</td></tr>
+        <tr><td>#6</td><td class="cell-no">✗</td><td class="cell-yes">✓</td><td class="cell-notspam">Not Spam</td></tr>
+        <tr><td>#7</td><td class="cell-no">✗</td><td class="cell-no">✗</td><td class="cell-notspam">Not Spam</td></tr>
+        <tr><td>#8</td><td class="cell-yes">✓</td><td class="cell-yes">✓</td><td class="cell-notspam">Not Spam</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="font-size:13.5px; text-align:center; margin-top:12px;">
+      دقت کنید ایمیل ۸ هم <span class="ltr">Free</span> دارد ولی اسپم نیست («وقت آزاد این هفته؟ برای جلسه هماهنگ کنیم»)؛ یک کلمه به‌تنهایی کافی نیست، برای همین ترکیب چند کلمه را با هم می‌سنجیم.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · SVM &amp; Naive Bayes</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 11 احتمال‌های اولیه و شرطی ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">محاسبه‌ی دستی · قدم ۱</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">اول: احتمال‌های اولیه <span class="ltr">(Prior)</span> و شرطی <span class="ltr">(Likelihood)</span></h1>
+    <div class="formula-box mb-12">P(Spam) , P(word | Spam)</div>
+    <div class="calc-row mb-10">
+      <div class="calc-card">
+        <div class="calc-card__title">P(Spam)</div>
+        <div class="calc-card__val">4/8 = 0.5</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card__title">P(Not Spam)</div>
+        <div class="calc-card__val">4/8 = 0.5</div>
+      </div>
+    </div>
+    <div class="calc-row mb-10">
+      <div class="calc-card">
+        <div class="calc-card__title">P(Free=✓ | Spam)</div>
+        <div class="calc-card__val">3/4 = 0.75</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card__title">P(Free=✓ | Not Spam)</div>
+        <div class="calc-card__val">1/4 = 0.25</div>
+      </div>
+    </div>
+    <div class="calc-row mb-16">
+      <div class="calc-card">
+        <div class="calc-card__title">P(Meeting=✗ | Spam)</div>
+        <div class="calc-card__val">3/4 = 0.75</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card__title">P(Meeting=✗ | Not Spam)</div>
+        <div class="calc-card__val">1/4 = 0.25</div>
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:13.5px; text-align:center;">
+      هر احتمال شرطی، فقط از شمردن سطرهای همان جدول به دست می‌آید؛ مثلاً از ۴ ایمیل اسپم، ۳ تا <span class="ltr">Free</span> داشتند، پس <span class="ltr">P(Free=✓|Spam) = 3/4</span>.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · SVM &amp; Naive Bayes</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 12 پیش‌بینی برای ایمیل جدید ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">محاسبه‌ی دستی · قدم ۲</div>
+    <h1 class="slide__title mb-12" style="font-size:26px; text-align:center;">یک ایمیل جدید می‌رسد: <span class="ltr">Free = ✓, Meeting = ✗</span></h1>
+    <div class="formula-box mb-12">P(class | words) ∝ P(class) · P(Free|class) · P(Meeting|class)</div>
+    <div class="calc-row mb-10">
+      <div class="calc-card">
+        <div class="calc-card__title">Spam</div>
+        <div class="calc-card__val">0.5 × 0.75 × 0.75 = 0.281</div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-card__title">Not Spam</div>
+        <div class="calc-card__val">0.5 × 0.25 × 0.25 = 0.031</div>
+      </div>
+    </div>
+    <div class="callout--blue callout mb-12" style="font-size:15px; text-align:center; font-weight:700;">
+      نرمال‌سازی: <span class="ltr">0.281 / (0.281+0.031) ≈ 90٪ Spam</span>، در برابر <span class="ltr">≈ 10٪ Not Spam</span> ← <span style="color:#EF4444;">پیش‌بینی: Spam</span>
+    </div>
+    <div class="callout" style="font-size:13.5px; text-align:center;">
+      همین‌جاست که فرض «<span class="em">Naive</span>» به کار می‌آید: چون <span class="ltr">Free</span> و <span class="ltr">Meeting</span> را مستقل فرض کردیم، کافی بود دو احتمال شرطی را در هم ضرب کنیم.
+      بدون این فرض، باید احتمال هر <em>ترکیب</em> ممکن از کلمات را از داده حساب می‌کردیم؛ برای یک ایمیل واقعی با هزاران کلمه، این عملاً غیرممکن است.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · SVM &amp; Naive Bayes</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 13 مرز تصمیم Naive Bayes ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">دیدن اثر</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">مرز تصمیم <span class="ltr">Naive Bayes</span>، در کنار SVM</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/svm_and_nb_boundary_comparison.png" alt="مقایسه مرز تصمیم SVM خطی، SVM با کرنل RBF و Naive Bayes" style="max-height:300px;">
+    </figure>
+    <div class="callout" style="font-size:15px; text-align:center;">
+      بدون هیچ هایپرپارامتر مهمی برای تنظیم، بسیار سریع (هم آموزش، هم پیش‌بینی)، و یک <span class="ltr">baseline</span> خوب برای مقایسه با مدل‌های پیچیده‌تر.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · SVM &amp; Naive Bayes</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 14 گذار به جمع‌بندی ───────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:32px; text-align:center;">
+      <div class="big-statement" style="font-size:28px;">
+        یکی هندسی (بیشترین فاصله‌ی امن)، دیگری احتمالاتی (قضیه‌ی بیز)؛ دو نگاه کاملاً متفاوت به همان مسئله.
+      </div>
+      <div class="callout--blue callout" style="max-width:700px; text-align:right;">
+        قدم بعدی: یک قدم به عقب؛ این دو هفته چند مدل دیدیم، نقشه‌ی کامل‌شان چه شکلی است؟
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · SVM &amp; Naive Bayes</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 15 مقایسه نهایی همه مدل‌ها ────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مقایسه‌ی عددی نهایی</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">هشت مدل، همان دیتاست، همان تقسیم <span class="ltr">train/test</span></h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/final_model_comparison_all.png" alt="مقایسه دقت هشت مدل روی دیتاست Breast Cancer" style="max-height:340px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      رگرسیون لجستیک و SVM بالاترین دقت را دارند، اما فاصله‌ی همه‌ی مدل‌ها روی این دیتاست کم است؛ این خودش یک یافته‌ی مهم است: تفاوت واقعی را باید در سرعت، تفسیرپذیری، و رفتار روی داده‌های دیگر جست، نه فقط این یک عدد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته پنجم · جمع‌بندی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 16 نقشه راه کامل طبقه‌بندی ────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">جمع‌بندی بصری</div>
+    <h1 class="slide__title mb-16" style="font-size:26px;">نقشه‌ی راه کامل طبقه‌بندی</h1>
+    <table class="toolbox-table">
+      <thead>
+        <tr><th>خانواده</th><th>الگوریتم نمونه</th></tr>
+      </thead>
+      <tbody>
+        <tr class="done"><td>خطی (Linear)</td><td dir="ltr">Logistic Regression</td></tr>
+        <tr class="done"><td>مبتنی بر نمونه (Instance-based)</td><td dir="ltr">KNN</td></tr>
+        <tr class="done"><td>مبتنی بر درخت (Tree-based)</td><td dir="ltr">Decision Tree</td></tr>
+        <tr class="done"><td>گروهی (Ensemble): Bagging</td><td dir="ltr">Random Forest</td></tr>
+        <tr class="done"><td>گروهی (Ensemble): Boosting</td><td dir="ltr">AdaBoost, Gradient Boosting</td></tr>
+        <tr class="done"><td>مبتنی بر مارجین (Margin-based)</td><td dir="ltr">SVM</td></tr>
+        <tr class="done"><td>احتمالاتی (Probabilistic)</td><td dir="ltr">Naive Bayes</td></tr>
+        <tr><td>بوستینگ صنعتی</td><td dir="ltr">XGBoost, LightGBM, CatBoost</td></tr>
+        <tr><td>شبکه‌ی عصبی (Neural Networks)</td><td dir="ltr">MLP</td></tr>
+      </tbody>
+    </table>
+    <div class="slide__footer">
+      <span>هفته پنجم · جمع‌بندی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 17 KEY TAKEAWAY نهایی ─────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">جمع‌بندی نهایی هفته</div>
+    <p class="key-quote">
+      <strong class="ltr">Random Forest</strong> و <strong class="ltr">Ensemble Learning</strong> نشان دادند چطور ترکیب مدل‌های ضعیف، یک مدل قوی می‌سازد؛
+      <br>
+      <strong class="ltr">SVM</strong> مرزی با بیشترین فاصله‌ی امن پیدا کرد؛
+      <br>
+      <strong class="ltr">Naive Bayes</strong> یک نگاه احتمالاتی و سریع بود.
+      <br><br>
+      هیچ مدلی همیشه برنده نیست؛ انتخاب مدل یعنی سنجیدن دقت، سرعت، و تفسیرپذیری در کنار هم.
+    </p>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>
