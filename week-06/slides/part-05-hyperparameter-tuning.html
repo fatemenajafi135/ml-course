@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>بهینه‌سازی Hyperparameterها | هفته ششم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .mini-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    .mini-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 9px 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .mini-table td {
+      padding: 9px 16px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .mini-table tr:nth-child(even) td { background: var(--light); }
+
+    /* ── under/good/overfit trio ─────────────────────────────────── */
+    .fit-row { display: flex; gap: 16px; }
+    .fit-card {
+      flex: 1;
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      text-align: center;
+    }
+    .fit-card__depth { font-size: 13px; font-family: var(--font-mono); direction: ltr; color: var(--mid); margin-bottom: 8px; }
+    .fit-card__label { font-size: 16px; font-weight: 700; }
+    .fit-card--under { background: #FEF2F2; border: 2px solid #EF4444; }
+    .fit-card--under .fit-card__label { color: #991B1B; }
+    .fit-card--good { background: #fff3e8; border: 2px solid var(--accent); }
+    .fit-card--good .fit-card__label { color: var(--dark); }
+    .fit-card--over { background: #FEF2F2; border: 2px solid #EF4444; }
+    .fit-card--over .fit-card__label { color: #991B1B; }
+
+    /* ── 3x3 combination grid ──────────────────────────────────── */
+    .combo-grid { display: grid; grid-template-columns: 90px repeat(3, 1fr); gap: 6px; direction: ltr; max-width: 620px; margin: 0 auto; }
+    .combo-cell {
+      padding: 12px 6px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .combo-cell--head { background: var(--dark); color: #fff; }
+    .combo-cell--combo { background: var(--white); border: 2px solid #E2E8F0; color: var(--dark); }
+    .combo-cell--best { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ── flow (parameter combination -> CV -> score -> best) ─────── */
+    .flow { display: flex; flex-direction: column; align-items: center; gap: 0; }
+    .flow-box {
+      background: var(--accent);
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 10px 26px;
+      border-radius: var(--radius);
+      min-width: 220px;
+      text-align: center;
+    }
+    .flow-box--dim { background: var(--mid); }
+    .flow-box--dark { background: var(--dark); }
+    .flow-arrow { font-size: 18px; color: var(--mid); line-height: 1; padding: 2px 0; }
+
+    .big-number {
+      font-family: var(--font-mono);
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--accent);
+      direction: ltr;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته ششم · بخش پنجم</div>
+    <h1 class="slide__title">بهینه‌سازی Hyperparameterها</h1>
+    <h2 class="slide__subtitle" dir="ltr">Hyperparameter Tuning: GridSearchCV &amp; RandomizedSearchCV</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 Parameter در برابر Hyperparameter ──────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یک تمایز مهم</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;"><span class="ltr">Parameter</span> در برابر <span class="ltr">Hyperparameter</span></h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:28px;">
+      <div class="callout" style="font-size:15.5px; line-height:1.85;">
+        <strong class="ltr" style="color:var(--dark);">Parameter</strong><br>
+        چیزی که مدل خودش، در زمان Training، یاد می‌گیرد. مثال: <span class="ltr">weights</span> و <span class="ltr">bias</span> در Linear Regression.
+      </div>
+      <div class="callout--blue callout" style="font-size:15.5px; line-height:1.85;">
+        <strong class="ltr" style="color:var(--accent);">Hyperparameter</strong><br>
+        چیزی که ما، قبل از Training، تعیین می‌کنیم. مثال: <span class="ltr">n_estimators</span> و <span class="ltr">max_depth</span> در Random Forest.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · بهینه‌سازی Hyperparameterها</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 چرا Tuning مهم است ─────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">چرا اهمیت دارد</div>
+    <h1 class="slide__title mb-20" style="font-size:27px; text-align:center;">یک Hyperparameter، سه نتیجه‌ی کاملاً متفاوت</h1>
+    <div class="fit-row mb-16">
+      <div class="fit-card fit-card--under">
+        <div class="fit-card__depth">max_depth = 2</div>
+        <div class="fit-card__label">Underfitting</div>
+      </div>
+      <div class="fit-card fit-card--good">
+        <div class="fit-card__depth">max_depth = 5</div>
+        <div class="fit-card__label">Good Fit</div>
+      </div>
+      <div class="fit-card fit-card--over">
+        <div class="fit-card__depth">max_depth = 30</div>
+        <div class="fit-card__label">Overfitting</div>
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:15px; text-align:center;">
+      دقیقاً همان طیف کم‌برازش/بیش‌برازش هفته‌ی ۳؛ سؤال این است: بهترین ترکیب Hyperparameterها چیست؟ به‌جای حدس زدن، به‌شکل سیستماتیک جستجو می‌کنیم.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · بهینه‌سازی Hyperparameterها</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 Grid Search: ایده ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">راه‌حل اول</div>
+    <h1 class="slide__title mb-20" style="font-size:27px; text-align:center;"><span class="ltr">Grid Search</span>: همه‌ی ترکیب‌های ممکن</h1>
+    <div class="combo-grid mb-16">
+      <div class="combo-cell combo-cell--head"></div>
+      <div class="combo-cell combo-cell--head">n_est=50</div>
+      <div class="combo-cell combo-cell--head">n_est=100</div>
+      <div class="combo-cell combo-cell--head">n_est=200</div>
+
+      <div class="combo-cell combo-cell--head">depth=3</div>
+      <div class="combo-cell combo-cell--combo">۱</div>
+      <div class="combo-cell combo-cell--combo">۲</div>
+      <div class="combo-cell combo-cell--combo">۳</div>
+
+      <div class="combo-cell combo-cell--head">depth=5</div>
+      <div class="combo-cell combo-cell--combo">۴</div>
+      <div class="combo-cell combo-cell--best">۵ ★</div>
+      <div class="combo-cell combo-cell--combo">۶</div>
+
+      <div class="combo-cell combo-cell--head">depth=10</div>
+      <div class="combo-cell combo-cell--combo">۷</div>
+      <div class="combo-cell combo-cell--combo">۸</div>
+      <div class="combo-cell combo-cell--combo">۹</div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      ۳ مقدار برای <span class="ltr">max_depth</span> × ۳ مقدار برای <span class="ltr">n_estimators</span> = ۹ ترکیب؛ برای هر ترکیب، یک <span class="ltr">Cross-Validation</span> کامل اجرا می‌شود.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · بهینه‌سازی Hyperparameterها</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 GridSearchCV: مکانیزم ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">در عمل</div>
+    <h1 class="slide__title mb-24" style="font-size:28px; text-align:center;"><span class="ltr">GridSearchCV</span></h1>
+    <div class="flow" style="flex:1; justify-content:center; gap:0;">
+      <div class="flow-box flow-box--dim">Parameter Combination</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box">Cross Validation</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box">CV Score</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box flow-box--dark">انتخاب بهترین</div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      بعد از اجرا: <span class="ltr">best_params_</span> (بهترین ترکیب)، <span class="ltr">best_score_</span> (بهترین CV Score)،
+      و <span class="ltr">best_estimator_</span> (مدل نهایی، آماده‌ی استفاده).
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · بهینه‌سازی Hyperparameterها</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 مشکل Grid Search در مقیاس بزرگ ─────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">مشکل مقیاس</div>
+      <div class="big-statement" style="font-size:20px; max-width:760px;">
+        اگر تعداد Hyperparameterها زیاد شود، تعداد ترکیب‌ها خیلی سریع زیاد می‌شود
+      </div>
+      <div class="big-number">5 × 5 × 4 × 3 = 300 combinations</div>
+      <div class="big-number" style="color:#EF4444;">300 × cv=5 = 1500 model trainings</div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · بهینه‌سازی Hyperparameterها</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 RandomizedSearchCV ─────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">راه‌حل دوم</div>
+    <h1 class="slide__title mb-20" style="font-size:27px; text-align:center;"><span class="ltr">RandomizedSearchCV</span></h1>
+    <div class="callout--blue callout" style="font-size:17px; text-align:center;">
+      به‌جای امتحان کردن همه‌ی ترکیب‌ها، تعداد مشخصی ترکیب (<span class="ltr">n_iter</span>) را به‌صورت تصادفی از فضای جستجو انتخاب و امتحان می‌کند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · بهینه‌سازی Hyperparameterها</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 Grid در برابر Randomized ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">جمع‌بندی این دو</div>
+    <h1 class="slide__title mb-20" style="font-size:27px;"><span class="ltr">Grid Search</span> در برابر <span class="ltr">Randomized Search</span></h1>
+    <table class="mini-table">
+      <thead><tr><th></th><th dir="ltr">Grid Search</th><th dir="ltr">Randomized Search</th></tr></thead>
+      <tbody>
+        <tr><td>روش</td><td>همه‌ی ترکیب‌های مشخص‌شده</td><td>تعداد محدودی ترکیب تصادفی</td></tr>
+        <tr><td>مناسب برای</td><td>فضای جستجوی کوچک</td><td>فضای جستجوی بزرگ</td></tr>
+        <tr><td>تضمین بهترین ترکیب داخل Grid</td><td>بله</td><td>خیر، فقط تخمین خوب</td></tr>
+      </tbody>
+    </table>
+    <div class="slide__footer">
+      <span>هفته ششم · بهینه‌سازی Hyperparameterها</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 KEY TAKEAWAY ──────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:24px; text-align:center;">
+      <div class="big-statement" style="font-size:27px; max-width:820px;">
+        هر دو، <span class="ltr">GridSearchCV</span> و <span class="ltr">RandomizedSearchCV</span>، از <span class="ltr">Cross-Validation</span> برای سنجیدن هر ترکیب استفاده می‌کنند؛ نه از Test Set.
+      </div>
+      <div class="callout--blue callout" style="max-width:700px; text-align:right;">
+        قدم بعدی: همه‌چیز را کنار هم می‌گذاریم؛ Pipeline، Cross-Validation و Tuning، در یک Workflow واحد.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · بهینه‌سازی Hyperparameterها</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

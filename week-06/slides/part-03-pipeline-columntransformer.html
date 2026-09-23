@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>Pipeline و ColumnTransformer | هفته ششم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .mini-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    .mini-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 9px 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .mini-table td {
+      padding: 9px 16px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .mini-table tr:nth-child(even) td { background: var(--light); }
+
+    /* ── compact chain of preprocessing steps ──────────────────── */
+    .mini-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      flex-wrap: wrap;
+      direction: ltr;
+    }
+    .mini-flow-box {
+      background: var(--mid);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 12px 14px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .mini-flow-arrow { font-size: 15px; color: var(--mid); }
+
+    /* ── wrong / correct comparison ────────────────────────────── */
+    .verdict-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; flex: 1; align-items: stretch; }
+    .verdict-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .verdict-card--wrong { border: 2px solid #EF4444; }
+    .verdict-card--right { border: 2px solid var(--accent); }
+    .verdict-card__tag {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 3px 14px;
+      border-radius: 999px;
+      color: #fff;
+    }
+    .verdict-card--wrong .verdict-card__tag { background: #EF4444; }
+    .verdict-card--right .verdict-card__tag { background: var(--accent); }
+    .verdict-step { font-size: 13.5px; color: var(--dark); direction: ltr; }
+    .verdict-arrow { font-size: 13px; color: var(--mid); }
+
+    /* ── horizontal pipeline flow ───────────────────────────────── */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .flow-item { display: flex; align-items: center; gap: 0; flex-direction: column; }
+    .flow-box {
+      background: var(--accent);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 600;
+      padding: 12px 30px;
+      border-radius: var(--radius);
+      min-width: 190px;
+      text-align: center;
+    }
+    .flow-box--dim { background: var(--mid); }
+    .flow-arrow { font-size: 22px; color: var(--mid); line-height: 1; padding: 2px 0; }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 17px;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    .check-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--accent); color: var(--white);
+      font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+
+    /* ── two-branch ColumnTransformer diagram ──────────────────── */
+    .branch-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+    .branch-card {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+    }
+    .branch-card__title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--dark);
+      direction: ltr;
+    }
+    .branch-node {
+      background: var(--dark);
+      color: #fff;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 8px;
+      direction: ltr;
+    }
+    .branch-arrow { font-size: 13px; color: var(--mid); }
+    .merge-box {
+      background: var(--accent);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 10px 24px;
+      border-radius: 8px;
+      text-align: center;
+      direction: ltr;
+      margin: 14px auto 0;
+      width: fit-content;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته ششم · بخش ۳</div>
+    <h1 class="slide__title">Data Leakage، Pipeline و ColumnTransformer</h1>
+    <h2 class="slide__subtitle" dir="ltr">From Manual Steps to a Structured Workflow</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 چرا روش دستی خطرناک است ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">چرا روش دستی خطرناک است</div>
+    <h1 class="slide__title mb-20" style="font-size:26px; text-align:center;">هرچه مراحل بیشتر، احتمال خطا بیشتر</h1>
+    <div class="mini-flow mb-20">
+    <div class="mini-flow-box" style="background:var(--accent);">Model</div>
+    <div class="mini-flow-arrow">←</div>
+    <div class="mini-flow-box">Feature Engineering</div>
+    <div class="mini-flow-arrow">←</div>
+    <div class="mini-flow-box">Encoding</div>
+    <div class="mini-flow-arrow">←</div>
+    <div class="mini-flow-box">Scaling</div>
+    <div class="mini-flow-arrow">←</div>
+    <div class="mini-flow-box">Imputation</div>
+<!--       
+      
+      <div class="mini-flow-arrow">←</div>
+      
+      <div class="mini-flow-arrow">←</div>
+      
+      <div class="mini-flow-arrow">←</div> -->
+      
+    </div>
+    <div class="callout--red callout" style="font-size:16px; text-align:center;">
+      در یک پروژه‌ی کوچک شاید بشود همه‌ی این مراحل را دستی مدیریت کرد؛ اما با چند مرحله‌ی پی‌درپی،
+      احتمال یک اشتباه ساده بالا می‌رود؛ مهم‌ترینش: فراموش کردن اینکه fit باید فقط روی Train باشد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Pipeline و ColumnTransformer</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 یادآوری جدی Data Leakage ──────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:22px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">یادآوری جدی‌تر</div>
+      <div class="big-statement" style="font-size:26px; max-width:820px;">
+        <span class="ltr">Data Leakage</span> یعنی اطلاعاتی وارد Training شوند که در دنیای واقعی، هنگام Prediction، در اختیار مدل نیستند.
+      </div>
+      <div class="callout--blue callout" style="max-width:700px;">
+        این خطا همیشه واضح نیست؛ حتی یک محاسبه‌ی ساده مثل Mean یا Median، اگر روی Train و Test با هم حساب شود، همین مشکل را ایجاد می‌کند.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Pipeline و ColumnTransformer</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 راه‌حل: Pipeline ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">راه‌حل</div>
+    <h1 class="slide__title mb-24" style="font-size:32px; text-align:center;"><span class="ltr">Pipeline</span></h1>
+    <div class="flow" style="flex-direction:row; justify-content:center; align-items:center; gap:12px; flex:1;">
+
+      <div class="flow-item"><div class="flow-box flow-box--dim" style="min-width:150px; font-size:15px; padding:12px 16px;">Prediction</div></div>
+      
+      <div class="flow-arrow" style="font-size:22px;">←</div>
+      <div class="flow-item"><div class="flow-box" style="min-width:130px; font-size:15px; padding:12px 16px;">Model</div></div>
+
+      
+      <div class="flow-arrow" style="font-size:22px;">←</div>
+      <div class="flow-item"><div class="flow-box" style="min-width:130px; font-size:15px; padding:12px 16px;">Scaler</div></div>
+      <div class="flow-arrow" style="font-size:22px;">←</div>
+      <div class="flow-item"><div class="flow-box" style="min-width:130px; font-size:15px; padding:12px 16px;">Imputer</div></div>
+      <div class="flow-arrow" style="font-size:22px;">←</div>
+      <div class="flow-item"><div class="flow-box flow-box--dim" style="min-width:130px; font-size:15px; padding:12px 16px;">Input</div></div>
+    </div>
+    <div class="callout--blue callout" style="font-size:16px; text-align:center;">
+      <span class="ltr">Pipeline</span> چند مرحله‌ی مختلف را به یک Workflow واحد تبدیل می‌کند؛ از بیرون، دقیقاً مثل یک Model واحد رفتار می‌کند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Pipeline و ColumnTransformer</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 مزایای Pipeline ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مزایا</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;">چرا Pipeline بسازیم؟</h1>
+    <div style="display:flex; flex-direction:column; gap:14px; flex:1; justify-content:center;">
+      <div class="check-item"><span class="check-num">۱</span><span>کد تمیزتر می‌شود؛ همه‌ی مراحل در یک جا.</span></div>
+      <div class="check-item"><span class="check-num">۲</span><span>هیچ مرحله‌ای فراموش نمی‌شود.</span></div>
+      <div class="check-item"><span class="check-num">۳</span><span>Workflow قابل‌تکرار می‌شود.</span></div>
+      <div class="check-item"><span class="check-num">۴</span><span>احتمال Data Leakage به‌صورت ساختاری کاهش می‌یابد.</span></div>
+      <div class="check-item"><span class="check-num">۵</span><span>آماده برای Cross Validation.</span></div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Pipeline و ColumnTransformer</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 Pipeline و Data Leakage ────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">چرا این ساختاری جواب می‌دهد</div>
+    <h1 class="slide__title mb-20" style="font-size:27px; text-align:center;">قاعده‌ی «fit فقط روی Train»، دیگر به یاد ما نیست</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:28px;">
+      <div class="callout--blue callout" style="font-size:15.5px; line-height:1.85;">
+        <strong class="rtl" style="color:var(--accent);">هنگام fit</strong><br>
+        تمام Transformerهای داخل Pipeline، فقط روی Training Data فیت می‌شوند.
+      </div>
+      <div class="callout" style="font-size:15.5px; line-height:1.85;">
+        <strong class="rtl" style="color:var(--dark);">هنگام predict</strong><br>
+        Test Data فقط Transform می‌شود، نه Fit.
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center; margin-top:16px;">
+      این قاعده دیگر به حافظه‌ی ما وابسته نیست؛ به‌صورت ساختاری در Pipeline تضمین شده است.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Pipeline و ColumnTransformer</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 مشکل جدید: Featureهای متفاوت ──────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یک مشکل جدید</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;">نه همه‌ی Featureها یک نوع نیازمندی دارند</h1>
+    <table class="mini-table mb-16" style="max-width:700px; margin:0 auto; table-layout:fixed;">
+      <colgroup><col style="width:32%;"><col style="width:20%;"><col style="width:48%;"></colgroup>
+      <thead><tr><th>Feature</th><th>نوع</th><th>نیاز</th></tr></thead>
+      <tbody>
+        <tr><td><span class="ltr">MedInc, AveRooms, ...</span></td><td>عددی</td><td><span class="ltr">Imputation + Scaling</span></td></tr>
+        <tr><td><span class="ltr">coast_region</span></td><td>Categorical</td><td><span class="ltr">Imputation + Encoding</span></td></tr>
+      </tbody>
+    </table>
+    <div class="callout--red callout" style="font-size:16px; text-align:center;">
+      آیا می‌توانیم یک Pipeline واحد را مستقیم روی همه‌ی ستون‌ها اجرا کنیم؟ خیر.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Pipeline و ColumnTransformer</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 ColumnTransformer ─────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">راه‌حل</div>
+    <h1 class="slide__title mb-20" style="font-size:28px; text-align:center;"><span class="ltr">ColumnTransformer</span></h1>
+    <div class="branch-wrap mb-8">
+      <div class="branch-card">
+        <div class="branch-card__title">Numerical Features</div>
+        <div class="branch-node">Imputer</div>
+        <div class="branch-arrow">↓</div>
+        <div class="branch-node">Scaler</div>
+      </div>
+      <div class="branch-card">
+        <div class="branch-card__title">Categorical Features</div>
+        <div class="branch-node">Imputer</div>
+        <div class="branch-arrow">↓</div>
+        <div class="branch-node">Encoder</div>
+      </div>
+    </div>
+    <div class="merge-box">Processed Features</div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center; margin-top:14px;">
+      <span class="ltr">ColumnTransformer</span> دقیقاً برای همین ساخته شده: اعمال Transformationهای متفاوت روی ستون‌های متفاوت، و ترکیب نتیجه در یک خروجی واحد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Pipeline و ColumnTransformer</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 KEY TAKEAWAY ──────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:24px; text-align:center;">
+      <div class="big-statement" style="font-size:28px; max-width:820px;">
+        <span class="ltr">Pipeline</span> چند مرحله را به یک واحد تبدیل می‌کند؛ <span class="ltr">ColumnTransformer</span> اجازه می‌دهد این کار را برای ستون‌های مختلف، متفاوت انجام دهیم.
+      </div>
+      <div class="callout--blue callout" style="max-width:700px; text-align:right;">
+        قدم بعدی: این Preprocessor را به یک Model وصل می‌کنیم و یک Workflow کامل و یک‌پارچه می‌سازیم.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Pipeline و ColumnTransformer</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

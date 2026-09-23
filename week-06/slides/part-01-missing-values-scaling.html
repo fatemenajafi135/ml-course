@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>Missing Values و Feature Scaling | هفته ششم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .mini-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    .mini-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 9px 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .mini-table td {
+      padding: 9px 16px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .mini-table tr:nth-child(even) td { background: var(--light); }
+    .mini-table .cell-missing { color: #EF4444; font-weight: 700; }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 17px;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    .check-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--accent); color: var(--white);
+      font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+
+    /* ── row-shrink bar visual ─────────────────────────────────── */
+    .shrink-row { display: flex; flex-direction: column; gap: 14px; max-width: 760px; margin: 0 auto; }
+    .shrink-item { display: flex; align-items: center; gap: 16px; }
+    .shrink-label { width: 130px; font-size: 14px; color: var(--dark); font-weight: 600; text-align: right; flex-shrink: 0; }
+    .shrink-bar-track { flex: 1; background: #E2E8F0; border-radius: 999px; height: 26px; overflow: hidden; }
+    .shrink-bar-fill { height: 100%; border-radius: 999px; display: flex; align-items: center; padding-inline-start: 12px; color: #fff; font-size: 12.5px; font-weight: 700; }
+
+    /* ── income outlier chips ──────────────────────────────────── */
+    .chip-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; direction: ltr; }
+    .income-chip {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--dark);
+      font-family: var(--font-mono);
+    }
+    .income-chip--outlier {
+      border-color: #EF4444;
+      color: #EF4444;
+      background: #FEF2F2;
+    }
+
+    /* ── wrong / correct comparison ────────────────────────────── */
+    .verdict-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; flex: 1; align-items: center; }
+    .verdict-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+      gap: 9px;
+    }
+    .verdict-card--wrong { border: 2px solid #EF4444; }
+    .verdict-card--right { border: 2px solid var(--accent); }
+    .verdict-card__tag {
+      font-size: 15px;
+      font-weight: 700;
+      padding: 3px 16px;
+      border-radius: 999px;
+      color: #fff;
+    }
+    .verdict-card--wrong .verdict-card__tag { background: #EF4444; }
+    .verdict-card--right .verdict-card__tag { background: var(--accent); }
+    .verdict-step { font-size: 17px; color: var(--dark); direction: ltr; }
+    .verdict-arrow { font-size: 15px; color: var(--mid); }
+
+    /* ── formula box ────────────────────────────────────────────── */
+    .formula-box {
+      font-family: var(--font-mono);
+      direction: ltr;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--dark);
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 16px 24px;
+    }
+    .formula-box small {
+      display: block;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--mid);
+      margin-top: 6px;
+    }
+
+    /* ── mean vs median number line ─────────────────────────────── */
+    .numline-wrap { width: 100%; max-width: 820px; margin: 58px auto 8px; padding: 0 20px; box-sizing: border-box; }
+    .numline-track { position: relative; width: 100%; height: 4px; background: #E2E8F0; border-radius: 999px; direction: ltr; }
+    .numline-dot {
+      position: absolute; top: 50%; transform: translate(-50%, -50%);
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--dark); border: 2px solid #fff; box-shadow: 0 0 0 1px #E2E8F0;
+    }
+    .numline-dot--outlier { background: #EF4444; }
+    .numline-dot__label {
+      position: absolute; top: 12px; transform: translateX(-50%);
+      font-size: 11px; color: var(--mid); white-space: nowrap; direction: ltr;
+    }
+    .numline-marker {
+      position: absolute; bottom: 0; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .numline-marker__label {
+      font-size: 12px; font-weight: 700; white-space: nowrap; color: #fff;
+      padding: 3px 10px; border-radius: 999px; margin-bottom: 4px;
+    }
+    .numline-marker__tick { width: 2px; height: 16px; }
+    .numline-marker--median .numline-marker__label { background: var(--accent); }
+    .numline-marker--median .numline-marker__tick { background: var(--accent); }
+    .numline-marker--mean .numline-marker__label { background: #EF4444; }
+    .numline-marker--mean .numline-marker__tick { background: #EF4444; }
+    .numline-caption { text-align: center; font-size: 12px; color: var(--mid); margin-top: 34px; }
+
+    /* ── same mean, different spread ────────────────────────────── */
+    .spread-wrap { position: relative; width: 100%; max-width: 640px; margin: 0 auto; padding-top: 22px; display: flex; flex-direction: column; gap: 28px; box-sizing: border-box; }
+    .spread-center-line { position: absolute; top: 0; bottom: 6px; left: 50%; width: 2px; background: var(--dark); opacity: .3; }
+    .spread-center-label {
+      position: absolute; top: -4px; left: 50%; transform: translate(-50%, -100%);
+      font-size: 11px; color: var(--mid); direction: ltr; white-space: nowrap;
+    }
+    .spread-row__label { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+    .spread-row__track { position: relative; height: 14px; }
+    .spread-dot {
+      position: absolute; top: 50%; transform: translate(-50%, -50%);
+      width: 12px; height: 12px; border-radius: 50%; background: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته ششم · بخش ۱</div>
+    <h1 class="slide__title">Missing Values و Feature Scaling</h1>
+    <h2 class="slide__subtitle" dir="ltr">Handling Missing Data &amp; Scaling Features</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 Preprocessing چیست ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">قبل از هر چیز</div>
+    <h1 class="slide__title mb-20" style="font-size:30px;"><span class="ltr">Preprocessing</span> یک دستور ثابت نیست</h1>
+    <p class="slide__body mb-16" style="font-size:17px;">
+      داده‌های واقعی معمولاً کاملاً تمیز نیستند: ممکن است <span class="ltr">Missing Values</span>، Featureهای <span class="ltr">Categorical</span>،
+      مقیاس‌های متفاوت یا فرمت‌های نامناسب داشته باشند. اما این اشتباه است که فکر کنیم همیشه باید همان مراحل ثابت را، در همان ترتیب، روی هر دیتاست اجرا کرد.
+    </p>
+    <div class="callout--blue callout" style="font-size:19px; text-align:center;">
+      سوال درست همیشه همین است: «داده‌ی من چه مشکلی دارد، و مدل من چه چیزی نیاز دارد؟»
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Missing Values و Scaling</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 نمونه Missing Value ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">اولین قدم</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;">قبل از هر تصمیمی، ببینیم کجا و چقدر Missing داریم</h1>
+    <table class="mini-table mb-16" style="max-width:600px; margin:0 auto;">
+      <thead><tr><th>Age</th><th>Income</th><th>City</th></tr></thead>
+      <tbody>
+        <tr><td>۲۵</td><td>۵۰۰۰</td><td>Tehran</td></tr>
+        <tr><td class="cell-missing">NaN</td><td>۸۰۰۰</td><td>Tehran</td></tr>
+        <tr><td>۴۰</td><td class="cell-missing">NaN</td><td>Shiraz</td></tr>
+      </tbody>
+    </table>
+    <div class="callout--blue callout" style="font-size:15.5px; text-align:center;">
+      فقط دانستن تعداد <span class="ltr">Missing Value</span> کافی نیست؛ باید بپرسیم چند درصد داده گم شده، آیا تصادفی است، و آیا خودِ گم‌شدن، اطلاعاتی درباره‌ی نمونه دارد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Missing Values و Scaling</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 استراتژی ۱: حذف داده ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">استراتژی ۱</div>
+    <h1 class="slide__title mb-20" style="font-size:28px; text-align:center;">حذف Rowهای دارای Missing Value</h1>
+    <div class="shrink-row mb-20">
+      <div class="shrink-item">
+        <span class="shrink-label">قبل از حذف</span>
+        <div class="shrink-bar-track"><div class="shrink-bar-fill" style="width:100%; background:var(--dark);">۱۰۰۰ Row</div></div>
+      </div>
+      <div class="shrink-item">
+        <span class="shrink-label">بعد از حذف</span>
+        <div class="shrink-bar-track"><div class="shrink-bar-fill" style="width:60%; background:#EF4444;">۶۰۰ Row</div></div>
+      </div>
+    </div>
+    <div class="callout--red callout" style="font-size:15.5px; text-align:center;">
+      مناسب است وقتی تعداد <span class="ltr">Missing Values</span> کم است؛ اما اگر از ۱۰۰۰ Row فقط ۶۰۰ تا بماند،
+      بخش زیادی از اطلاعات را از دست داده‌ایم. حذف داده همیشه بهترین راه‌حل نیست.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Missing Values و Scaling</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04b سه معیار مرکزیت ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">قبل از انتخاب Strategy، یک مرور</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;">سه راه برای پیدا کردن «مرکز» داده</h1>
+    <table class="mini-table mb-16">
+      <thead><tr><th>آماره</th><th>تعریف</th><th>مناسب برای</th><th>حساس به Outlier؟</th></tr></thead>
+      <tbody>
+        <tr><td class="ltr">Mean</td><td>میانگین حسابی: جمع مقادیر تقسیم بر تعدادشان</td><td>Numerical، Distribution نسبتاً معمولی</td><td>بله</td></tr>
+        <tr><td class="ltr">Median</td><td>مقدار وسط، بعد از مرتب‌سازی داده</td><td>Numerical با Outlier یا Skew</td><td>خیر</td></tr>
+        <tr><td class="ltr">Mode</td><td>پرتکرارترین مقدار</td><td>Categorical (و گاهی Numerical گسسته)</td><td>خیر</td></tr>
+      </tbody>
+    </table>
+    <div class="formula-box">Mean = ( Σ x ) / n<small>Median = مقدار وسط پس از Sort (یا میانگین دو مقدار وسط، وقتی n زوج است)</small></div>
+    <div class="slide__footer">
+      <span>هفته ششم · Missing Values و Scaling</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 استراتژی ۲: Imputation ────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">استراتژی ۲</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;"><span class="ltr">Imputation</span>: جایگزینی با یک مقدار مناسب</h1>
+    <table class="mini-table" style="max-width:560px; margin:0 auto; table-layout:fixed;">
+      <colgroup><col style="width:60%;"><col style="width:40%;"></colgroup>
+      <thead><tr><th>وضعیت</th><th>استراتژی پیشنهادی</th></tr></thead>
+      <tbody>
+        <tr><td>Distribution نسبتاً معمولی</td><td><span class="ltr">Mean</span></td></tr>
+        <tr><td>وجود Outlier</td><td><span class="ltr">Median</span></td></tr>
+        <tr><td>Categorical Feature</td><td><span class="ltr">Most Frequent</span></td></tr>
+        <tr><td>Missing بودن خودش معنادار است</td><td><span class="ltr">Constant / Unknown</span></td></tr>
+      </tbody>
+    </table>
+    <div class="slide__footer">
+      <span>هفته ششم · Missing Values و Scaling</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 Mean در برابر Median ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">چرا Median مقاوم‌تر است</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;">یک <span class="ltr">Outlier</span>، Mean را کاملاً جابه‌جا می‌کند</h1>
+    <div class="numline-wrap">
+      <div class="numline-track">
+        <span class="numline-marker numline-marker--median" style="left:12%;">
+          <span class="numline-marker__label">Median</span>
+          <span class="numline-marker__tick"></span>
+        </span>
+        <span class="numline-marker numline-marker--mean" style="left:44%;">
+          <span class="numline-marker__label">Mean</span>
+          <span class="numline-marker__tick"></span>
+        </span>
+        <span class="numline-dot" style="left:6%;"></span>
+        <span class="numline-dot__label" style="left:6%;">5000</span>
+        <span class="numline-dot" style="left:10%;"></span>
+        <span class="numline-dot__label" style="left:10%;">5500</span>
+        <span class="numline-dot" style="left:14%;"></span>
+        <span class="numline-dot__label" style="left:14%;">6000</span>
+        <span class="numline-dot" style="left:19%;"></span>
+        <span class="numline-dot__label" style="left:19%;">7000</span>
+        <span class="numline-dot numline-dot--outlier" style="left:93%;"></span>
+        <span class="numline-dot__label" style="left:93%;">200000</span>
+      </div>
+      <div class="numline-caption">فاصله‌ها نمادین‌اند، نه دقیقاً به مقیاس</div>
+    </div>
+    <div class="cols-2" style="flex:1; align-items:center; gap:24px;">
+      <div class="callout--red callout" style="font-size:15.5px; line-height:1.8;">
+        <strong class="ltr">Mean</strong><br>
+        همان یک عدد پرت، مقدار جایگزین را به‌شدت بالا می‌کشد.
+      </div>
+      <div class="callout--blue callout" style="font-size:15.5px; line-height:1.8;">
+        <strong class="ltr">Median</strong><br>
+        در برابر <span class="ltr">Outlier</span> مقاوم است؛ انتخاب معمولاً مطمئن‌تر.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Missing Values و Scaling</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 قاعده طلایی Imputer ───────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:22px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">نکته‌ی بسیار مهم</div>
+      <div class="big-statement" style="font-size:26px; max-width:820px;">
+        <span class="ltr">Imputer</span> هم باید مثل یک <span class="ltr">Model</span> رفتار کند.
+      </div>
+      <div class="callout--blue callout" style="max-width:760px; font-size:16px; line-height:1.85;">
+        روی <span class="ltr">Training Data</span> فیت می‌شود (Strategy را یاد می‌گیرد)، سپس هم Train و هم Test را تبدیل می‌کند؛
+        اما روی <span class="ltr">Test Data</span> هرگز فیت نمی‌شود. وگرنه اطلاعات آماری Test وارد یادگیری شده، دقیقاً همان <span class="em">Data Leakage</span> هفته‌ی ۲.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Missing Values و Scaling</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 انگیزه‌ی Scaling ──────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:24px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">از یک مشکل دیگر</div>
+      <div class="big-statement" style="font-size:24px; max-width:800px;">
+        <span class="ltr">Age</span> بین ۲۰ تا ۶۰؛ <span class="ltr">Salary</span> بین هزار تا صد هزار.
+      </div>
+      <div class="big-statement" style="font-size:28px; max-width:800px;">
+        آیا این تفاوت مقیاس همیشه مشکل است؟
+      </div>
+      <div class="callout" style="font-size:16px;">خیر؛ به الگوریتم بستگی دارد.</div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Missing Values و Scaling</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 حساس در برابر کم‌حساس ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">به الگوریتم بستگی دارد</div>
+    <h1 class="slide__title mb-20" style="font-size:28px; text-align:center;">کدام مدل‌ها به مقیاس حساس‌اند؟</h1>
+    <div style="display:flex; gap:18px; flex:1; align-items:center;">
+      <div class="callout--blue callout" style="font-size:15px; line-height:1.8; flex:1;">
+        <strong class="rtl" style="color:var(--accent);">حساس به Scaling</strong><br>
+        <span class="ltr">KNN</span>، <span class="ltr">SVM</span>، <span class="ltr">Logistic Regression</span>، شبکه‌های عصبی.
+        مثلاً <span class="ltr">KNN</span> از فاصله استفاده می‌کند؛ Featureی با بازه‌ی بزرگ‌تر، به‌تنهایی فاصله را تعیین می‌کند، حتی اگر مهم‌تر نباشد.
+      </div>
+      <div class="callout" style="font-size:15px; line-height:1.8; flex:1; background:#fff3e8;">
+        <strong class="rtl" style="color:var(--dark);">کم‌حساس به Scaling </strong><br>
+        مدل‌های مبتنی بر درخت (<span class="ltr">Decision Tree</span>، <span class="ltr">Random Forest</span>).
+        این مدل‌ها سوالی مثل <span class="ltr">Age &lt; 30 ?</span> می‌پرسند؛ مقیاس Feature معمولاً ساختار تصمیم را تغییر نمی‌دهد.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Missing Values و Scaling</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09b Standard Deviation ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">نه‌فقط مرکز، بلکه پراکندگی</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;"><span class="ltr">Standard Deviation</span>: داده‌ها چقدر پخش‌اند؟</h1>
+    <div class="spread-wrap mb-16">
+      <div class="spread-center-line"></div>
+      <div class="spread-center-label">mean</div>
+      <div>
+        <div class="spread-row__label">Feature A · متمرکز (Low Variance)</div>
+        <div class="spread-row__track">
+          <span class="spread-dot" style="left:44%;"></span>
+          <span class="spread-dot" style="left:47%;"></span>
+          <span class="spread-dot" style="left:50%;"></span>
+          <span class="spread-dot" style="left:53%;"></span>
+          <span class="spread-dot" style="left:56%;"></span>
+        </div>
+      </div>
+      <div>
+        <div class="spread-row__label">Feature B · پخش (High Variance)</div>
+        <div class="spread-row__track">
+          <span class="spread-dot" style="left:12%;"></span>
+          <span class="spread-dot" style="left:28%;"></span>
+          <span class="spread-dot" style="left:50%;"></span>
+          <span class="spread-dot" style="left:72%;"></span>
+          <span class="spread-dot" style="left:88%;"></span>
+        </div>
+      </div>
+    </div>
+    <p class="slide__body mb-16" style="font-size:14.5px; text-align:center;">
+      دو Feature بالا <span class="ltr">Mean</span> یکسانی دارند؛ همین «پخشیدگی» متفاوت است که <span class="ltr">StandardScaler</span> برای مقیاس‌بندی از آن استفاده می‌کند.
+    </p>
+    <div class="formula-box mb-16">Variance = Σ (x − mean)² / n<small>Standard Deviation = √Variance؛ همان واحدِ خودِ Feature را دارد، برخلاف Variance</small></div>
+    <div class="callout--blue callout" style="font-size:15.5px; text-align:center;">
+      همان چیزی که <span class="ltr">StandardScaler</span> محاسبه می‌کند دقیقاً همین است:
+      <span class="ltr">z = (x − mean) / std</span>؛ یعنی هر مقدار را برحسب «چند انحراف معیار از میانگین فاصله دارد» بیان می‌کند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Missing Values و Scaling</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 StandardScaler ────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">رایج‌ترین روش</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;"><span class="ltr">StandardScaler</span></h1>
+    <div class="callout--blue callout" style="font-size:19px; line-height:1.9; text-align:center;">
+      Featureها را طوری تبدیل می‌کند که میانگین تقریباً ۰ و انحراف معیار تقریباً ۱ شود؛
+      یعنی همه را در مقیاسی قابل‌مقایسه قرار می‌دهد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Missing Values و Scaling</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 11 اشتباه رایج در برابر روش درست ─────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">همان قاعده، این‌بار برای Scaler</div>
+    <h1 class="slide__title mb-20" style="font-size:26px; text-align:center;">کی Split کنیم، کی Fit کنیم؟</h1>
+    <div class="verdict-wrap">
+      <div class="verdict-card verdict-card--wrong">
+        <span class="verdict-card__tag">نادرست</span>
+        <div class="verdict-step">Full Dataset</div>
+        <span class="verdict-arrow">↓</span>
+        <div class="verdict-step">Scaler fit روی همه‌ی داده</div>
+        <span class="verdict-arrow">↓</span>
+        <div class="verdict-step">حالا Train/Test Split</div>
+      </div>
+      <div class="verdict-card verdict-card--right">
+        <span class="verdict-card__tag">درست</span>
+        <div class="verdict-step">اول Train/Test Split</div>
+        <span class="verdict-arrow">↓</span>
+        <div class="verdict-step">Scaler fit فقط روی Train</div>
+        <span class="verdict-arrow">↓</span>
+        <div class="verdict-step">Transform روی Train و Test</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Missing Values و Scaling</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 12 KEY TAKEAWAY ──────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:24px; text-align:center;">
+      <div class="big-statement" style="font-size:30px; max-width:820px;">
+        قاعده‌ی طلایی برای هر Transformer در Preprocessing:
+      </div>
+      <div class="big-statement" style="font-size:34px; color:var(--accent);">
+        fit فقط روی Training Data
+      </div>
+      <div class="callout--blue callout" style="max-width:700px; text-align:right;">
+        همین قاعده برای <span class="ltr">Imputer</span> و <span class="ltr">Scaler</span>، هر دو، برقرار است؛ قدم بعدی: همین کار را برای داده‌ی متنی و Categorical هم انجام می‌دهیم.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Missing Values و Scaling</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

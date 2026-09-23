@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>معرفی هفته ششم | یادگیری ماشین</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .week-topics {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      direction: rtl;
+      align-items: flex-start;
+    }
+    .week-topic-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 19px;
+      color: rgba(255,255,255,.8);
+      direction: rtl;
+    }
+    .week-topic-item .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── five-week recap grid ─────────────────────────────────── */
+    .recap-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+    .recap-card {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 14px 12px;
+      text-align: center;
+    }
+    .recap-card__num {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--dark); color: var(--white);
+      font-size: 14px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 10px;
+    }
+    .recap-card__topics {
+      font-size: 12px;
+      color: var(--mid);
+      line-height: 1.7;
+    }
+
+    /* ── compact horizontal workflow chain ────────────────────── */
+    .mini-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      flex-wrap: nowrap;
+      direction: ltr;
+    }
+    .mini-flow-box {
+      background: var(--mid);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 12px 10px;
+      border-radius: 8px;
+      text-align: center;
+      min-width: 118px;
+    }
+    .mini-flow-arrow {
+      font-size: 15px;
+      color: var(--mid);
+      flex-shrink: 0;
+    }
+
+    /* ── before / after transformation row ────────────────────── */
+    .transform-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+    .transform-box {
+      flex: 1;
+      max-width: 380px;
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.8;
+      font-weight: 600;
+    }
+    .transform-box--before {
+      background: #FEF2F2;
+      border: 2px solid #EF4444;
+      color: #991B1B;
+    }
+    .transform-box--after {
+      background: #fff3e8;
+      border: 2px solid var(--accent);
+      color: var(--dark);
+    }
+    .transform-arrow {
+      font-size: 30px;
+      color: var(--mid);
+    }
+
+    .roadmap-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 10px 20px;
+      border: 2px solid #E2E8F0;
+      direction: rtl;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .roadmap-card__right {
+      text-align: right;
+      flex-shrink: 0;
+      min-width: 210px;
+    }
+    .roadmap-card__num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .08em;
+      margin-bottom: 3px;
+    }
+    .roadmap-card__title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .roadmap-card__desc {
+      flex: 2;
+      font-size: 13.5px;
+      color: var(--mid);
+      line-height: 1.5;
+      direction: rtl;
+      text-align: left;
+    }
+    .roadmap-card__note {
+      flex: 1;
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .dataset-badge-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+    }
+    .dataset-badge {
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 10px 18px;
+      font-size: 14px;
+      color: var(--dark);
+      text-align: center;
+    }
+    .dataset-badge strong {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 15px;
+      color: var(--accent);
+      direction: ltr;
+      margin-bottom: 4px;
+    }
+
+    .key-quote {
+      font-size: 25px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(255,255,255,.9);
+      text-align: center;
+      max-width: 880px;
+    }
+    .key-quote strong {
+      font-weight: 700;
+      color: var(--accent2);
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ──────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته ششم · مقدمه</div>
+    <h1 class="slide__title mb-16">مهندسی ویژگی، Pipeline و بهینه‌سازی مدل</h1>
+    <h2 class="slide__subtitle mb-40" dir="ltr">Feature Engineering, Pipelines &amp; Model Tuning</h2>
+    <div class="week-topics">
+      <div class="week-topic-item"><span class="num">۱</span><span><span class="ltr">Feature Engineering</span>: Missing Values، Scaling، Encoding، Pipeline</span></div>
+      <div class="week-topic-item"><span class="num">۲</span><span><span class="ltr">Model Evaluation &amp; Selection</span>: Cross-Validation</span></div>
+      <div class="week-topic-item"><span class="num">۳</span><span><span class="ltr">Hyperparameter Tuning</span>: GridSearchCV و RandomizedSearchCV</span></div>
+      <div class="week-topic-item"><span class="num">۴</span><span><span class="ltr">End-to-End Workflow</span> و ارزیابی نهایی</span></div>
+    </div>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 یادآوری پنج هفته گذشته ────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یادآوری</div>
+    <h1 class="slide__title mb-24" style="font-size:30px; text-align:center;">تا اینجا چه چیزهایی یاد گرفته‌ایم؟</h1>
+    <div class="recap-grid">
+      <div class="recap-card">
+        <div class="recap-card__num">۱</div>
+        <div class="recap-card__topics">مبانی <span class="ltr">ML</span><br><span class="ltr">Supervised</span>/<span class="ltr">Unsupervised</span><br>مشکلات داده</div>
+      </div>
+      <div class="recap-card">
+        <div class="recap-card__num">۲</div>
+        <div class="recap-card__topics"><span class="ltr">NumPy</span> و <span class="ltr">pandas</span><br><span class="ltr">EDA</span><br><span class="ltr">Train/Test Split</span><br><span class="ltr">Data Leakage</span></div>
+      </div>
+      <div class="recap-card">
+        <div class="recap-card__num">۳</div>
+        <div class="recap-card__topics"><span class="ltr">Regression</span><br><span class="ltr">Overfitting</span>/<span class="ltr">Underfitting</span><br><span class="ltr">Evaluation Metrics</span></div>
+      </div>
+      <div class="recap-card">
+        <div class="recap-card__num">۴</div>
+        <div class="recap-card__topics"><span class="ltr">Classification</span><br><span class="ltr">Logistic Regression</span>، <span class="ltr">KNN</span><br><span class="ltr">Classification Metrics</span></div>
+      </div>
+      <div class="recap-card">
+        <div class="recap-card__num">۵</div>
+        <div class="recap-card__topics"><span class="ltr">Decision Trees</span><br><span class="ltr">Random Forest</span><br><span class="ltr">Ensemble Learning</span></div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 مسیر تکراری تا اینجا ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">تا الان چطور کار کرده‌ایم؟</div>
+    <h1 class="slide__title mb-24" style="font-size:28px; text-align:center;">در همه‌ی این جلسات، بارها همین مسیر را طی کرده‌ایم</h1>
+    <div class="mini-flow mb-24">
+      <div class="mini-flow-box">Evaluation</div><div class="mini-flow-arrow">←</div>  
+      
+      
+      
+      <div class="mini-flow-box">Model Training</div><div class="mini-flow-arrow">←</div>
+      <div class="mini-flow-box" style="background:var(--accent);">Preprocessing</div><div class="mini-flow-arrow">←</div>
+      <div class="mini-flow-box">Train/Test Split</div><div class="mini-flow-arrow">←</div>
+      <div class="mini-flow-box">EDA</div><div class="mini-flow-arrow">←</div>
+      <div class="mini-flow-box">Load Data</div>
+    </div>
+    <div class="callout--blue callout" style="font-size:17px; text-align:center;">
+      در بخش <span class="ltr">Preprocessing</span> هم بارها با <span class="ltr">Missing Values</span>، <span class="ltr">Scaling</span> و <span class="ltr">Encoding</span> روبه‌رو شده‌ایم؛
+      اما تا اینجا این مراحل را <span class="em">جداگانه و دستی</span> انجام داده‌ایم، هر بار به شکلی کمی متفاوت.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 سوال اصلی امروز ───────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:28px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">سوال اصلی امروز</div>
+      <div class="big-statement" style="font-size:24px; max-width:840px;">
+        «چطور می‌توانیم از کدهای پراکنده و دستی به یک <span class="ltr">Workflow</span> استاندارد برسیم؛
+        Workflowی که هم داده را درست آماده می‌کند، هم بهترین مدل را انتخاب می‌کند، و هم بهترین تنظیمات را پیدا می‌کند؟»
+      </div>
+      <div class="transform-row">
+        <div class="transform-box transform-box--before">کدهای پراکنده<br>مراحل دستی<br>احتمال خطا</div>
+        <div class="transform-arrow">←</div>
+        <div class="transform-box transform-box--after">Pipeline کامل<br>انتخاب درست مدل<br>بهترین <span class="ltr">Hyperparameter</span>ها</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 نقشه هفته ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">ساختار هفته</div>
+    <h1 class="slide__title mb-24" style="font-size:34px;">نقشه هفته</h1>
+    <div style="display:flex; flex-direction:column; gap:10px; flex:1; justify-content:center; max-width:920px; margin:0 auto; width:100%;">
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش اول</div>
+          <div class="roadmap-card__title" dir="ltr">Feature Engineering</div>
+        </div>
+        <div class="roadmap-card__note">آماده‌سازی داده</div>
+        <div class="roadmap-card__desc"><span class="ltr">Missing Values</span>، <span class="ltr">Scaling</span>، <span class="ltr">Encoding</span>، <span class="ltr">Pipeline</span> و <span class="ltr">ColumnTransformer</span>.</div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش دوم</div>
+          <div class="roadmap-card__title" dir="ltr">Model Evaluation &amp; Selection</div>
+        </div>
+        <div class="roadmap-card__note">چرا یک Test Set کافی نیست</div>
+        <div class="roadmap-card__desc"><span class="ltr">Cross-Validation</span>: ارزیابی درست، پیش از انتخاب مدل.</div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش سوم</div>
+          <div class="roadmap-card__title" dir="ltr">Hyperparameter Tuning</div>
+        </div>
+        <div class="roadmap-card__note">پیدا کردن بهترین تنظیمات</div>
+        <div class="roadmap-card__desc"><span class="ltr">GridSearchCV</span> و <span class="ltr">RandomizedSearchCV</span>.</div>
+      </div>
+      <div class="roadmap-card">
+        <div class="roadmap-card__right">
+          <div class="roadmap-card__num">بخش چهارم</div>
+          <div class="roadmap-card__title" dir="ltr">End-to-End Workflow</div>
+        </div>
+        <div class="roadmap-card__note">همه‌چیز کنار هم</div>
+        <div class="roadmap-card__desc"><span class="ltr">Pipeline</span> + <span class="ltr">CV</span> + <span class="ltr">Tuning</span>، و ارزیابی نهایی روی <span class="ltr">Test Set</span>.</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 دیتاست این هفته ───────────────────────────────── -->
+  <!-- <div class="slide slide--content">
+    <div class="slide__eyebrow">دیتاست این هفته</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">همان دیتاست مسکن کالیفرنیا از هفته‌های ۲ و ۳</h1>
+    <p class="slide__body mb-20" style="font-size:16px; text-align:center;">
+      یادتان است در هفته ۲ روی <span class="ltr">fetch_california_housing</span> چند <span class="ltr">Missing Value</span> مصنوعی ساختیم تا <span class="ltr">Imputation</span> را دستی تمرین کنیم؟
+      این هفته دقیقاً همان‌جا ادامه می‌دهیم: همان دیتاست، همان <span class="ltr">Missing Value</span>ها، این‌بار با ابزار واقعی <span class="ltr">scikit-learn</span>، به‌علاوه یک Feature Categorical که خودمان از روی <span class="ltr">Longitude</span> می‌سازیم.
+    </p>
+    <div class="dataset-badge-row mb-16">
+      <div class="dataset-badge"><strong>AveBedrms, AveRooms</strong>Missing Value مصنوعی (مثل هفته ۲)</div>
+      <div class="dataset-badge"><strong>coast_region</strong>Feature Categorical تازه‌ساز</div>
+      <div class="dataset-badge"><strong>MedHouseVal</strong>هدف Regression</div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      همان داده، همان هدف؛ فقط این‌بار به‌جای چند خط <span class="ltr">pandas</span> پراکنده، یک <span class="ltr">Pipeline</span> استاندارد می‌سازیم.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · مقدمه</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div> -->
+
+  <!-- ── 07 KEY TAKEAWAY ──────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">پیام کلیدی هفته</div>
+    <p class="key-quote">
+      این هفته یاد می‌گیریم چطور داده‌ی خام واقعی را درست آماده کنیم،
+      بین چند مدل به‌درستی انتخاب کنیم، و بهترین <span class="ltr">Hyperparameter</span>ها را پیدا کنیم؛
+      بدون <span class="ltr">Data Leakage</span>، در هیچ مرحله‌ای.
+      <br><br>
+      از کدهای پراکنده به یک <strong>Workflow استاندارد و کامل</strong>.
+    </p>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

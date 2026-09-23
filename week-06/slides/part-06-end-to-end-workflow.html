@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>Workflow کامل | هفته ششم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── wrong / correct comparison ────────────────────────────── */
+    .verdict-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; flex: 1; align-items: center; }
+    .verdict-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+      gap: 9px;
+    }
+    .verdict-card--wrong { border: 2px solid #EF4444; }
+    .verdict-card--right { border: 2px solid var(--accent); }
+    .verdict-card__tag {
+      font-size: 15px;
+      font-weight: 700;
+      padding: 3px 16px;
+      border-radius: 999px;
+      color: #fff;
+    }
+    .verdict-card--wrong .verdict-card__tag { background: #EF4444; }
+    .verdict-card--right .verdict-card__tag { background: var(--accent); }
+    .verdict-step { font-size: 17px; color: var(--dark); direction: ltr; }
+    .verdict-arrow { font-size: 15px; color: var(--mid); }
+
+    /* ── vertical big-picture workflow ───────────────────────────── */
+    .flow { display: flex; flex-direction: column; align-items: center; gap: 0; }
+    .flow-box {
+      background: var(--accent);
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 9px 26px;
+      border-radius: var(--radius);
+      min-width: 230px;
+      text-align: center;
+    }
+    .flow-box--dim { background: var(--mid); }
+    .flow-box--dark { background: var(--dark); }
+    .flow-box--final { background: #22C55E; }
+    .flow-arrow { font-size: 16px; color: var(--mid); line-height: 1; padding: 1px 0; }
+
+    .key-quote {
+      font-size: 24px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(255,255,255,.9);
+      text-align: center;
+      max-width: 880px;
+    }
+    .key-quote strong { font-weight: 700; color: var(--accent2); }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته ششم · بخش ششم</div>
+    <h1 class="slide__title">Workflow کامل</h1>
+    <h2 class="slide__subtitle" dir="ltr">End-to-End: Pipeline + Cross-Validation + Tuning</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 همان قاعده، این‌بار برای GridSearchCV ──────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">همان قاعده‌ی همیشگی</div>
+    <h1 class="slide__title mb-20" style="font-size:25px; text-align:center;">Preprocessing کجای Cross-Validation و Tuning قرار می‌گیرد؟</h1>
+    <div class="verdict-wrap">
+      <div class="verdict-card verdict-card--wrong">
+        <span class="verdict-card__tag">نادرست</span>
+        <div class="verdict-step">Dataset</div>
+        <span class="verdict-arrow">↓</span>
+        <div class="verdict-step">Scaling روی کل داده</div>
+        <span class="verdict-arrow">↓</span>
+        <div class="verdict-step">Cross Validation</div>
+      </div>
+      <div class="verdict-card verdict-card--right">
+        <span class="verdict-card__tag">درست</span>
+        <div class="verdict-step">Fold</div>
+        <span class="verdict-arrow">↓</span>
+        <div class="verdict-step">Preprocessing</div>
+        <span class="verdict-arrow">↓</span>
+        <div class="verdict-step">Model</div>
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14px; text-align:center; margin-top:14px;">
+      برای همین، همیشه خودِ Pipeline (Preprocessor + Model) را به <span class="ltr">cross_val_score</span> یا <span class="ltr">GridSearchCV</span> می‌دهیم، نه فقط مدل تنها.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Workflow کامل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 نقشه‌ی کامل Workflow ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">همه‌چیز کنار هم</div>
+    <h1 class="slide__title mb-16" style="font-size:26px; text-align:center;">Workflow کامل این هفته</h1>
+    <div class="flow" style="flex:1; justify-content:center; gap:0;">
+      <div class="flow-box flow-box--dim">Raw Data</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box flow-box--dim">Train / Test Split</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box">Pipeline</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box">Cross-Validation</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box">Hyperparameter Tuning</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box flow-box--dark">Best Model</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-box flow-box--final">Final Test Evaluation</div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Workflow کامل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 اصل طلایی ──────────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:22px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">اصل طلایی این بخش</div>
+      <div class="big-statement" style="font-size:26px; max-width:820px;">
+        Test Set برای انتخاب مدل نیست؛ برای تخمین نهایی عملکرد مدل انتخاب‌شده است.
+      </div>
+      <div class="callout--blue callout" style="max-width:720px; font-size:15px;">
+        بعد از <span class="ltr">grid_search.fit(X_train, y_train)</span>، Test Set فقط و فقط یک‌بار استفاده می‌شود؛
+        نه برای انتخاب مدل، نه برای انتخاب Hyperparameter، فقط برای گزارش عدد نهایی.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Workflow کامل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 جمع‌بندی نهایی هفته ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">جمع‌بندی نهایی هفته</div>
+    <h1 class="slide__title mb-16" style="font-size:24px;">از داده‌ی خام تا مدل نهایی</h1>
+    <ul class="slide__list" style="font-size:14px; gap:8px;">
+      <li><span class="ltr">Feature Engineering</span>: Missing Values، Scaling، Encoding، همه با Pipeline و ColumnTransformer، بدون Data Leakage.</li>
+      <li><span class="ltr">Cross-Validation</span>: ارزیابی هر مدل با میانگین چند Fold، نه یک تقسیم تصادفی؛ Test Set دست‌نخورده می‌ماند.</li>
+      <li><span class="ltr">Hyperparameter Tuning</span>: GridSearchCV همه‌ی ترکیب‌ها را امتحان می‌کند؛ RandomizedSearchCV تعداد محدودی را به‌صورت تصادفی.</li>
+      <li>همیشه کل Pipeline (نه فقط مدل) به Cross-Validation و Tuning داده می‌شود.</li>
+      <li>اصل طلایی: Test Set فقط یک‌بار، فقط برای ارزیابی نهایی مدل انتخاب‌شده.</li>
+    </ul>
+    <div class="slide__footer">
+      <span>هفته ششم · Workflow کامل</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 پیام پایانی ───────────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">پیام پایانی هفته</div>
+    <p class="key-quote">
+      حالا برای اولین بار، یک <strong>Workflow استاندارد و کامل</strong> دارید:
+      از داده‌ی خام و کثیف، تا یک مدل ارزیابی‌شده و بهینه‌شده،
+      بدون هیچ Data Leakage‌ای در هیچ مرحله‌ای.
+      <!-- <br><br> -->
+      <!-- همین Workflow، ابزار اصلی پروژه‌ی Capstone شماست. -->
+    </p>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

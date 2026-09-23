@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>Categorical Encoding و Feature Engineering | هفته ششم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .mini-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    .mini-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 9px 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .mini-table td {
+      padding: 9px 16px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .mini-table tr:nth-child(even) td { background: var(--light); }
+
+    /* ── pure-CSS decision branch (reused pattern) ─────────────── */
+    .dtree, .dtree ul { list-style: none; margin: 0; padding: 0; }
+    .dtree { display: flex; justify-content: center; direction: ltr; }
+    .dtree ul { display: flex; padding-top: 20px; position: relative; }
+    .dtree li {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 14px 0;
+      position: relative;
+    }
+    .dtree li::before, .dtree li::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 50%;
+      height: 20px;
+      border-top: 2px solid #CBD5E1;
+    }
+    .dtree li::before { right: 50%; border-right: 2px solid #CBD5E1; }
+    .dtree li::after  { left: 50%;  border-left: 2px solid #CBD5E1; }
+    .dtree li:only-child::before, .dtree li:only-child::after { display: none; }
+    .dtree li:only-child { padding-top: 0; }
+    .dtree li:first-child::before, .dtree li:last-child::after { border: 0 none; }
+    .dtree li:last-child::before { border-right: 2px solid #CBD5E1; border-radius: 0 6px 0 0; }
+    .dtree li:first-child::after { border-left: 2px solid #CBD5E1; border-radius: 6px 0 0 0; }
+    .dtree-edge {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--mid);
+      margin-bottom: 6px;
+      direction: ltr;
+    }
+    .dtree-node {
+      background: var(--dark);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 9px 16px;
+      border-radius: 8px;
+      direction: ltr;
+      white-space: nowrap;
+    }
+    .dtree-leaf {
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 8px;
+      direction: ltr;
+      white-space: nowrap;
+    }
+    .dtree-leaf--yes { background: var(--accent); }
+    .dtree-leaf--no  { background: #22C55E; }
+
+    .badge-row { display: flex; justify-content: center; gap: 14px; }
+    .big-badge {
+      background: #FEF2F2;
+      border: 2px solid #EF4444;
+      color: #991B1B;
+      border-radius: var(--radius);
+      padding: 14px 24px;
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* ── fan-out feature engineering diagram ───────────────────── */
+    .fan-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .fan-source {
+      background: var(--dark);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 10px 24px;
+      border-radius: 8px;
+      direction: ltr;
+    }
+    .fan-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .fan-chip {
+      background: var(--accent);
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 999px;
+      direction: ltr;
+    }
+
+    /* ── three-step Feature Engineering overview ───────────────── */
+    .step3-wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .step3-card {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      text-align: center;
+    }
+    .step3-card__num {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--dark); color: #fff;
+      font-size: 14px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 10px;
+    }
+    .step3-card__title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--dark);
+      direction: ltr;
+      margin-bottom: 8px;
+    }
+    .step3-card__desc {
+      font-size: 12.5px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+
+    /* ── combine-features diagram (ratio features) ─────────────── */
+    .combine-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      direction: ltr;
+      flex-wrap: wrap;
+    }
+    .combine-chip {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    .combine-op { font-size: 16px; color: var(--mid); font-weight: 700; }
+    .combine-result {
+      background: var(--accent);
+      color: #fff;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته ششم · بخش ۲</div>
+    <h1 class="slide__title">Categorical Encoding و Feature Engineering</h1>
+    <h2 class="slide__subtitle" dir="ltr">Turning Categories into Numbers, and Building Better Features</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 چرا تبدیل کنیم ────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مسئله</div>
+    <h1 class="slide__title mb-20" style="font-size:28px; text-align:center;">مدل‌ها نمی‌توانند مستقیماً با متن کار کنند</h1>
+    <div class="callout--blue callout" style="font-size:19px; text-align:center;">
+      بسیاری از مدل‌ها نمی‌توانند مستقیماً <span class="ltr">City = "Tehran"</span> را پردازش کنند؛
+      باید این داده را به یک نمایش عددی تبدیل کنیم.
+    </div>
+    <div class="callout" style="font-size:16px; text-align:center; margin-top:16px;">
+      اما قبل از هر Encoding، یک سوال مهم: آیا این Category ترتیب واقعی دارد؟
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 تصمیم Ordinal/Nominal ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">سوال کلیدی</div>
+    <h1 class="slide__title mb-20" style="font-size:26px; text-align:center;">آیا Feature ترتیب واقعی دارد؟</h1>
+    <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+      <ul class="dtree">
+        <li>
+          <div class="dtree-node">ترتیب واقعی دارد؟</div>
+          <ul>
+            <li><span class="dtree-edge">بله</span><div class="dtree-leaf dtree-leaf--yes">Ordinal Encoding</div></li>
+            <li><span class="dtree-edge">خیر</span><div class="dtree-leaf dtree-leaf--no">One-Hot Encoding</div></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 Ordinal Data ──────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">وقتی ترتیب معنا دارد</div>
+    <h1 class="slide__title mb-16" style="font-size:28px;"><span class="ltr">Ordinal Data</span></h1>
+    <p class="slide__body mb-16" style="font-size:17px; text-align:center;">
+      مثال: <span class="ltr">Low, Medium, High</span>؛ اینجا <span class="ltr">Low &lt; Medium &lt; High</span> معنا دارد.
+    </p>
+    <table class="mini-table" style="max-width:420px; margin:0 auto;">
+      <thead><tr><th>مقدار</th><th>کد عددی</th></tr></thead>
+      <tbody>
+        <tr><td class="ltr">Low</td><td>۰</td></tr>
+        <tr><td class="ltr">Medium</td><td>۱</td></tr>
+        <tr><td class="ltr">High</td><td>۲</td></tr>
+      </tbody>
+    </table>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 Nominal Data ──────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">وقتی ترتیب معنا ندارد</div>
+    <h1 class="slide__title mb-16" style="font-size:28px;"><span class="ltr">Nominal Data</span></h1>
+    <p class="slide__body mb-20" style="font-size:17px; text-align:center;">
+      مثال: <span class="ltr">Tehran, Shiraz, Tabriz</span>؛ آیا <span class="ltr">Tabriz &gt; Shiraz &gt; Tehran</span> معنا دارد؟
+    </p>
+    <div class="callout--red callout" style="font-size:18px; text-align:center;">
+      خیر. نباید یک ترتیب مصنوعی بسازیم؛ به‌جایش از <span class="ltr">One-Hot Encoding</span> استفاده می‌کنیم.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 One-Hot Encoding مثال ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مثال</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;">برای هر مقدار ممکن، یک ستون صفر/یک جدید</h1>
+    <table class="mini-table" style="max-width:480px; margin:0 auto;">
+      <thead><tr><th>Tehran</th><th>Shiraz</th><th>Tabriz</th></tr></thead>
+      <tbody>
+        <tr><td>۱</td><td>۰</td><td>۰</td></tr>
+        <tr><td>۰</td><td>۱</td><td>۰</td></tr>
+        <tr><td>۰</td><td>۰</td><td>۱</td></tr>
+      </tbody>
+    </table>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 هشدار Cardinality بالا ─────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یک هشدار مهم</div>
+    <h1 class="slide__title mb-20" style="font-size:27px; text-align:center;"><span class="ltr">One-Hot Encoding</span> همیشه بهترین راه‌حل نیست</h1>
+    <div class="badge-row mb-20">
+      <div class="big-badge"><span class="ltr">Product ID</span><br>۵۰,۰۰۰ مقدار یکتا</div>
+    </div>
+    <div class="callout--red callout" style="font-size:16px; text-align:center;">
+      اگر <span class="ltr">One-Hot Encoding</span> بزنیم، تعداد بسیار زیادی ستون جدید ساخته می‌شود.
+      نوع Encoding باید براساس Cardinality (تعداد مقادیر یکتا) هر Feature انتخاب شود.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 دسته‌ی جدید هنگام Prediction ──────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یک نکته‌ی عملی</div>
+    <h1 class="slide__title mb-20" style="font-size:27px; text-align:center;">وقتی هنگام Prediction، دسته‌ای جدید می‌رسد</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:28px;">
+      <div class="callout" style="font-size:15.5px; line-height:1.85;">
+        <strong class="ltr" style="color:var(--dark);">در Training</strong><br>
+        فقط <span class="ltr">Tehran</span> و <span class="ltr">Shiraz</span> دیده شده‌اند.
+      </div>
+      <div class="callout--blue callout" style="font-size:15.5px; line-height:1.85;">
+        <strong class="ltr" style="color:var(--accent);">در Prediction</strong><br>
+        دسته‌ی جدید <span class="ltr">Tabriz</span> ظاهر می‌شود.
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center; margin-top:16px;">
+      <span class="ltr">OneHotEncoder</span> را می‌توان طوری تنظیم کرد که دسته‌های دیده‌نشده را نادیده بگیرد و Pipeline بدون خطا کار کند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 Feature Engineering در برابر Preprocessing ────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یک تمایز مهم</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;">Feature Engineering در برابر Preprocessing</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:28px;">
+      <div class="callout" style="font-size:15.5px; line-height:1.85;">
+        <strong class="ltr" style="color:var(--dark);">Data Preprocessing</strong><br>
+        آماده کردن Featureهای <em>موجود</em> برای مدل: <span class="ltr">Missing Value → Imputation</span>، <span class="ltr">Categorical → Encoding</span>.
+      </div>
+      <div class="callout--blue callout" style="font-size:15.5px; line-height:1.85;">
+        <strong class="ltr" style="color:var(--accent);">Feature Engineering</strong><br>
+        ساختن Featureهای <em>جدید</em>، یا تغییر Featureها برای نمایش بهتر اطلاعات.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 چرا Feature Engineering مهم است ───────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:22px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">چرا Feature Engineering مهم است</div>
+      <div class="big-statement" style="font-size:26px; max-width:800px;">
+        داده‌ی بی‌کیفیت، نتیجه‌ی بی‌کیفیت. <span class="ltr" style="font-size:20px; color:var(--mid); font-weight:400;">(Garbage In, Garbage Out)</span>
+      </div>
+      <div class="callout--blue callout" style="max-width:760px; font-size:15.5px; line-height:1.85;">
+        مدل فقط زمانی خوب یاد می‌گیرد که داده‌ی آموزشی Featureهای کافی و مرتبط داشته باشد، نه پر از Featureهای نامرتبط؛
+        بخش مهمی از موفقیت یک پروژه‌ی <span class="ltr">Machine Learning</span>، پیدا کردن یک مجموعه‌ی Feature خوب برای آموزش است.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 11 سه قدم Feature Engineering ─────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">نقشه‌ی این بخش</div>
+    <h1 class="slide__title mb-20" style="font-size:27px; text-align:center;">سه قدم <span class="ltr">Feature Engineering</span></h1>
+    <div class="step3-wrap">
+      <div class="step3-card">
+        <div class="step3-card__num">۱</div>
+        <div class="step3-card__title">Feature Selection</div>
+        <div class="step3-card__desc">انتخاب مفیدترین Featureها از میان Featureهای موجود</div>
+      </div>
+      <div class="step3-card">
+        <div class="step3-card__num">۲</div>
+        <div class="step3-card__title">Feature Extraction</div>
+        <div class="step3-card__desc">ترکیب Featureهای موجود برای ساخت یک Feature مفیدتر</div>
+      </div>
+      <div class="step3-card">
+        <div class="step3-card__num">۳</div>
+        <div class="step3-card__title">Creating New Features</div>
+        <div class="step3-card__desc">جمع‌آوری داده‌ی تازه برای ساخت Featureی که اصلاً وجود نداشت</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 12 قدم ۱: Feature Selection ──────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">قدم ۱</div>
+    <h1 class="slide__title mb-20" style="font-size:27px; text-align:center;"><span class="ltr">Feature Selection</span>: کدام Featureها را نگه داریم؟</h1>
+    <div class="callout--blue callout" style="font-size:17px; text-align:center;">
+      از میان Featureهای موجود، آن‌هایی که بیشترین اطلاعات مفید را دارند نگه می‌داریم؛
+      Featureهای نامرتبط یا کم‌اثر را کنار می‌گذاریم.
+    </div>
+    <div class="callout" style="font-size:15px; text-align:center; margin-top:16px;">
+      یکی از ابزارهایی که همین حالا در دست داریم: <span class="ltr">feature_importances_</span> جنگل تصادفی از هفته‌ی ۵؛
+      همان عددی که نشان می‌داد کدام Featureها بیشترین نقش را در تصمیم‌گیری مدل داشتند، دقیقاً یکی از سرنخ‌های <span class="ltr">Feature Selection</span> است.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 13 قدم ۲: Feature Extraction ─────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">قدم ۲</div>
+    <h1 class="slide__title mb-20" style="font-size:27px; text-align:center;"><span class="ltr">Feature Extraction</span>: ترکیب Featureهای موجود</h1>
+    <div class="callout--blue callout" style="font-size:17px; text-align:center;">
+      ترکیب چند Feature موجود، برای ساختن یک Feature تازه و معنادارتر.
+    </div>
+    <div class="callout" style="font-size:14px; text-align:center; margin-top:16px;">
+      الگوریتم‌های <span class="ltr">Dimensionality Reduction</span> مثل <span class="ltr">PCA</span> هم می‌توانند در این مرحله کمک کنند؛
+      بعدا آن را بررسی می‌کنیم.
+      <!-- بررسی کامل آن‌ها موضوع یک جلسه‌ی جداگانه است، این هفته فقط اسمش را می‌بینیم. -->
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 14 مثال Feature Extraction از دیتاست مسکن ────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مثال از دیتاست خودمان</div>
+    <h1 class="slide__title mb-20" style="font-size:26px; text-align:center;">دو Feature نسبتی، از دیتاست مسکن</h1>
+    <div style="display:flex; flex-direction:column; gap:14px; flex:1; justify-content:center;">
+      <div class="combine-row">
+        <span class="combine-chip">AveBedrms</span>
+        <span class="combine-op">÷</span>
+        <span class="combine-chip">AveRooms</span>
+        <span class="combine-op">=</span>
+        <span class="combine-result">bedrooms_ratio</span>
+      </div>
+      <div class="combine-row">
+        <span class="combine-chip">AveRooms</span>
+        <span class="combine-op">÷</span>
+        <span class="combine-chip">AveOccup</span>
+        <span class="combine-op">=</span>
+        <span class="combine-result">rooms_per_person</span>
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      <span class="ltr">AveBedrms</span> به‌تنهایی خیلی گویا نیست؛ اما نسبت <span class="ltr">bedrooms_ratio</span> مستقیماً می‌گوید
+      چه سهمی از اتاق‌ها، اتاق خواب‌اند؛ Feature معنادارتر و برای مدل مفیدتر.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 15 مثال Birth Year → Age ──────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">قدم ۲ (ادامه) · مثال دیگر</div>
+    <h1 class="slide__title mb-24" style="font-size:30px; text-align:center;">Feature جدید از روی یک Feature موجود</h1>
+    <div class="fan-wrap">
+      <div class="fan-source">Birth Year</div>
+      <div style="font-size:20px; color:var(--mid);">↓</div>
+      <div class="fan-chip">Age</div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 16 مثال Purchase Date ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">قدم ۲ (ادامه) · مثال کامل‌تر</div>
+    <h1 class="slide__title mb-24" style="font-size:28px; text-align:center;">از یک تاریخ، چند Feature مفید استخراج می‌کنیم</h1>
+    <div class="fan-wrap">
+      <div class="fan-source">Purchase Date</div>
+      <div style="font-size:20px; color:var(--mid);">↓</div>
+      <div class="fan-row">
+        <span class="fan-chip">Year</span>
+        <span class="fan-chip">Month</span>
+        <span class="fan-chip">Day of Week</span>
+        <span class="fan-chip">Weekend?</span>
+        <span class="fan-chip">Season</span>
+      </div>
+    </div>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center; margin-top:20px;">
+      مدل معمولاً نمی‌تواند مفهوم «آخر هفته» یا «فصل» را مستقیم از یک تاریخ خام یاد بگیرد؛
+      اگر این اطلاعات را صریح استخراج کنیم، در دسترس مدل قرار می‌گیرد.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 17 قدم ۳: ساخت Feature جدید با داده‌ی تازه ────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">قدم ۳</div>
+    <h1 class="slide__title mb-20" style="font-size:26px; text-align:center;">گاهی باید داده‌ی تازه جمع‌آوری کرد</h1>
+    <div class="callout--red callout" style="font-size:16px; text-align:center;">
+      گاهی هیچ‌کدام از دو قدم قبلی کافی نیست، چون اطلاعات لازم اصلاً در دیتاست فعلی وجود ندارد.
+    </div>
+    <div class="callout" style="font-size:15px; text-align:center; margin-top:16px;">
+      مثال: اگر پیش‌بینی قیمت مسکن به داده‌ی آب‌وهوایی یا فاصله تا مراکز خرید نیاز دارد، اما دیتاست فعلی این ستون‌ها را ندارد،
+      باید این داده از منبع دیگری جمع‌آوری و اضافه شود.
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 18 KEY TAKEAWAY ──────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:24px; text-align:center;">
+      <div class="big-statement" style="font-size:26px; max-width:820px;">
+        Feature Engineering سه مسیر دارد: انتخاب، ترکیب، و جمع‌آوری داده‌ی تازه.
+      </div>
+      <div class="callout--blue callout" style="max-width:720px; text-align:right;">
+        همه براساس تحلیل داده، صورت مسئله و دانش حوزه انتخاب می‌شوند، نه صرفاً برای تولید هرچه بیشتر Feature؛
+        قدم بعدی: می‌بینیم چرا انجام همه‌ی این مراحل به‌صورت دستی، در عمل خطرناک است.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته ششم · Encoding و Feature Engineering</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>
