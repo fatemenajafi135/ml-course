@@ -50,9 +50,22 @@ over and how.
 - Naive Bayes: Bayes' theorem, the independence assumption, a worked spam-filter example
 - Final comparison of all eight models seen across weeks 4–5
 
+### [Week 6: Feature Engineering, Pipelines, and Model Selection](week-06/)
+- Handling missing values with imputation strategies
+- Feature scaling: `StandardScaler` vs `MinMaxScaler`
+- Categorical encoding: one-hot, ordinal, and target encoding
+- Feature engineering: creating, selecting, and transforming features
+- Pipelines (`Pipeline` and `ColumnTransformer`) to organize workflows and prevent data leakage
+- Model evaluation: train/test split, cross-validation, validation curves
+- Hyperparameter tuning: grid search and random search
+- End-to-end workflow on real datasets (Titanic)
 
-### Week 6
-*Coming soon ...*
+### [Week 7: Unsupervised Learning and Clustering](week-07/)
+- **K-Means**: centroid-based clustering, the assign-and-update algorithm, choosing `k` with elbow method and silhouette score, handling non-spherical clusters
+- **DBSCAN**: density-based clustering, `eps` and `min_samples` parameters, core/border/noise points, success on non-round shapes
+- Real dataset application: Palmer Penguins with EDA, scaling, and comparison against ground truth
+- Clustering evaluation metrics without ground truth (silhouette score, inertia)
+- Comparison of K-Means vs DBSCAN and why unsupervised evaluation is harder
 
 See each week's own `README.md` for the full breakdown.
 
