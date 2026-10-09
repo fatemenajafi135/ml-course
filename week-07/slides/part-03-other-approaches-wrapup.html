@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>رویکردهای دیگر، مقایسه و جمع‌بندی | هفته هفتم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    .algo-tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--light);
+      padding: 4px 14px;
+      border-radius: 999px;
+      direction: ltr;
+      margin-bottom: 14px;
+    }
+    .algo-points {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .algo-points li {
+      font-size: 14.5px;
+      line-height: 1.75;
+      color: var(--dark);
+      padding-inline-start: 22px;
+      position: relative;
+    }
+    .algo-points li::before {
+      content: '';
+      position: absolute;
+      inset-inline-start: 0;
+      top: .6em;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .algo-points li strong { color: var(--dark); }
+
+    .landscape-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .landscape-table th {
+      background: var(--dark);
+      color: var(--white);
+      padding: 9px 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .landscape-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .landscape-table tr:nth-child(even) td { background: var(--light); }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+    .compare-table th {
+      background: var(--accent);
+      color: var(--white);
+      padding: 9px 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .compare-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .compare-table tr:nth-child(even) td { background: var(--light); }
+
+
+    .question-card {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-inline-start: 4px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      font-size: 17px;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    .key-quote {
+      font-size: 25px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(255,255,255,.9);
+      text-align: center;
+      max-width: 880px;
+    }
+    .key-quote strong {
+      font-weight: 700;
+      color: var(--accent2);
+    }
+
+    ul.summary-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    ul.summary-list li {
+      font-size: 16.5px;
+      line-height: 1.6;
+      color: var(--dark);
+      padding-inline-start: 26px;
+      position: relative;
+    }
+    ul.summary-list li::before {
+      content: '';
+      position: absolute;
+      inset-inline-start: 0;
+      top: .6em;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته هفتم · بخش ۳</div>
+    <h1 class="slide__title">رویکردهای دیگر، مقایسه و جمع‌بندی</h1>
+    <h2 class="slide__subtitle" dir="ltr">Other approaches, K-Means vs. DBSCAN, and wrap-up</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 مقدمه ──────────────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:22px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">قبل از جمع‌بندی نهایی</div>
+      <div class="big-statement" style="font-size:26px; max-width:800px;">
+        دنیای خوشه‌بندی فقط همین دو الگوریتم نیست.
+      </div>
+      <p class="slide__body" style="font-size:16px; max-width:760px;">
+        در ادامه چهار رویکرد دیگر را می‌بینیم؛ نه برای یادگیری کامل در همین جلسه، بلکه برای این‌که بدانید هر کدام از چه زاویه‌ای به مسئله نگاه می‌کنند و کِی ممکن است سراغشان بروید.
+      </p>
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · فراتر از این دو الگوریتم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 Hierarchical Clustering ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">رویکرد اول</div>
+    <span class="algo-tag">Hierarchical / Agglomerative Clustering</span>
+    <h1 class="slide__title mb-16" style="font-size:26px;">ادغام مرتب، از پایین به بالا</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:28px;">
+      <ul class="algo-points">
+        <li><strong>انگیزه:</strong> اگر نخواهیم تعداد خوشه را از همان اول مشخص کنیم، و بخواهیم بتوانیم بین چند سطح مختلف خوشه‌بندی جابه‌جا شویم؟</li>
+        <li><strong>ایده:</strong> کار را با این‌که هر نمونه یک خوشه‌ی جداگانه است شروع می‌کند؛ در هر قدم، دو نزدیک‌ترین خوشه را با هم ادغام می‌کند، تا وقتی یک خوشه‌ی بزرگ بماند.</li>
+        <li><strong>خروجی:</strong> یک درخت به‌نام Dendrogram که کل تاریخچه‌ی ادغام‌ها را نشان می‌دهد؛ می‌توانیم این درخت را در هر ارتفاعی «ببریم» و تعداد خوشه‌ی دلخواه را بعداً، بدون اجرای دوباره‌ی الگوریتم، انتخاب کنیم.</li>
+        <li><strong>هزینه:</strong> باید فاصله‌ی همه‌جفت‌نمونه‌ها را نگه دارد، پس روی دیتاست‌های خیلی بزرگ سنگین می‌شود.</li>
+      </ul>
+      <figure class="slide__figure">
+        <img src="images/hierarchical_dendrogram.png" alt="نمودار Dendrogram خوشه‌بندی سلسله‌مراتبی" style="max-height:320px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · فراتر از این دو الگوریتم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 Gaussian Mixture Models ───────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">رویکرد دوم</div>
+    <span class="algo-tag">Gaussian Mixture Models (GMM)</span>
+    <h1 class="slide__title mb-16" style="font-size:26px;">خوشه‌بندی احتمالاتی و بیضی‌شکل</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:28px;">
+      <ul class="algo-points">
+        <li><strong>انگیزه:</strong> K-Means فرض می‌کند خوشه‌ها گرد و هم‌اندازه‌اند؛ اگر خوشه‌ها کشیده باشند یا جهت متفاوتی داشته باشند چه؟</li>
+        <li><strong>ایده:</strong> فرض می‌کند داده از ترکیبی از چند توزیع نرمال (Gaussian) به‌دست آمده؛ هر خوشه می‌تواند شکل بیضی و جهت مخصوص به خودش را داشته باشد.</li>
+        <li><strong>تفاوت کلیدی:</strong> به‌جای اختصاص قطعی هر نمونه به یک خوشه، یک احتمال عضویت در هر خوشه می‌دهد؛ به این می‌گویند Soft Clustering.</li>
+        <li><strong>یادگیری:</strong> با یک الگوریتم تکراری به‌نام Expectation-Maximization آموزش می‌بیند؛ شبیه نسخه‌ی احتمالاتیِ همان حلقه‌ی «اختصاص و به‌روزرسانی» که در K-Means دیدیم.</li>
+      </ul>
+      <figure class="slide__figure">
+        <img src="images/gmm_vs_kmeans.png" alt="خوشه‌های بیضی و جهت‌دار در Gaussian Mixture Model" style="max-height:320px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · فراتر از این دو الگوریتم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 Mean Shift ─────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">رویکرد سوم</div>
+    <span class="algo-tag">Mean Shift</span>
+    <h1 class="slide__title mb-16" style="font-size:26px;">حرکت به‌سمت قله‌های چگالی</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:28px;">
+      <ul class="algo-points">
+        <li><strong>انگیزه:</strong> اگر مثل DBSCAN دنبال تراکم بگردیم، اما بدون این‌که یک شعاع ثابت (eps) برای کل داده تعیین کنیم؟</li>
+        <li><strong>ایده:</strong> هر نقطه به‌تدریج به‌سمت میانگین وزن‌دار همسایه‌های اطرافش (در یک شعاع به‌نام bandwidth) جابه‌جا می‌شود؛ این کار تکرار می‌شود تا نقطه به یک «قله‌ی چگالی» برسد.</li>
+        <li><strong>خروجی خوشه:</strong> نقاطی که به یک قله‌ی مشترک می‌رسند، یک خوشه تشکیل می‌دهند؛ تعداد خوشه از قبل مشخص نیست و خودش کشف می‌شود.</li>
+        <li><strong>هزینه:</strong> همچنان یک پارامتر (bandwidth) دارد، و چون هر نقطه باید طی چند قدم واقعاً جابه‌جا شود، از K-Means و DBSCAN کندتر است.</li>
+      </ul>
+      <figure class="slide__figure">
+        <img src="images/meanshift_demo.png" alt="حرکت نقاط به‌سمت قله‌های چگالی در Mean Shift" style="max-height:320px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · فراتر از این دو الگوریتم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 Spectral Clustering ───────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">رویکرد چهارم</div>
+    <span class="algo-tag">Spectral Clustering</span>
+    <h1 class="slide__title mb-16" style="font-size:26px;">خوشه‌بندی از روی گراف شباهت</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:28px;">
+      <ul class="algo-points">
+        <li><strong>انگیزه:</strong> بعضی داده‌ها (مثل دو دایره‌ی تودرتو) نه با فاصله تا یک مرکز جدا می‌شوند، نه لزوماً با یک آستانه‌ی چگالی ساده.</li>
+        <li><strong>ایده:</strong> یک گراف شباهت بین نمونه‌ها می‌سازد (نقاط نزدیک به هم را به هم وصل می‌کند)، سپس با استفاده از مقادیر ویژه‌ی این گراف، نمونه‌ها را در یک فضای جدید قرار می‌دهد که در آن یک الگوریتم ساده مثل K-Means جواب می‌دهد.</li>
+        <li><strong>نتیجه:</strong> می‌تواند شکل‌هایی را جدا کند که نه K-Means و نه حتی DBSCAN به‌سادگی از پس‌شان برنمی‌آیند.</li>
+        <li><strong>هزینه:</strong> ساختن و پردازش گراف روی دیتاست‌های بزرگ کند و سنگین می‌شود.</li>
+      </ul>
+      <figure class="slide__figure">
+        <img src="images/spectral_vs_kmeans.png" alt="مقایسه K-Means و Spectral Clustering روی دو دایره‌ی تودرتو" style="max-height:320px;">
+      </figure>
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · فراتر از این دو الگوریتم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 چشم‌انداز کلی ──────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">جمع‌بندی رویکردها</div>
+    <h1 class="slide__title mb-20" style="font-size:28px; text-align:center;">چشم‌انداز کلی خوشه‌بندی</h1>
+    <table class="landscape-table mb-16" style="max-width:640px; margin-inline:auto;">
+      <tr><th>الگوریتم</th><th>ایده‌ی اصلی</th></tr>
+      <tr><td dir="ltr">K-Means</td><td>فاصله تا مرکز خوشه</td></tr>
+      <tr><td dir="ltr">DBSCAN</td><td>مناطق متراکم</td></tr>
+      <tr><td dir="ltr">Hierarchical</td><td>ادغام مرتب از پایین به بالا</td></tr>
+      <tr><td dir="ltr">Gaussian Mixture</td><td>ترکیبی از توزیع‌های نرمال</td></tr>
+      <tr><td dir="ltr">Mean Shift</td><td>حرکت به‌سمت قله‌ی چگالی</td></tr>
+      <tr><td dir="ltr">Spectral</td><td>گراف شباهت و مقادیر ویژه</td></tr>
+    </table>
+    <div class="callout--blue callout" style="font-size:14px; text-align:center;">
+      نکته‌ی اصلی این نیست که همه‌ی این‌ها را حفظ کنید؛ نکته این است که «خوشه‌بندی» یک الگوریتم واحد نیست، بلکه چند خانواده‌ی متفاوت با فرض‌های متفاوت است.
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · فراتر از این دو الگوریتم</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 جدول مقایسه ───────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مقایسه‌ی مستقیم</div>
+    <h1 class="slide__title mb-20" style="font-size:30px; text-align:center;">K-Means در برابر DBSCAN</h1>
+    <table class="compare-table mb-16">
+      <tr><th>ویژگی</th><th dir="ltr">K-Means</th><th dir="ltr">DBSCAN</th></tr>
+      <tr><td>نیاز به تعداد خوشه از قبل</td><td>بله</td><td>خیر</td></tr>
+      <tr><td>مبتنی بر Centroid</td><td>بله</td><td>خیر</td></tr>
+      <tr><td>عملکرد روی خوشه‌های با شکل پیچیده</td><td>ضعیف‌تر</td><td>بهتر</td></tr>
+      <tr><td>تشخیص نویز</td><td>خیر</td><td>بله</td></tr>
+      <tr><td>پارامترهای اصلی</td><td dir="ltr">n_clusters</td><td dir="ltr">eps, min_samples</td></tr>
+      <tr><td>حساسیت به مقیاس ویژگی‌ها</td><td>زیاد</td><td>زیاد</td></tr>
+    </table>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      DBSCAN هم جادویی نیست: اگر تراکم خوشه‌ها خیلی متفاوت باشد، پیدا کردن یک eps مشترک خودش سخت می‌شود.
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · مقایسه و جمع‌بندی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 ارزیابی خوشه‌بندی ─────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">نکته‌ی مهم</div>
+    <h1 class="slide__title mb-20" style="font-size:28px; text-align:center;">ارزیابی خوشه‌بندی چرا سخت‌تر است؟</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <div class="callout" style="font-size:16px; line-height:1.85;">
+        <strong class="ltr" style="color:var(--dark);">Classification</strong><br>
+        همیشه y_true و y_pred داریم؛ می‌توانیم دقیقاً بشماریم چند پیش‌بینی درست بوده.
+      </div>
+      <div class="callout--blue callout" style="font-size:16px; line-height:1.85;">
+        <strong class="ltr" style="color:var(--accent);">Clustering</strong><br>
+        معمولاً <span class="em">y_true نداریم</span>؛ «درست بودن» یک تعریف مطلق ندارد.
+      </div>
+    </div>
+    <div class="callout callout--red mt-auto" style="font-size:15px; text-align:center;">
+      Inertia و Silhouette Score کمک می‌کنند، اما جایگزین کامل ground truth نیستند.
+      <strong>Silhouette همان Accuracy برای clustering نیست.</strong>
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · مقایسه و جمع‌بندی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 سه سوال تحلیلی ────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">برای بحث در کلاس</div>
+    <h1 class="slide__title mb-8" style="font-size:26px; text-align:center;">سه سؤال برای فکر کردن</h1>
+    <p class="slide__body mb-20" style="font-size:14px; text-align:center; color:var(--mid);">
+      جواب هر سه را در همین جلسه دیدیم؛ هدف این است که بتوانید «چرا»یش را توضیح دهید، نه فقط نتیجه را.
+    </p>
+    <div style="display:flex; flex-direction:column; gap:12px; flex:1; justify-content:center; max-width:820px; margin:0 auto; width:100%;">
+      <div class="question-card">چرا K-Means روی داده‌ی blobs عملکرد خوبی داشت؟</div>
+      <div class="question-card">چرا روی داده‌ی moons عملکرد ضعیف‌تری داشت؟</div>
+      <div class="question-card">چرا DBSCAN برای داده‌ی moons مناسب‌تر بود؟</div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · مقایسه و جمع‌بندی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 11 جمع‌بندی نهایی ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">جمع‌بندی هفته</div>
+    <h1 class="slide__title mb-24" style="font-size:28px;">آنچه این هفته دیدیم</h1>
+    <ul class="summary-list">
+      <li>یادگیری بدون نظارت یعنی کشف ساختار در داده‌ی بدون برچسب؛ خوشه‌بندی مهم‌ترین نمونه‌ی آن است.</li>
+      <li><span class="ltr">K-Means</span> ساده و سریع است، اما فرض می‌کند خوشه‌ها تقریباً گرد و فشرده‌اند.</li>
+      <li>برای انتخاب تعداد خوشه، <span class="ltr">Elbow Method</span> و به‌خصوص <span class="ltr">Silhouette Score</span> بهتر از تکیه بر <span class="ltr">Inertia</span> به‌تنهایی هستند.</li>
+      <li><span class="ltr">DBSCAN</span> دنبال مناطق متراکم می‌گردد؛ نیازی به تعداد خوشه‌ی از پیش مشخص ندارد و نویز را هم تشخیص می‌دهد.</li>
+      <li>مقیاس ویژگی‌ها همچنان مهم است؛ هر دو الگوریتم بر پایه‌ی فاصله کار می‌کنند.</li>
+      <li>ارزیابی خوشه‌بندی، برخلاف طبقه‌بندی، معمولاً ground truth ندارد؛ سخت‌تر است، نه غیرممکن.</li>
+    </ul>
+    <div class="slide__footer">
+      <span>هفته هفتم · مقایسه و جمع‌بندی</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 12 KEY TAKEAWAY ──────────────────────────────────────── -->
+  <div class="slide slide--cover">
+    <div class="slide__eyebrow">پیام کلیدی هفته</div>
+    <p class="key-quote">
+      وقتی برچسبی در کار نیست، مدل به‌جای یاد گرفتن یک جواب، دنبال یک <strong>ساختار پنهان</strong> می‌گردد.
+      <br><br>
+      این ساختار همیشه یک جواب قطعی درست ندارد؛ و همین، خودِ درسِ این هفته است.
+    </p>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>

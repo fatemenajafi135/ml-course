@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>DBSCAN | هفته هفتم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/style.css" />
+  <style>
+    /* ── two-parameter cards ──────────────────────────────────── */
+    .param-row {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+    }
+    .param-card {
+      flex: 1;
+      max-width: 400px;
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      text-align: center;
+    }
+    .param-card__name {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      direction: ltr;
+      margin-bottom: 10px;
+    }
+    .param-card__desc {
+      font-size: 15px;
+      color: var(--dark);
+      line-height: 1.8;
+    }
+
+    /* ── point-type legend cards ──────────────────────────────── */
+    .type-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+    .type-card {
+      flex: 1;
+      max-width: 280px;
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      text-align: center;
+      border: 2px solid #E2E8F0;
+    }
+    .type-card__dot {
+      width: 22px; height: 22px; border-radius: 50%;
+      margin: 0 auto 10px;
+    }
+    .type-card__title {
+      font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 6px;
+    }
+    .type-card__desc {
+      font-size: 12.5px; color: var(--mid); line-height: 1.6;
+    }
+
+    /* ── strengths / weaknesses columns ───────────────────────── */
+    .proscons-col {
+      flex: 1;
+      border-radius: var(--radius);
+      padding: 18px 22px;
+    }
+    .proscons-col--good {
+      background: #F0FDF4;
+      border: 2px solid #22C55E;
+    }
+    .proscons-col--bad {
+      background: #FEF2F2;
+      border: 2px solid #EF4444;
+    }
+    .proscons-col__title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .proscons-col--good .proscons-col__title { color: #15803D; }
+    .proscons-col--bad .proscons-col__title { color: #B91C1C; }
+    ul.proscons-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    ul.proscons-list li {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--dark);
+      padding-inline-start: 20px;
+      position: relative;
+    }
+    .proscons-col--good li::before {
+      content: '+';
+      position: absolute; inset-inline-start: 0; color: #22C55E; font-weight: 700;
+    }
+    .proscons-col--bad li::before {
+      content: '\2212';
+      position: absolute; inset-inline-start: 0; color: #EF4444; font-weight: 700;
+    }
+
+    /* ── practical-use cards ───────────────────────────────────── */
+    .usecase-row {
+      display: flex;
+      gap: 16px;
+    }
+    .usecase-card {
+      flex: 1;
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 16px 16px;
+      text-align: center;
+    }
+    .usecase-card__title {
+      font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 8px;
+    }
+    .usecase-card__desc {
+      font-size: 12.5px; color: var(--mid); line-height: 1.7;
+    }
+
+    /* ── number tables ────────────────────────────────────────── */
+    .num-table {
+      border-collapse: collapse;
+      font-size: 14px;
+      width: 100%;
+    }
+    .num-table th {
+      background: var(--dark);
+      color: var(--white);
+      font-weight: 600;
+      padding: 7px 10px;
+      text-align: center;
+    }
+    .num-table td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #E2E8F0;
+      color: var(--dark);
+      text-align: center;
+    }
+    .num-table .ltr-cell { direction: ltr; unicode-bidi: isolate; font-family: var(--font-mono); }
+
+    /* distance matrix */
+    .matrix {
+      direction: ltr;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      margin: 0 auto;
+    }
+    .matrix th {
+      padding: 6px 9px;
+      color: var(--dark);
+      font-weight: 600;
+    }
+    .matrix td {
+      padding: 6px 9px;
+      text-align: center;
+      color: #A0AEC0;
+      border: 1px solid #EEF2F6;
+    }
+    .matrix td.in {
+      background: #FFE3CC;
+      color: var(--dark);
+      font-weight: 600;
+    }
+    .matrix td.edge {
+      background: #FEF2F2;
+      color: #B91C1C;
+      font-weight: 600;
+    }
+    .matrix td.count {
+      background: var(--dark);
+      color: var(--white);
+      font-weight: 700;
+      border-color: var(--dark);
+    }
+    .matrix th.count-head { background: var(--dark); color: var(--white); }
+
+    /* ── algorithm steps (same look as part 1) ────────────────── */
+    .step-card {
+      background: var(--white);
+      border: 2px solid #E2E8F0;
+      border-radius: var(--radius);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .step-card .num {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--accent); color: var(--white);
+      font-size: 15px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-card__text { font-size: 15.5px; color: var(--dark); line-height: 1.65; }
+
+    /* ── svg figures ──────────────────────────────────────────── */
+    .svg-fig {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .svg-fig svg { max-width: 100%; height: auto; }
+    .svg-legend {
+      display: flex;
+      gap: 16px;
+      font-size: 12.5px;
+      color: var(--mid);
+    }
+    .svg-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .svg-legend i {
+      width: 12px; height: 12px; border-radius: 50%; display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ── 01 COVER ─────────────────────────────────────────────── -->
+  <div class="slide slide--cover active">
+    <div class="slide__eyebrow">هفته هفتم · بخش ۲</div>
+    <h1 class="slide__title">DBSCAN</h1>
+    <h2 class="slide__subtitle" dir="ltr">Finding groups by their density</h2>
+    <div class="slide__footer">
+      <span>گیلان‌مهارت · یادگیری ماشین</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <!-- ── 02 ایده اصلی ─────────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:24px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">ایده‌ی اصلی</div>
+      <div class="big-statement" style="font-size:26px; max-width:800px;">
+        اگر به‌جای دنبال‌کردن مرکز خوشه، دنبال مناطق <span class="em">متراکم</span> داده باشیم چه؟
+      </div>
+      <p class="slide__body" style="font-size:16px; max-width:700px;">
+        <span class="ltr">DBSCAN</span> (خوشه‌بندی فضایی مبتنی بر چگالی): نقاطی که در یک ناحیه تراکم بالایی دارند، یک خوشه تشکیل می‌دهند.
+      </p>
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 03 دو پارامتر اصلی ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مفاهیم پایه</div>
+    <h1 class="slide__title mb-24" style="font-size:30px; text-align:center;">دو پارامتر اصلی</h1>
+    <div class="param-row mb-24">
+      <div class="param-card">
+        <div class="param-card__name">eps</div>
+        <div class="param-card__desc">شعاع همسایگی: دو نقطه همسایه‌اند اگر فاصله‌شان <strong>کمتر یا مساوی</strong> eps باشد.</div>
+      </div>
+      <div class="param-card">
+        <div class="param-card__name">min_samples</div>
+        <div class="param-card__desc">حداقل تعداد نقاطی که باید در شعاع eps یک نقطه باشند تا آن ناحیه «متراکم» به‌حساب بیاید.</div>
+      </div>
+    </div>
+    <div class="callout callout--blue" style="font-size:15.5px; line-height:1.9;">
+      دو نکته‌ی ریز ولی مهم: فاصله‌ی <span class="em">دقیقاً برابر</span> eps هم همسایه حساب می‌شود، و در <span class="ltr">scikit-learn</span> هنگام شمارش، <span class="em">خود نقطه هم جزو همسایه‌هایش حساب می‌شود</span>.
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 04 سه نوع نقطه ───────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">سه نوع نقطه</div>
+    <h1 class="slide__title mb-20" style="font-size:28px; text-align:center;">Core, Border, Noise</h1>
+    <div class="type-row mb-20">
+      <div class="type-card" style="border-color:var(--dark);">
+        <div class="type-card__dot" style="background:var(--dark);"></div>
+        <div class="type-card__title">Core Point</div>
+        <div class="type-card__desc">حداقل <span class="ltr">min_samples</span> همسایه در شعاع <span class="ltr">eps</span> خودش دارد (خودش را هم حساب می‌کنیم).</div>
+      </div>
+      <div class="type-card" style="border-color:var(--accent);">
+        <div class="type-card__dot" style="background:var(--accent);"></div>
+        <div class="type-card__title">Border Point</div>
+        <div class="type-card__desc">خودش تراکم کافی ندارد، اما <strong>حداقل یک Core Point</strong> در شعاع <span class="ltr">eps</span> آن هست.</div>
+      </div>
+      <div class="type-card" style="border-color:#94A3B8;">
+        <div class="type-card__dot" style="background:#fff; border:2px solid #94A3B8;"></div>
+        <div class="type-card__title">Noise</div>
+        <div class="type-card__desc">نه Core است نه Border؛ عضو هیچ خوشه‌ای نیست. برچسب <span class="ltr">-1</span>.</div>
+      </div>
+    </div>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/dbscan_core_border_noise.png" alt="نمونه‌ای از نقاط Core، Border و Noise" style="max-height:280px;">
+    </figure>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 05 مثال دستی: داده ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مثال دستی ۱ · همان داده‌ی نوت‌بوک</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;">۹ نقطه، با <span class="ltr">eps = 0.35</span> و <span class="ltr">min_samples = 4</span></h1>
+    <div style="display:flex; gap:36px; align-items:center; flex:1;">
+      <div style="flex:0 0 360px;">
+        <table class="num-table">
+          <thead><tr><th>نقطه</th><th>x</th><th>y</th></tr></thead>
+          <tbody>
+            <tr><td class="ltr-cell">P0</td><td class="ltr-cell">0.00</td><td class="ltr-cell">0.00</td></tr>
+            <tr><td class="ltr-cell">P1</td><td class="ltr-cell">0.20</td><td class="ltr-cell">0.10</td></tr>
+            <tr><td class="ltr-cell">P2</td><td class="ltr-cell">0.10</td><td class="ltr-cell">−0.20</td></tr>
+            <tr><td class="ltr-cell">P3</td><td class="ltr-cell">−0.10</td><td class="ltr-cell">0.15</td></tr>
+            <tr><td class="ltr-cell">P4</td><td class="ltr-cell">0.15</td><td class="ltr-cell">−0.10</td></tr>
+            <tr><td class="ltr-cell">P5</td><td class="ltr-cell">−0.15</td><td class="ltr-cell">−0.05</td></tr>
+            <tr><td class="ltr-cell">P6</td><td class="ltr-cell">0.42</td><td class="ltr-cell">0.32</td></tr>
+            <tr><td class="ltr-cell">P7</td><td class="ltr-cell">3.00</td><td class="ltr-cell">3.00</td></tr>
+            <tr><td class="ltr-cell">P8</td><td class="ltr-cell">−3.00</td><td class="ltr-cell">−3.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="svg-fig" style="flex:1;">
+        <svg viewBox="0 0 446 386" width="446" height="386" xmlns="http://www.w3.org/2000/svg" style="direction:ltr" font-family="Fira Code, monospace">
+          <line x1="0" y1="237.6" x2="446" y2="237.6" stroke="#E2E8F0"/>
+          <line x1="165.0" y1="0" x2="165.0" y2="386" stroke="#E2E8F0"/>
+          <circle cx="231.0" cy="204.6" r="115.5" fill="#20295c" fill-opacity=".06" stroke="#20295c" stroke-dasharray="6 5" stroke-width="1.5"/>
+          <circle cx="303.6" cy="132.0" r="115.5" fill="#ff6600" fill-opacity=".06" stroke="#ff6600" stroke-dasharray="6 5" stroke-width="1.5"/>
+          <line x1="231.0" y1="204.6" x2="303.6" y2="132.0" stroke="#ff6600" stroke-width="1.5"/>
+          <text x="275.3" y="182.3" font-size="12" fill="#ff6600">0.311</text>
+          <circle cx="165.0" cy="237.6" r="7" fill="#20295c"/>
+          <text x="157.0" y="255.6" font-size="13" fill="#20295c" text-anchor="end">P0</text>
+          <circle cx="231.0" cy="204.6" r="7" fill="#20295c"/>
+          <text x="241.0" y="220.6" font-size="13" fill="#20295c" text-anchor="start">P1</text>
+          <circle cx="198.0" cy="303.6" r="7" fill="#20295c"/>
+          <text x="208.0" y="309.6" font-size="13" fill="#20295c" text-anchor="start">P2</text>
+          <circle cx="132.0" cy="188.1" r="7" fill="#20295c"/>
+          <text x="120.0" y="178.1" font-size="13" fill="#20295c" text-anchor="end">P3</text>
+          <circle cx="214.5" cy="270.6" r="7" fill="#20295c"/>
+          <text x="224.5" y="276.6" font-size="13" fill="#20295c" text-anchor="start">P4</text>
+          <circle cx="115.5" cy="254.1" r="7" fill="#20295c"/>
+          <text x="103.5" y="272.1" font-size="13" fill="#20295c" text-anchor="end">P5</text>
+          <circle cx="303.6" cy="132.0" r="7" fill="#ff6600"/>
+          <text x="313.6" y="124.0" font-size="13" fill="#20295c" text-anchor="start">P6</text>
+          <circle cx="18" cy="364" r="7" fill="#fff" stroke="#94A3B8" stroke-width="2"/>
+          <text x="30" y="369" font-size="13" fill="#20295c">P8 (−3, −3), off-chart</text>
+          <circle cx="428" cy="364" r="7" fill="#fff" stroke="#94A3B8" stroke-width="2"/>
+          <text x="416" y="369" font-size="13" fill="#20295c" text-anchor="end">P7 (3, 3), off-chart</text>
+        </svg>
+        <div class="svg-legend">
+          <span>دایره‌ها: شعاع <span class="ltr">eps</span> دور <span class="ltr">P1</span> و <span class="ltr">P6</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="callout callout--blue" style="font-size:14.5px; text-align:center;">
+      سؤال برای کلاس، قبل از هر محاسبه‌ای: به نظرتان کدام نقطه‌ها Core، کدام Border و کدام Noise می‌شوند؟
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 06 مثال دستی: جدول فاصله و شمارش ─────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مثال دستی ۱ · قدم دوم</div>
+    <h1 class="slide__title mb-12" style="font-size:27px; text-align:center;">جدول فاصله‌ها و شمارش همسایه‌ها</h1>
+    <p class="slide__body mb-12" style="font-size:14.5px; text-align:center;">
+      خانه‌های نارنجی یعنی فاصله‌ی آن دو نقطه از <span class="ltr">eps=0.35</span> کمتر یا مساوی است (قطر جدول یعنی خود نقطه). تعداد خانه‌های نارنجی هر ردیف، تعداد همسایه‌های همان نقطه است.
+    </p>
+    <table class="matrix">
+      <thead><tr><th></th><th>P0</th><th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th><th>P7</th><th>P8</th><th class="count-head">|N|</th></tr></thead>
+      <tbody>
+        <tr><th>P0</th><td class="in">0</td><td class="in">0.224</td><td class="in">0.224</td><td class="in">0.180</td><td class="in">0.180</td><td class="in">0.158</td><td>0.528</td><td>4.243</td><td>4.243</td><td class="count">6</td></tr>
+        <tr><th>P1</th><td class="in">0.224</td><td class="in">0</td><td class="in">0.316</td><td class="in">0.304</td><td class="in">0.206</td><td>0.381</td><td class="in">0.311</td><td>4.031</td><td>4.455</td><td class="count">6</td></tr>
+        <tr><th>P2</th><td class="in">0.224</td><td class="in">0.316</td><td class="in">0</td><td>0.403</td><td class="in">0.112</td><td class="in">0.292</td><td>0.611</td><td>4.319</td><td>4.177</td><td class="count">5</td></tr>
+        <tr><th>P3</th><td class="in">0.180</td><td class="in">0.304</td><td>0.403</td><td class="in">0</td><td class="edge">0.354</td><td class="in">0.206</td><td>0.547</td><td>4.211</td><td>4.282</td><td class="count">4</td></tr>
+        <tr><th>P4</th><td class="in">0.180</td><td class="in">0.206</td><td class="in">0.112</td><td class="edge">0.354</td><td class="in">0</td><td class="in">0.304</td><td>0.499</td><td>4.211</td><td>4.282</td><td class="count">5</td></tr>
+        <tr><th>P5</th><td class="in">0.158</td><td>0.381</td><td class="in">0.292</td><td class="in">0.206</td><td class="in">0.304</td><td class="in">0</td><td>0.680</td><td>4.385</td><td>4.102</td><td class="count">5</td></tr>
+        <tr><th>P6</th><td>0.528</td><td class="in">0.311</td><td>0.611</td><td>0.547</td><td>0.499</td><td>0.680</td><td class="in">0</td><td>3.720</td><td>4.766</td><td class="count">2</td></tr>
+        <tr><th>P7</th><td>4.243</td><td>4.031</td><td>4.319</td><td>4.211</td><td>4.211</td><td>4.385</td><td>3.720</td><td class="in">0</td><td>8.485</td><td class="count">1</td></tr>
+        <tr><th>P8</th><td>4.243</td><td>4.455</td><td>4.177</td><td>4.282</td><td>4.282</td><td>4.102</td><td>4.766</td><td>8.485</td><td class="in">0</td><td class="count">1</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout--blue" style="font-size:14.5px; text-align:center; margin-top:14px;">
+      مثلاً ردیف <span class="ltr">P6</span>: فقط خودش و <span class="ltr">P1</span> (با فاصله‌ی ۰.۳۱۱) داخل شعاع‌اند؛ یعنی ۲ همسایه. خانه‌ی قرمز همان ۰.۳۵۴ است: فقط کمی بیشتر از eps، پس همسایه حساب نمی‌شود.
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 07 مثال دستی: جمع‌بندی ────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">مثال دستی ۱ · جمع‌بندی</div>
+    <h1 class="slide__title mb-20" style="font-size:27px; text-align:center;">نتیجه‌ی نهایی این مثال</h1>
+    <div class="cols-2" style="flex:1; align-items:center; gap:32px;">
+      <div class="callout" style="font-size:15.5px; line-height:1.9;">
+        <strong style="color:var(--dark);">یک خوشه، هفت نقطه</strong><br>
+        <span class="ltr">P0</span> تا <span class="ltr">P5</span> شش Core Point‌اند؛ <span class="ltr">P6</span> با وجود کمبود همسایه، چون در شعاع یک Core Point (<span class="ltr">P1</span>) است، Border همین خوشه می‌شود.
+      </div>
+      <div class="callout callout--blue" style="font-size:15.5px; line-height:1.9;">
+        <strong style="color:var(--accent);">نویز، دو نقطه</strong><br>
+        <span class="ltr">P7</span> و <span class="ltr">P8</span> نه خودشان Core‌اند و نه هیچ Core‌ای در همسایگی‌شان هست؛ برچسب <span class="ltr">-1</span> می‌گیرند.
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 08 الگوریتم کامل ─────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">الگوریتم</div>
+    <h1 class="slide__title mb-20" style="font-size:28px;">DBSCAN دقیقاً چه کار می‌کند؟</h1>
+    <div style="display:flex; flex-direction:column; gap:10px; flex:1; justify-content:center;">
+      <div class="step-card">
+        <span class="num">۱</span>
+        <span class="step-card__text"><strong>همسایه‌یابی:</strong> برای هر نقطه، فاصله‌اش تا بقیه‌ی نقاط را حساب کن و ببین چند نقطه (به‌علاوه‌ی خودش) در شعاع <span class="ltr">eps</span> آن هستند.</span>
+      </div>
+      <div class="step-card">
+        <span class="num">۲</span>
+        <span class="step-card__text"><strong>شروع خوشه:</strong> یک <strong>Core Point</strong> بدون خوشه انتخاب کن (یعنی به‌اندازه‌ی <span class="ltr">min_samples</span> همسایه دارد)، یک خوشه‌ی جدید بساز، و همسایه‌هایش را به صف اضافه کن.</span>
+      </div>
+      <div class="step-card">
+        <span class="num">۳</span>
+        <span class="step-card__text"><strong>گسترش:</strong> نقاط صف را یکی‌یکی به خوشه اضافه کن؛ اگر خودشان هم Core بودند، همسایه‌های‌شان را هم به صف اضافه کن، وگرنه (Border) گسترش را همان‌جا متوقف کن.</span>
+      </div>
+      <div class="step-card">
+        <span class="num">۴</span>
+        <span class="step-card__text"><strong>تکرار و پایان:</strong> سراغ Core Point بعدیِ بی‌خوشه برو. وقتی دیگر Core بی‌خوشه‌ای نماند، هر نقطه‌ای که به هیچ خوشه‌ای نرسید، Noise است (<span class="ltr">-1</span>).</span>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 09 نحوه رشد یک خوشه ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">همین فرایند، روی داده‌ی بیشتر</div>
+    <h1 class="slide__title mb-12" style="font-size:27px; text-align:center;">یک خوشه چطور رشد می‌کند؟</h1>
+    <p class="slide__body mb-12" style="font-size:14px; text-align:center;">
+      DBSCAN برخلاف K-Means هیچ ناحیه‌ای را از قبل برای کل داده مشخص نمی‌کند؛ از یک Core Point شروع می‌کند و قدم‌به‌قدم گسترش پیدا می‌کند.
+    </p>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/dbscan_growth.png" alt="مراحل رشد یک خوشه در DBSCAN از یک نقطه‌ی شروع" style="max-height:340px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14px; text-align:center;">
+      از یک Core Point (ستاره) شروع می‌شود؛ همسایه‌های آن اضافه می‌شوند، هر Core Point جدید همسایه‌های خودش را هم اضافه می‌کند، و همین‌طور ادامه پیدا می‌کند تا دیگر Core Point جدیدی برای گسترش نماند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 10 نتیجه روی moons ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">همان مثالی که K-Means شکست خورد</div>
+    <h1 class="slide__title mb-16" style="font-size:27px; text-align:center;">DBSCAN روی داده‌ی دو هلال</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/moons_dbscan_result.png" alt="نتیجه‌ی موفق DBSCAN روی داده‌ی دو هلال" style="max-height:360px;">
+    </figure>
+    <div class="callout callout--blue" style="font-size:15.5px; text-align:center;">
+      این‌بار به‌جای فاصله تا یک مرکز، الگوریتم دنبال نواحی متراکم و پیوسته گشته؛ دقیقاً همین‌طور که هر هلال واقعاً شکل گرفته است.
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 11 انتخاب اصولی eps ──────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">یک راه اصولی‌تر</div>
+    <h1 class="slide__title mb-12" style="font-size:27px; text-align:center;">انتخاب eps با نمودار k-distance</h1>
+    <p class="slide__body mb-12" style="font-size:14px; text-align:center;">
+      به‌جای فقط آزمون‌وخطا، یک روش رایج هم هست: برای هر نمونه، فاصله تا همان تعداد‌اُمین همسایه‌ی نزدیک (برابر با min_samples، اینجا پنجم) را حساب می‌کنیم، این فاصله‌ها را مرتب می‌کنیم، و دنبال نقطه‌ی خمیدگی (Knee) می‌گردیم؛ دقیقاً همان منطق Elbow Method که برای K-Means دیدیم.
+    </p>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/dbscan_kdistance.png" alt="نمودار k-distance برای انتخاب eps" style="max-height:320px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14px; text-align:center;">
+      قبل از نقطه‌ی خمیدگی، فاصله‌ها آرام رشد می‌کنند (نواحی متراکم)؛ بعد از آن، به‌شدت افزایش پیدا می‌کنند (شروع نواحی پراکنده). مقدار eps را همان‌جا، حدود ۰.۱۵ تا ۰.۲، انتخاب می‌کنیم؛ دقیقاً همان بازه‌ای که با آزمون‌وخطا هم به آن رسیدیم.
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 12 تأثیر eps ─────────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Hands-on</div>
+    <h1 class="slide__title mb-12" style="font-size:26px; text-align:center;">تأثیر eps روی نتیجه</h1>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/dbscan_eps_effect.png" alt="تأثیر مقادیر مختلف eps روی خروجی DBSCAN" style="max-height:280px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14.5px; text-align:center;">
+      هدف حفظ‌کردن یک عدد دقیق نیست؛ هدف دیدن این است که <span class="em">پارامترهای خوشه‌بندی</span> می‌توانند ساختارهای کاملاً متفاوتی از همان داده کشف کنند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 13 تأثیر min_samples ─────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">Hands-on</div>
+    <h1 class="slide__title mb-12" style="font-size:26px; text-align:center;">تأثیر min_samples روی نتیجه</h1>
+    <p class="slide__body mb-12" style="font-size:14px; text-align:center;">
+      eps را همان ۰.۲ ثابت نگه می‌داریم و فقط min_samples را زیاد می‌کنیم؛ یعنی سخت‌گیرتر می‌شویم که یک ناحیه «متراکم» به‌حساب بیاید.
+    </p>
+    <figure class="slide__figure" style="flex:1; justify-content:center;">
+      <img src="images/dbscan_minsamples_effect.png" alt="تأثیر مقادیر مختلف min_samples روی خروجی DBSCAN" style="max-height:280px;">
+    </figure>
+    <div class="callout--blue callout" style="font-size:14px; text-align:center;">
+      با min_samples کم، تقریباً همه‌چیز در دو خوشه جای می‌گیرد. هرچه min_samples را بیشتر کنیم، نقاط بیشتری دیگر «به‌اندازه‌ی کافی همسایه» ندارند و نویز می‌شوند؛ با min_samples=20 حتی خود خوشه‌ها هم تکه‌تکه می‌شوند.
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 14 کاربردهای واقعی ───────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">چرا این‌قدر اهمیت دارد</div>
+    <h1 class="slide__title mb-20" style="font-size:27px; text-align:center;">DBSCAN در عمل کجا استفاده می‌شود؟</h1>
+    <div class="usecase-row" style="flex:1; align-items:center;">
+      <div class="usecase-card">
+        <div class="usecase-card__title">تشخیص ناهنجاری</div>
+        <div class="usecase-card__desc">چون نویز به‌طور طبیعی تشخیص داده می‌شود، تراکنش‌های مشکوک یا رفتار غیرعادی کاربر دقیقاً همان نقاط «نویز» الگوریتم هستند.</div>
+      </div>
+      <div class="usecase-card">
+        <div class="usecase-card__title">خوشه‌بندی جغرافیایی</div>
+        <div class="usecase-card__desc">برای گروه‌بندی نقاط مکانی (مثلاً محل تصادفات یا فروشگاه‌ها) که شکل طبیعی و نامنظمی دارند، نه لزوماً دایره‌ای.</div>
+      </div>
+      <div class="usecase-card">
+        <div class="usecase-card__title">بخش‌بندی تصویر</div>
+        <div class="usecase-card__desc">پیکسل‌های نزدیک به هم با رنگ مشابه، بدون دانستن تعداد بخش‌ها از قبل، در یک ناحیه گروه می‌شوند.</div>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 15 نقاط قوت و ضعف ────────────────────────────────────── -->
+  <div class="slide slide--content">
+    <div class="slide__eyebrow">جمع‌بندی الگوریتم</div>
+    <h1 class="slide__title mb-20" style="font-size:28px; text-align:center;">نقاط قوت و ضعف DBSCAN</h1>
+    <div style="display:flex; gap:22px; flex:1; align-items:center;">
+      <div class="proscons-col proscons-col--good">
+        <div class="proscons-col__title">نقاط قوت</div>
+        <ul class="proscons-list">
+          <li>نیازی به مشخص‌کردن تعداد خوشه از قبل ندارد.</li>
+          <li>می‌تواند خوشه‌هایی با شکل کاملاً دلخواه (نه فقط گرد) را پیدا کند.</li>
+          <li>نویز و نقاط پرت را به‌طور خودکار تشخیص می‌دهد.</li>
+        </ul>
+      </div>
+      <div class="proscons-col proscons-col--bad">
+        <div class="proscons-col__title">نقاط ضعف</div>
+        <ul class="proscons-list">
+          <li>وقتی تراکم خوشه‌های مختلف خیلی متفاوت باشد، یک eps مشترک جواب نمی‌دهد.</li>
+          <li>پیدا کردن eps و min_samples مناسب معمولاً نیاز به آزمون‌وخطا دارد.</li>
+          <li>درست مثل K-Means، به مقیاس ویژگی‌ها حساس است.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+  <!-- ── 16 هشدار پایانی ──────────────────────────────────────── -->
+  <div class="slide slide--highlight">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; text-align:center;">
+      <div class="slide__eyebrow" style="color:var(--accent);">یک نکته‌ی مهم</div>
+      <div class="big-statement" style="font-size:28px; max-width:760px;">
+        DBSCAN هم جادویی نیست.
+      </div>
+      <p class="slide__body" style="font-size:16px; max-width:700px;">
+        اگر تراکم خوشه‌های مختلف در یک دیتاست خیلی متفاوت باشد، پیدا کردن یک <span class="ltr">eps</span> مشترک که برای همه‌ی خوشه‌ها خوب کار کند، خودش می‌تواند مشکل‌ساز شود.
+      </p>
+    </div>
+    <div class="slide__footer">
+      <span>هفته هفتم · DBSCAN</span>
+      <span class="slide-num"></span>
+    </div>
+    <div class="progress"></div>
+  </div>
+
+</div>
+
+<script src="../../assets/deck.js"></script>
+</body>
+</html>
